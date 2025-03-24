@@ -1,0 +1,6 @@
+@SmartBuy_HostAddress = http://localhost:5108
+
+GET {{SmartBuy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
