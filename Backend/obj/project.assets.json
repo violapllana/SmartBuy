@@ -62,32 +62,6 @@
           }
         }
       },
-      "DotNetNuke.Core/8.0.0.809": {
-        "type": "package",
-        "compile": {
-          "lib/net40/DotNetNuke.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Microsoft.ApplicationBlocks.Data.dll": {}
-        },
-        "runtime": {
-          "lib/net40/DotNetNuke.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Microsoft.ApplicationBlocks.Data.dll": {}
-        }
-      },
-      "DotNetNuke.Web/8.0.0.809": {
-        "type": "package",
-        "compile": {
-          "lib/net40/DotNetNuke.Web.dll": {},
-          "lib/net40/DotNetNuke.WebUtility.dll": {}
-        },
-        "runtime": {
-          "lib/net40/DotNetNuke.Web.dll": {},
-          "lib/net40/DotNetNuke.WebUtility.dll": {}
-        }
-      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -97,38 +71,6 @@
         },
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Microsoft.AspNet.WebApi.Client/5.2.3": {
-        "type": "package",
-        "dependencies": {
-          "Newtonsoft.Json": "6.0.4"
-        },
-        "compile": {
-          "lib/net45/System.Net.Http.Formatting.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/System.Net.Http.Formatting.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Microsoft.AspNet.WebApi.Core/5.2.3": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.WebApi.Client": "5.2.3"
-        },
-        "compile": {
-          "lib/net45/System.Web.Http.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/System.Web.Http.dll": {
             "related": ".xml"
           }
         }
@@ -1949,33 +1891,6 @@
         "lib/netstandard2.1/DnsClient.xml"
       ]
     },
-    "DotNetNuke.Core/8.0.0.809": {
-      "sha512": "A7g0Rwn/5PN9dxZdJ4rkGYK7nEsLJfJYaswuKFfFUDuD0DXc64NXEGmgg8SWI7x315s/kQlAQYPMoidAfHhvew==",
-      "type": "package",
-      "path": "dotnetnuke.core/8.0.0.809",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "dotnetnuke.core.8.0.0.809.nupkg.sha512",
-        "dotnetnuke.core.nuspec",
-        "lib/net40/DotNetNuke.dll",
-        "lib/net40/DotNetNuke.pdb",
-        "lib/net40/Microsoft.ApplicationBlocks.Data.dll"
-      ]
-    },
-    "DotNetNuke.Web/8.0.0.809": {
-      "sha512": "9Fb6J97IiOLx9PMrn2jsrVhtZFjqlJBW8y1i+CID5hBtdH4n1a7U9JIytNLDzn7rXzDg/wdLk+EsWsRwZcnFTw==",
-      "type": "package",
-      "path": "dotnetnuke.web/8.0.0.809",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "dotnetnuke.web.8.0.0.809.nupkg.sha512",
-        "dotnetnuke.web.nuspec",
-        "lib/net40/DotNetNuke.Web.dll",
-        "lib/net40/DotNetNuke.WebUtility.dll"
-      ]
-    },
     "Humanizer.Core/2.14.1": {
       "sha512": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "type": "package",
@@ -1992,35 +1907,6 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
-      ]
-    },
-    "Microsoft.AspNet.WebApi.Client/5.2.3": {
-      "sha512": "3kiI8peSXbXHDDrRuo+QaX0iCEVRe0nvn2dBDRw656uPX32UalbBlSIDUDlJxu05eau4tnuhsikiUuugvvoUoQ==",
-      "type": "package",
-      "path": "microsoft.aspnet.webapi.client/5.2.3",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/System.Net.Http.Formatting.dll",
-        "lib/net45/System.Net.Http.Formatting.xml",
-        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.dll",
-        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.xml",
-        "microsoft.aspnet.webapi.client.5.2.3.nupkg.sha512",
-        "microsoft.aspnet.webapi.client.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.WebApi.Core/5.2.3": {
-      "sha512": "o90QYlRV8VKR1S7+EcJw9w8WSyVFLl+IIzN8ILZ+n2t6rsc/KS8kBxRzA7wCFPRUHhebCfLqilBk39phvanx3g==",
-      "type": "package",
-      "path": "microsoft.aspnet.webapi.core/5.2.3",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Content/web.config.transform",
-        "lib/net45/System.Web.Http.dll",
-        "lib/net45/System.Web.Http.xml",
-        "microsoft.aspnet.webapi.core.5.2.3.nupkg.sha512",
-        "microsoft.aspnet.webapi.core.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
@@ -5017,9 +4903,6 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "DotNetNuke.Core >= 8.0.0.809",
-      "DotNetNuke.Web >= 8.0.0.809",
-      "Microsoft.AspNet.WebApi.Core >= 5.2.3",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.0",
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson >= 8.0.0",
@@ -5032,24 +4915,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\begus\\.nuget\\packages\\": {}
+    "C:\\Users\\Alban\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "projectUniqueName": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
-      "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
-      "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+      "projectPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\Alban\\.nuget\\packages\\",
+      "outputPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Alban\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -5067,24 +4957,13 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
-          "DotNetNuke.Core": {
-            "target": "Package",
-            "version": "[8.0.0.809, )"
-          },
-          "DotNetNuke.Web": {
-            "target": "Package",
-            "version": "[8.0.0.809, )"
-          },
-          "Microsoft.AspNet.WebApi.Core": {
-            "target": "Package",
-            "version": "[5.2.3, )"
-          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[8.0.0, )"
@@ -5141,170 +5020,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known high severity vulnerability, https://github.com/advisories/GHSA-4qf5-7xc2-wqpg",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-5c66-x4wm-rjfx",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-5whq-j5qg-wjvp",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9phr-h5mx-4fp6",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9w72-2f23-57gm",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known high severity vulnerability, https://github.com/advisories/GHSA-g8j6-m4p7-5rfq",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known high severity vulnerability, https://github.com/advisories/GHSA-j3g9-6fx5-gjv7",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-m6w9-8cxc-jff7",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vjcm-j85r-7p68",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known high severity vulnerability, https://github.com/advisories/GHSA-x2rg-fmcv-crq5",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core' 8.0.0.809 has a known high severity vulnerability, https://github.com/advisories/GHSA-xx3h-j3cx-8qfj",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Web' 8.0.0.809 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9w72-2f23-57gm",
-      "libraryId": "DotNetNuke.Web",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Core 8.0.0.809' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "libraryId": "DotNetNuke.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'DotNetNuke.Web 8.0.0.809' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "libraryId": "DotNetNuke.Web",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNet.WebApi.Client 5.2.3' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.AspNet.WebApi.Client",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNet.WebApi.Core 5.2.3' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.AspNet.WebApi.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  }
 }

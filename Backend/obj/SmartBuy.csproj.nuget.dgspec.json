@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj": {}
+    "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj": {}
   },
   "projects": {
-    "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj": {
+    "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+        "projectUniqueName": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
         "projectName": "SmartBuy",
-        "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
-        "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+        "projectPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
+        "packagesPath": "C:\\Users\\Alban\\.nuget\\packages\\",
+        "outputPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Alban\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -37,24 +43,13 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "DotNetNuke.Core": {
-              "target": "Package",
-              "version": "[8.0.0.809, )"
-            },
-            "DotNetNuke.Web": {
-              "target": "Package",
-              "version": "[8.0.0.809, )"
-            },
-            "Microsoft.AspNet.WebApi.Core": {
-              "target": "Package",
-              "version": "[5.2.3, )"
-            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -111,7 +106,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

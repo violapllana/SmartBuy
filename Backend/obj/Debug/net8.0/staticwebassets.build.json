@@ -1,11 +1,20 @@
 {
   "Version": 1,
+<<<<<<< HEAD
   "Hash": "yWLeRz64iX3L8PyrOhef8qHHPJVSXtoDhkqsxmiXBVI=",
+=======
+  "Hash": "XpH/qeznyYDGn+T2L1p6rJ5PJFgQpNqt24RwqcyL9DE=",
+>>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
   "Source": "SmartBuy",
   "BasePath": "_content/SmartBuy",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
+<<<<<<< HEAD
   "Assets": []
+=======
+  "Assets": [],
+  "Endpoints": []
+>>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
 }
