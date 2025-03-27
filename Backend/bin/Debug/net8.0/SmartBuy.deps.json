@@ -8,12 +8,6 @@
     ".NETCoreApp,Version=v8.0": {
       "SmartBuy/1.0.0": {
         "dependencies": {
-<<<<<<< HEAD
-          "DotNetNuke.Core": "8.0.0.809",
-          "DotNetNuke.Web": "8.0.0.809",
-          "Microsoft.AspNet.WebApi.Core": "5.2.3",
-=======
->>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "8.0.0",
@@ -73,33 +67,6 @@
           }
         }
       },
-<<<<<<< HEAD
-      "DotNetNuke.Core/8.0.0.809": {
-        "runtime": {
-          "lib/net40/DotNetNuke.dll": {
-            "assemblyVersion": "8.0.0.809",
-            "fileVersion": "8.0.0.809"
-          },
-          "lib/net40/Microsoft.ApplicationBlocks.Data.dll": {
-            "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.0.0.0"
-          }
-        }
-      },
-      "DotNetNuke.Web/8.0.0.809": {
-        "runtime": {
-          "lib/net40/DotNetNuke.Web.dll": {
-            "assemblyVersion": "8.0.0.809",
-            "fileVersion": "8.0.0.809"
-          },
-          "lib/net40/DotNetNuke.WebUtility.dll": {
-            "assemblyVersion": "4.2.1.783",
-            "fileVersion": "4.2.1.783"
-          }
-        }
-      },
-=======
->>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
       "Humanizer.Core/2.14.1": {
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
@@ -108,31 +75,6 @@
           }
         }
       },
-<<<<<<< HEAD
-      "Microsoft.AspNet.WebApi.Client/5.2.3": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
-        },
-        "runtime": {
-          "lib/net45/System.Net.Http.Formatting.dll": {
-            "assemblyVersion": "5.2.3.0",
-            "fileVersion": "5.2.30128.0"
-          }
-        }
-      },
-      "Microsoft.AspNet.WebApi.Core/5.2.3": {
-        "dependencies": {
-          "Microsoft.AspNet.WebApi.Client": "5.2.3"
-        },
-        "runtime": {
-          "lib/net45/System.Web.Http.dll": {
-            "assemblyVersion": "5.2.3.0",
-            "fileVersion": "5.2.30128.0"
-          }
-        }
-      },
-=======
->>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
       "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.0.3"
@@ -1139,23 +1081,6 @@
       "path": "dnsclient/1.6.1",
       "hashPath": "dnsclient.1.6.1.nupkg.sha512"
     },
-<<<<<<< HEAD
-    "DotNetNuke.Core/8.0.0.809": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-A7g0Rwn/5PN9dxZdJ4rkGYK7nEsLJfJYaswuKFfFUDuD0DXc64NXEGmgg8SWI7x315s/kQlAQYPMoidAfHhvew==",
-      "path": "dotnetnuke.core/8.0.0.809",
-      "hashPath": "dotnetnuke.core.8.0.0.809.nupkg.sha512"
-    },
-    "DotNetNuke.Web/8.0.0.809": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-9Fb6J97IiOLx9PMrn2jsrVhtZFjqlJBW8y1i+CID5hBtdH4n1a7U9JIytNLDzn7rXzDg/wdLk+EsWsRwZcnFTw==",
-      "path": "dotnetnuke.web/8.0.0.809",
-      "hashPath": "dotnetnuke.web.8.0.0.809.nupkg.sha512"
-    },
-=======
->>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
     "Humanizer.Core/2.14.1": {
       "type": "package",
       "serviceable": true,
@@ -1163,23 +1088,6 @@
       "path": "humanizer.core/2.14.1",
       "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
     },
-<<<<<<< HEAD
-    "Microsoft.AspNet.WebApi.Client/5.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-3kiI8peSXbXHDDrRuo+QaX0iCEVRe0nvn2dBDRw656uPX32UalbBlSIDUDlJxu05eau4tnuhsikiUuugvvoUoQ==",
-      "path": "microsoft.aspnet.webapi.client/5.2.3",
-      "hashPath": "microsoft.aspnet.webapi.client.5.2.3.nupkg.sha512"
-    },
-    "Microsoft.AspNet.WebApi.Core/5.2.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-o90QYlRV8VKR1S7+EcJw9w8WSyVFLl+IIzN8ILZ+n2t6rsc/KS8kBxRzA7wCFPRUHhebCfLqilBk39phvanx3g==",
-      "path": "microsoft.aspnet.webapi.core/5.2.3",
-      "hashPath": "microsoft.aspnet.webapi.core.5.2.3.nupkg.sha512"
-    },
-=======
->>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
     "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
       "type": "package",
       "serviceable": true,
