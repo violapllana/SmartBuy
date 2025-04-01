@@ -9,11 +9,19 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SmartBuy
 build_property.RootNamespace = SmartBuy
+<<<<<<< HEAD
 build_property.ProjectDir = C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\
+=======
+build_property.ProjectDir = C:\Users\reaja.DESKTOP-RA6KKDK\OneDrive\Desktop\lab2\SmartBuy\backend\
+>>>>>>> a859a8311902e77faeb85844c3d0602ffde4f12d
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+<<<<<<< HEAD
 build_property.MSBuildProjectDirectory = C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend
+=======
+build_property.MSBuildProjectDirectory = C:\Users\reaja.DESKTOP-RA6KKDK\OneDrive\Desktop\lab2\SmartBuy\backend
+>>>>>>> a859a8311902e77faeb85844c3d0602ffde4f12d
 build_property._RazorSourceGeneratorDebug = 

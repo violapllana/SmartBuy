@@ -4915,11 +4915,16 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\begus\\.nuget\\packages\\": {}
+=======
+    "C:\\Users\\reaja.DESKTOP-RA6KKDK\\.nuget\\packages\\": {}
+>>>>>>> a859a8311902e77faeb85844c3d0602ffde4f12d
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
       "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
@@ -4928,6 +4933,16 @@
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config"
+=======
+      "projectUniqueName": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj",
+      "projectName": "SmartBuy",
+      "projectPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\reaja.DESKTOP-RA6KKDK\\AppData\\Roaming\\NuGet\\NuGet.Config"
+>>>>>>> a859a8311902e77faeb85844c3d0602ffde4f12d
       ],
       "originalTargetFrameworks": [
         "net8.0"
