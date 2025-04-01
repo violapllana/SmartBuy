@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "XpH/qeznyYDGn+T2L1p6rJ5PJFgQpNqt24RwqcyL9DE=",
+  "Hash": "yWLeRz64iX3L8PyrOhef8qHHPJVSXtoDhkqsxmiXBVI=",
   "Source": "SmartBuy",
   "BasePath": "_content/SmartBuy",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }
