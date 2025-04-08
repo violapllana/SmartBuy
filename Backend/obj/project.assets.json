@@ -4915,23 +4915,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Alban\\.nuget\\packages\\": {},
+    "C:\\Users\\dell\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "projectUniqueName": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
-      "projectPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\SmartBuy.csproj",
-      "packagesPath": "C:\\Users\\Alban\\.nuget\\packages\\",
-      "outputPath": "C:\\ProgramData\\Alban\\GitHubDesktop\\app-3.4.16\\SmartBuy\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Alban\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4958,7 +4958,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -5020,7 +5020,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
