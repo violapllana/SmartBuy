@@ -211,7 +211,6 @@ C:\ProgramData\Alban\GitHubDesktop\app-3.4.16\SmartBuy\Backend\obj\Debug\net8.0\
 C:\ProgramData\Alban\GitHubDesktop\app-3.4.16\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.pdb
 C:\ProgramData\Alban\GitHubDesktop\app-3.4.16\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.genruntimeconfig.cache
 C:\ProgramData\Alban\GitHubDesktop\app-3.4.16\SmartBuy\Backend\obj\Debug\net8.0\ref\SmartBuy.dll
-<<<<<<< HEAD
 >>>>>>> 5014e3413e668a7ea409ee01c77b80394421bbb7
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.json
@@ -363,7 +362,6 @@ C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\refint\SmartBu
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.pdb
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.genruntimeconfig.cache
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\ref\SmartBuy.dll
-=======
 C:\Users\reaja.DESKTOP-RA6KKDK\OneDrive\Desktop\lab2\SmartBuy\backend\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\reaja.DESKTOP-RA6KKDK\OneDrive\Desktop\lab2\SmartBuy\backend\bin\Debug\net8.0\appsettings.json
 C:\Users\reaja.DESKTOP-RA6KKDK\OneDrive\Desktop\lab2\SmartBuy\backend\bin\Debug\net8.0\SmartBuy.exe

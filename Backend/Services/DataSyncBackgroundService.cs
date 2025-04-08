@@ -39,7 +39,7 @@ public class DataSyncBackgroundService : BackgroundService
         using (var scope = _scopeFactory.CreateScope())
         {
             var sqlContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            
+
             var users = await sqlContext.Users.ToListAsync();
             var products = await sqlContext.Products.ToListAsync();
 
