@@ -42,9 +42,12 @@ public class DataSyncBackgroundService : BackgroundService
 
             var users = await sqlContext.Users.ToListAsync();
             var products = await sqlContext.Products.ToListAsync();
+            var cards = await sqlContext.Cards.ToListAsync();
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
+            var cardCollection = _mongoDatabase.GetCollection<MongoCard>("Cards");
+
 
             foreach (var sqlUser in users)
             {
@@ -91,6 +94,30 @@ public class DataSyncBackgroundService : BackgroundService
 
                 await productCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
+
+            
+            
+            foreach (var sqlCard in cards)
+{
+    var mongoCard = new MongoCard
+    {
+        Id = sqlCard.Id, 
+        Title = sqlCard.Title,
+        Description = sqlCard.Description,
+        Type = sqlCard.Type,
+        CreatedAt = sqlCard.CreatedAt
+    };
+
+    var filter = Builders<MongoCard>.Filter.Eq(c => c.Id, mongoCard.Id);
+    var update = Builders<MongoCard>.Update
+        .Set(c => c.Title, mongoCard.Title)
+        .Set(c => c.Description, mongoCard.Description)
+        .Set(c => c.Type, mongoCard.Type)
+        .Set(c => c.CreatedAt, mongoCard.CreatedAt);
+
+    await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+}
+           
         }
     }
 }
