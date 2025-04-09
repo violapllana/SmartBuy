@@ -4915,41 +4915,25 @@
     ]
   },
   "packageFolders": {
-<<<<<<< HEAD
-    "C:\\Users\\begus\\.nuget\\packages\\": {}
-=======
-    "C:\\Users\\dell\\.nuget\\packages\\": {},
+    "C:\\Users\\begus\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
->>>>>>> d5e609f13af1a31e522d887e59251b6071c9642e
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
       "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
-=======
-      "projectUniqueName": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\SmartBuy.csproj",
-      "projectName": "SmartBuy",
-      "projectPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\SmartBuy.csproj",
-      "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\New folder\\SmartBuy\\backend\\obj\\",
->>>>>>> d5e609f13af1a31e522d887e59251b6071c9642e
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-<<<<<<< HEAD
-        "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config"
-=======
-        "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
->>>>>>> d5e609f13af1a31e522d887e59251b6071c9642e
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4974,7 +4958,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -5036,7 +5020,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
