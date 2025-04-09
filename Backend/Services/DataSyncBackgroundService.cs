@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration.UserSecrets;
+using Backend.Models;
 
 public class DataSyncBackgroundService : BackgroundService
 {
@@ -43,10 +45,12 @@ public class DataSyncBackgroundService : BackgroundService
             var users = await sqlContext.Users.ToListAsync();
             var products = await sqlContext.Products.ToListAsync();
             var cards = await sqlContext.Cards.ToListAsync();
+            var reviews = await sqlContext.Reviews.ToListAsync();
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
             var cardCollection = _mongoDatabase.GetCollection<MongoCard>("Cards");
+            var reviewCollection = _mongoDatabase.GetCollection<MongoReviews>("Reviews");
 
 
             foreach (var sqlUser in users)
@@ -117,7 +121,33 @@ public class DataSyncBackgroundService : BackgroundService
 
     await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
 }
+ foreach (var sqlReview in reviews)
+{
+    var mongoReview = new MongoReviews
+    {
+        Id = sqlReview.Id,
+        UserId = sqlReview.UserId,
+        ProductId = sqlReview.ProductId,
+        Rating = sqlReview.Rating,
+        Comment = sqlReview.Comment,
+        CreatedAt = sqlReview.CreatedAt
+    };
+
+    var filter = Builders<MongoReviews>.Filter.Eq(r => r.Id, mongoReview.Id);
+    var update = Builders<MongoReviews>.Update
+        .Set(r => r.UserId, mongoReview.UserId)
+        .Set(r => r.ProductId, mongoReview.ProductId)
+        .Set(r => r.Rating, mongoReview.Rating)
+        .Set(r => r.Comment, mongoReview.Comment)
+        .Set(r => r.CreatedAt, mongoReview.CreatedAt);
+
+    await reviewCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+}
+
            
         }
     }
+    
 }
+
+
