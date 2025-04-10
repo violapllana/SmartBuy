@@ -4915,23 +4915,39 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\begus\\.nuget\\packages\\": {},
+=======
+    "C:\\Users\\Alban\\.nuget\\packages\\": {},
+>>>>>>> e9cfac9aa528771d16f6b9178e49f48b86d744a8
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
       "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+=======
+      "projectUniqueName": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "projectName": "SmartBuy",
+      "projectPath": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\Alban\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\obj\\",
+>>>>>>> e9cfac9aa528771d16f6b9178e49f48b86d744a8
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
+<<<<<<< HEAD
         "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+        "C:\\Users\\Alban\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> e9cfac9aa528771d16f6b9178e49f48b86d744a8
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

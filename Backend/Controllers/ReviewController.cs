@@ -1,0 +1,86 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Backend.dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SmartBuy.Data;
+
+namespace Backend.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ReviewController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ReviewController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/review - Get all reviews
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var reviews = _context.Reviews
+                .Select(r => r.toReviewDto()) // Using lowercase 'toReviewDto()'
+                .ToList();
+
+            return Ok(reviews);
+        }
+
+        // GET: api/review/{userId}/{productId} - Get a specific review
+        [HttpGet("{userId}/{productId}")]
+        public async Task<IActionResult> Get(string userId, int productId)
+        {
+            var review = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.ProductId == productId);
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(review.toReviewDto()); // Using lowercase 'toReviewDto()'
+        }
+
+        // POST: api/review - Create a new review
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] ReviewCreateDto reviewDto)
+        {
+            var existingReview = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.UserId == reviewDto.UserId && r.ProductId == reviewDto.ProductId);
+
+            if (existingReview != null)
+            {
+                return BadRequest($"Review for Product {reviewDto.ProductId} by User {reviewDto.UserId} already exists!");
+            }
+
+            var reviewModel = reviewDto.toReviewFromCreateDto(); // Using lowercase 'toReviewFromCreateDto()'
+
+            _context.Reviews.Add(reviewModel);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(Get), new { userId = reviewModel.UserId, productId = reviewModel.ProductId }, reviewModel.toReviewDto());
+        }
+
+        // DELETE: api/review/{userId}/{productId} - Delete a review
+        [HttpDelete("{userId}/{productId}")]
+        public async Task<IActionResult> Delete(string userId, int productId)
+        {
+            var review = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.ProductId == productId);
+
+            if (review == null)
+            {
+                return NotFound($"No review found for Product {productId} by User {userId}.");
+            }
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+    }
+}

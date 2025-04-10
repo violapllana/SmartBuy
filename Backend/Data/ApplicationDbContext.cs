@@ -14,6 +14,23 @@ namespace SmartBuy.Data
         public DbSet<RefreshToken> RefreshToken { get; set; }  // Example table
         public DbSet<Product> Products {get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+         
+         protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Define the relationship between Review, User, and Product
+        modelBuilder.Entity<Review>()
+            .HasOne(r => r.User)
+            .WithMany()   // Assuming a user can have many reviews
+            .HasForeignKey(r => r.UserId);
+
+        modelBuilder.Entity<Review>()
+            .HasOne(r => r.Product)
+            .WithMany()   // Assuming a product can have many reviews
+            .HasForeignKey(r => r.ProductId);
+    }
 
 
     }
