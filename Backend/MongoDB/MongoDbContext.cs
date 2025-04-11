@@ -12,6 +12,7 @@ public class MongoDbContext
     }
 
     public IMongoCollection<MongoUser> Users => _database.GetCollection<MongoUser>("users");
-     public IMongoCollection<MongoProducts> Products => _database.GetCollection<MongoProducts>("products");
-     public IMongoCollection<MongoCard> Cards => _database.GetCollection<MongoCard>("cards");
+    public IMongoCollection<MongoProducts> Products => _database.GetCollection<MongoProducts>("products");
+    public IMongoCollection<MongoCard> Cards => _database.GetCollection<MongoCard>("cards");
+    public IMongoCollection<MongoOrder> Orders => _database.GetCollection<MongoOrder>("orders");  // Added Order collection
 }

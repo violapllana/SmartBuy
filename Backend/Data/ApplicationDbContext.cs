@@ -11,9 +11,14 @@ namespace SmartBuy.Data
 
 
         public DbSet<User> Users { get; set; }  // Example table
+        // public new DbSet<User> Users { get; set; }
+
         public DbSet<RefreshToken> RefreshToken { get; set; }  // Example table
         public DbSet<Product> Products {get; set; }
         public DbSet<Card> Cards { get; set; }
+     
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderProduct> OrderProducts { get; set; }
 
 
     }

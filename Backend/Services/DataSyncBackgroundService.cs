@@ -39,15 +39,19 @@ public class DataSyncBackgroundService : BackgroundService
         using (var scope = _scopeFactory.CreateScope())
         {
             var sqlContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            
+
             var users = await sqlContext.Users.ToListAsync();
             var products = await sqlContext.Products.ToListAsync();
             var cards = await sqlContext.Cards.ToListAsync();
+            var orders = await sqlContext.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .ToListAsync();
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
             var cardCollection = _mongoDatabase.GetCollection<MongoCard>("Cards");
-
+            var orderCollection = _mongoDatabase.GetCollection<MongoOrder>("Orders");
 
             foreach (var sqlUser in users)
             {
@@ -95,29 +99,51 @@ public class DataSyncBackgroundService : BackgroundService
                 await productCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
 
-            
-            
             foreach (var sqlCard in cards)
-{
-    var mongoCard = new MongoCard
-    {
-        Id = sqlCard.Id, 
-        Title = sqlCard.Title,
-        Description = sqlCard.Description,
-        Type = sqlCard.Type,
-        CreatedAt = sqlCard.CreatedAt
-    };
+            {
+                var mongoCard = new MongoCard
+                {
+                    Id = sqlCard.Id,
+                    Title = sqlCard.Title,
+                    Description = sqlCard.Description,
+                    Type = sqlCard.Type,
+                    CreatedAt = sqlCard.CreatedAt
+                };
 
-    var filter = Builders<MongoCard>.Filter.Eq(c => c.Id, mongoCard.Id);
-    var update = Builders<MongoCard>.Update
-        .Set(c => c.Title, mongoCard.Title)
-        .Set(c => c.Description, mongoCard.Description)
-        .Set(c => c.Type, mongoCard.Type)
-        .Set(c => c.CreatedAt, mongoCard.CreatedAt);
+                var filter = Builders<MongoCard>.Filter.Eq(c => c.Id, mongoCard.Id);
+                var update = Builders<MongoCard>.Update
+                    .Set(c => c.Title, mongoCard.Title)
+                    .Set(c => c.Description, mongoCard.Description)
+                    .Set(c => c.Type, mongoCard.Type)
+                    .Set(c => c.CreatedAt, mongoCard.CreatedAt);
 
-    await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
-}
-           
+                await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            foreach (var sqlOrder in orders)
+            {
+                var mongoOrder = new MongoOrder
+                {
+                    Id = sqlOrder.Id.ToString(),
+                    UserId = sqlOrder.UserId,
+                    OrderDate = sqlOrder.OrderDate,
+                    Products = sqlOrder.OrderProducts.Select(op => new MongoOrderProduct
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.Product?.Name,
+                        Quantity = op.Quantity,
+                        Price = op.Price
+                    }).ToList()
+                };
+
+                var filter = Builders<MongoOrder>.Filter.Eq(o => o.Id, mongoOrder.Id);
+                var update = Builders<MongoOrder>.Update
+                    .Set(o => o.UserId, mongoOrder.UserId)
+                    .Set(o => o.OrderDate, mongoOrder.OrderDate)
+                    .Set(o => o.Products, mongoOrder.Products);
+
+                await orderCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
         }
     }
 }
