@@ -516,7 +516,6 @@ C:\Users\dell\Documents\Lab2_Projekti\New folder\SmartBuy\backend\obj\Debug\net8
 C:\Users\dell\Documents\Lab2_Projekti\New folder\SmartBuy\backend\obj\Debug\net8.0\SmartBuy.pdb
 C:\Users\dell\Documents\Lab2_Projekti\New folder\SmartBuy\backend\obj\Debug\net8.0\SmartBuy.genruntimeconfig.cache
 C:\Users\dell\Documents\Lab2_Projekti\New folder\SmartBuy\backend\obj\Debug\net8.0\ref\SmartBuy.dll
-<<<<<<< HEAD
 >>>>>>> d5e609f13af1a31e522d887e59251b6071c9642e
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.json
@@ -671,7 +670,6 @@ C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\refint\SmartBu
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.pdb
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\SmartBuy.genruntimeconfig.cache
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\obj\Debug\net8.0\ref\SmartBuy.dll
-=======
 C:\Users\Alban\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Alban\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.json
 C:\Users\Alban\Desktop\SmartBuy\Backend\bin\Debug\net8.0\SmartBuy.staticwebassets.endpoints.json
