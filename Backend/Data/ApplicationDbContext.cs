@@ -14,11 +14,11 @@ namespace SmartBuy.Data
         public DbSet<RefreshToken> RefreshToken { get; set; }  // Example table
         public DbSet<Product> Products {get; set; }
         public DbSet<Card> Cards { get; set; }
-
-           public DbSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
-
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+
          
          protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

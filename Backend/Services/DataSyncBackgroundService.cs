@@ -46,13 +46,16 @@ public class DataSyncBackgroundService : BackgroundService
             var products = await sqlContext.Products.ToListAsync();
             var cards = await sqlContext.Cards.ToListAsync();
             var reviews = await sqlContext.Reviews.ToListAsync();
+            var wishlists = await sqlContext.Wishlists.ToListAsync();
+            var orders = await sqlContext.Orders.ToListAsync();
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
             var cardCollection = _mongoDatabase.GetCollection<MongoCard>("Cards");
             var reviewCollection = _mongoDatabase.GetCollection<MongoReviews>("Reviews");
-
-
+            var wishlistCollection = _mongoDatabase.GetCollection<MongoWishlist>("Wishlists");
+            var orderCollection = _mongoDatabase.GetCollection<MongoOrder>("Orders");
+//users
             foreach (var sqlUser in users)
             {
                 var mongoUser = new MongoUser
@@ -71,6 +74,8 @@ public class DataSyncBackgroundService : BackgroundService
 
                 await userCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
+
+//products
 
             foreach (var sqlProduct in products)
             {
@@ -98,11 +103,10 @@ public class DataSyncBackgroundService : BackgroundService
 
                 await productCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
-
-            
+  //cards    
             
             foreach (var sqlCard in cards)
-{
+            {
     var mongoCard = new MongoCard
     {
         Id = sqlCard.Id, 
@@ -120,9 +124,39 @@ public class DataSyncBackgroundService : BackgroundService
         .Set(c => c.CreatedAt, mongoCard.CreatedAt);
 
     await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
-}
- foreach (var sqlReview in reviews)
+            }
+  //orders
+foreach (var sqlOrder in orders)
 {
+    var mongoOrder = new MongoOrder
+    {
+        Id = sqlOrder.Id.ToString(),
+        UserId = sqlOrder.UserId,
+        OrderDate = sqlOrder.OrderDate,
+        Products = sqlOrder.OrderProducts.Select(op => new MongoOrderProduct
+        {
+            ProductId = op.ProductId,
+            ProductName = op.Product?.Name,  // Duke pasur parasysh se mund të ketë një lidhje për emrin e produktit
+            Quantity = op.Quantity,
+            Price = op.Price
+        }).ToList()
+    };
+
+    var filter = Builders<MongoOrder>.Filter.Eq(o => o.Id, mongoOrder.Id);
+    var update = Builders<MongoOrder>.Update
+        .Set(o => o.UserId, mongoOrder.UserId)
+        .Set(o => o.OrderDate, mongoOrder.OrderDate)
+        .Set(o => o.Products, mongoOrder.Products);
+
+    await orderCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+}
+
+
+
+//reviews
+
+            foreach (var sqlReview in reviews)
+            {
     var mongoReview = new MongoReviews
     {
         Id = sqlReview.Id,
@@ -142,7 +176,28 @@ public class DataSyncBackgroundService : BackgroundService
         .Set(r => r.CreatedAt, mongoReview.CreatedAt);
 
     await reviewCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
-}
+            }
+
+//wishlists
+
+          foreach (var sqlWishlist in wishlists)
+          {
+    var mongoWishlist = new MongoWishlist
+    {
+        Id = sqlWishlist.Id,
+        UserId = sqlWishlist.UserId,
+        ProductId = sqlWishlist.ProductId,
+        CreatedAt = sqlWishlist.CreatedAt
+    };
+
+    var filter = Builders<MongoWishlist>.Filter.Eq(w => w.Id, mongoWishlist.Id);
+    var update = Builders<MongoWishlist>.Update
+        .Set(w => w.UserId, mongoWishlist.UserId)
+        .Set(w => w.ProductId, mongoWishlist.ProductId)
+        .Set(w => w.CreatedAt, mongoWishlist.CreatedAt);
+
+    await wishlistCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+          }
 
            
         }
