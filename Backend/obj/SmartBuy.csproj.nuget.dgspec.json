@@ -1,7 +1,6 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
     "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj": {}
   },
   "projects": {
@@ -13,33 +12,20 @@
         "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
         "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
-=======
-    "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj": {}
-  },
-  "projects": {
-    "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj",
-        "projectName": "SmartBuy",
-        "projectPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\SmartBuy.csproj",
-        "packagesPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\lab2\\SmartBuy\\backend\\obj\\",
->>>>>>> a86eb2d8b972297fd00c72a3e36ce069bd7fd502
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-<<<<<<< HEAD
           "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-=======
-          "C:\\Users\\reaja.DESKTOP-RA6KKDK\\AppData\\Roaming\\NuGet\\NuGet.Config"
->>>>>>> a86eb2d8b972297fd00c72a3e36ce069bd7fd502
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -57,7 +43,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -95,6 +82,10 @@
               "target": "Package",
               "version": "[3.2.1, )"
             },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[48.1.0-beta.3, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -119,7 +110,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

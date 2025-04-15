@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SmartBuy.Models;
 
 public class Card
 {
@@ -16,6 +17,13 @@ public class Card
 
     [StringLength(100)]
     public string? Type { get; set; }
+
+    // Foreign key to User
+    public string UserId { get; set; } = string.Empty;
+
+    // Navigation property to User
+    [ForeignKey("UserId")]
+    public User User { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

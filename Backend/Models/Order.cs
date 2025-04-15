@@ -19,6 +19,9 @@ namespace SmartBuy.Models
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
     }
 
     public class OrderProduct
@@ -44,5 +47,10 @@ namespace SmartBuy.Models
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+
+
+
+
+
     }
 }

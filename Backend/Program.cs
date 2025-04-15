@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Backend.Models;
+using Microsoft.Extensions.Options;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,8 +126,18 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
+
+
+
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+{
+    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
+    return new StripeClient(stripeSettings.SecretKey);
+});
 
 
 // Add Authorization Policies
