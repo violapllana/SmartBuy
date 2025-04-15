@@ -312,7 +312,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("OrderProducts");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("SmartBuy.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -358,8 +357,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("Payments");
                 });
 
-=======
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
             modelBuilder.Entity("SmartBuy.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Token")
@@ -443,17 +440,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("Card", b =>
-                {
-                    b.HasOne("SmartBuy.Models.User", "User")
-                        .WithMany("Cards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-=======
             modelBuilder.Entity("Wishlist", b =>
                 {
                     b.Property<int>("Id")
@@ -478,7 +464,17 @@ namespace SmartBuy.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Wishlists");
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
+                });
+
+            modelBuilder.Entity("Card", b =>
+                {
+                    b.HasOne("SmartBuy.Models.User", "User")
+                        .WithMany("Cards")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -580,7 +576,6 @@ namespace SmartBuy.Migrations
                     b.Navigation("Product");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("SmartBuy.Models.Payment", b =>
                 {
                     b.HasOne("SmartBuy.Models.Order", "Order")
@@ -600,8 +595,6 @@ namespace SmartBuy.Migrations
                     b.Navigation("User");
                 });
 
-=======
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
             modelBuilder.Entity("SmartBuy.Models.RefreshToken", b =>
                 {
                     b.HasOne("SmartBuy.Models.User", "User")
@@ -611,20 +604,6 @@ namespace SmartBuy.Migrations
                     b.Navigation("User");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("SmartBuy.Models.Order", b =>
-                {
-                    b.Navigation("OrderProducts");
-
-                    b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("SmartBuy.Models.User", b =>
-                {
-                    b.Navigation("Cards");
-
-                    b.Navigation("Payments");
-=======
             modelBuilder.Entity("Wishlist", b =>
                 {
                     b.HasOne("Product", "Product")
@@ -645,7 +624,15 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("SmartBuy.Models.Order", b =>
                 {
                     b.Navigation("OrderProducts");
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
+
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("SmartBuy.Models.User", b =>
+                {
+                    b.Navigation("Cards");
+
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

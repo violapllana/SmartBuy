@@ -16,16 +16,8 @@ namespace SmartBuy.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
         public DbSet<Review> Reviews { get; set; }
-<<<<<<< HEAD
         public DbSet<Payment> Payments { get; set; }
-=======
         public DbSet<Wishlist> Wishlists { get; set; }
-
-         
-         protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,35 +28,35 @@ namespace SmartBuy.Data
                 .HasOne(r => r.User)
                 .WithMany()
                 .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Restrict);  // Prevent cascade
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Review -> Product
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Product)
                 .WithMany()
                 .HasForeignKey(r => r.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);  // Prevent cascade
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Payment -> User
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Payments)
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);  // Prevent cascade
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Payment -> Order
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Order)
                 .WithMany(o => o.Payments)
                 .HasForeignKey(p => p.OrderId)
-                .OnDelete(DeleteBehavior.Restrict);  // ✅ This was the issue
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Card -> User
             modelBuilder.Entity<Card>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Cards)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict);  // Optional but safe
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
