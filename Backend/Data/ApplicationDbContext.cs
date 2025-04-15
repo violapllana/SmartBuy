@@ -16,7 +16,16 @@ namespace SmartBuy.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
         public DbSet<Review> Reviews { get; set; }
+<<<<<<< HEAD
         public DbSet<Payment> Payments { get; set; }
+=======
+        public DbSet<Wishlist> Wishlists { get; set; }
+
+         
+         protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+>>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

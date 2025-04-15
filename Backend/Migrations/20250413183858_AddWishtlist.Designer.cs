@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartBuy.Data;
 
@@ -11,9 +12,11 @@ using SmartBuy.Data;
 namespace SmartBuy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250413183858_AddWishtlist")]
+    partial class AddWishtlist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,13 +49,7 @@ namespace SmartBuy.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Cards");
                 });
@@ -312,54 +309,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("OrderProducts");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("SmartBuy.Models.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PaidAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TransactionId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Payments");
-                });
-
-=======
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
             modelBuilder.Entity("SmartBuy.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Token")
@@ -443,17 +392,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("Card", b =>
-                {
-                    b.HasOne("SmartBuy.Models.User", "User")
-                        .WithMany("Cards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-=======
             modelBuilder.Entity("Wishlist", b =>
                 {
                     b.Property<int>("Id")
@@ -478,7 +416,6 @@ namespace SmartBuy.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Wishlists");
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -537,13 +474,12 @@ namespace SmartBuy.Migrations
                     b.HasOne("Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SmartBuy.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Product");
 
@@ -580,28 +516,6 @@ namespace SmartBuy.Migrations
                     b.Navigation("Product");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("SmartBuy.Models.Payment", b =>
-                {
-                    b.HasOne("SmartBuy.Models.Order", "Order")
-                        .WithMany("Payments")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SmartBuy.Models.User", "User")
-                        .WithMany("Payments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("User");
-                });
-
-=======
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
             modelBuilder.Entity("SmartBuy.Models.RefreshToken", b =>
                 {
                     b.HasOne("SmartBuy.Models.User", "User")
@@ -611,20 +525,6 @@ namespace SmartBuy.Migrations
                     b.Navigation("User");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("SmartBuy.Models.Order", b =>
-                {
-                    b.Navigation("OrderProducts");
-
-                    b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("SmartBuy.Models.User", b =>
-                {
-                    b.Navigation("Cards");
-
-                    b.Navigation("Payments");
-=======
             modelBuilder.Entity("Wishlist", b =>
                 {
                     b.HasOne("Product", "Product")
@@ -645,7 +545,6 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("SmartBuy.Models.Order", b =>
                 {
                     b.Navigation("OrderProducts");
->>>>>>> d7b7fdc7ac6bf702bf7d74a4550bff0dd835631b
                 });
 #pragma warning restore 612, 618
         }
