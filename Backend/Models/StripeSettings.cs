@@ -9,14 +9,11 @@ namespace Backend.Models
     {
         public string? SecretKey { get; set; }
         public string? PublishableKey { get; set; }
-<<<<<<< HEAD
         public string? WebhookSecret { get; set; }
 
 
 
 
-=======
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     }
 
 }

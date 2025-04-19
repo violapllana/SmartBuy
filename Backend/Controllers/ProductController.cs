@@ -35,7 +35,6 @@ public class ProductController : ControllerBase
         return Ok(product.ToProductDto());
     }
 
-<<<<<<< HEAD
 
 
 
@@ -68,8 +67,6 @@ public class ProductController : ControllerBase
 
 
 
-=======
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     [HttpPost]
     public async Task<ActionResult> CreateProduct(ProductCreateDto productDto)
     {

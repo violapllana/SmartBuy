@@ -1164,11 +1164,7 @@
           }
         }
       },
-<<<<<<< HEAD
       "Stripe.net/48.1.0-beta.4": {
-=======
-      "Stripe.net/48.1.0-beta.3": {
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3",
@@ -3752,17 +3748,10 @@
         "snappier.nuspec"
       ]
     },
-<<<<<<< HEAD
     "Stripe.net/48.1.0-beta.4": {
       "sha512": "SzyR23HR9u1+jRowK+tJ7GoLYSi8KPoYUA7S39TUmKnpiyuEtnNAtzwPWxCa5lrB4XxqYOGazWznvw/P9++Puw==",
       "type": "package",
       "path": "stripe.net/48.1.0-beta.4",
-=======
-    "Stripe.net/48.1.0-beta.3": {
-      "sha512": "sGJuukOptq1N3WH+SfMb5No4kZHv8NOXUxHxc3+B6CJxQLaZqelHkoa1LfWmagJPN7X8S0AVNu3O4lpYJeZV6Q==",
-      "type": "package",
-      "path": "stripe.net/48.1.0-beta.3",
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3783,11 +3772,7 @@
         "lib/netcoreapp3.1/Stripe.net.xml",
         "lib/netstandard2.0/Stripe.net.dll",
         "lib/netstandard2.0/Stripe.net.xml",
-<<<<<<< HEAD
         "stripe.net.48.1.0-beta.4.nupkg.sha512",
-=======
-        "stripe.net.48.1.0-beta.3.nupkg.sha512",
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
         "stripe.net.nuspec"
       ]
     },
@@ -4869,32 +4854,28 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.0",
       "MongoDB.Driver >= 3.2.1",
-<<<<<<< HEAD
       "Stripe.net >= 48.1.0-beta.4",
-=======
-      "Stripe.net >= 48.1.0-beta.3",
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
       "Swashbuckle.AspNetCore >= 8.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\begus\\.nuget\\packages\\": {},
+    "C:\\Users\\dell\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "projectUniqueName": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
-      "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
-      "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4921,7 +4902,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -4961,11 +4942,7 @@
           },
           "Stripe.net": {
             "target": "Package",
-<<<<<<< HEAD
             "version": "[48.1.0-beta.4, )"
-=======
-            "version": "[48.1.0-beta.3, )"
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
@@ -4991,16 +4968,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  }
 }

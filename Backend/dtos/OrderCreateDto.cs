@@ -19,6 +19,5 @@ public class OrderProductCreateDto
     [Required]
     public int Quantity { get; set; }
 
-    [Required]
-    public decimal Price { get; set; }
+
 }
