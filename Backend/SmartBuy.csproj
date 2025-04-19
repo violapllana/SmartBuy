@@ -15,7 +15,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
+<<<<<<< HEAD
     <PackageReference Include="Stripe.net" Version="48.1.0-beta.4" />
+=======
+    <PackageReference Include="Stripe.net" Version="48.1.0-beta.3" />
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0" />
   </ItemGroup>
 

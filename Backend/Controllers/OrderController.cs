@@ -51,6 +51,7 @@ namespace SmartBuy.Controllers
             return Ok(order.ToOrderDto());
         }
 
+<<<<<<< HEAD
         [HttpPost]
         public async Task<ActionResult> CreateOrder(OrderCreateDto orderDto)
         {
@@ -103,10 +104,18 @@ namespace SmartBuy.Controllers
                 OrderDate = DateTime.UtcNow,
                 OrderProducts = orderProducts
             };
+=======
+        // Create Order in SQL Database
+        [HttpPost]
+        public async Task<ActionResult> CreateOrder(OrderCreateDto orderDto)
+        {
+            var order = orderDto.ToOrderFromCreateDto();
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
+<<<<<<< HEAD
             // Step 5: Return the created order with total price
             var orderDtoResponse = new OrderDto
             {
@@ -127,6 +136,11 @@ namespace SmartBuy.Controllers
 
 
 
+=======
+            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order.ToOrderDto());
+        }
+
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
         // Update Order in SQL Database
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOrder(int id, OrderUpdateDto orderDto)

@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "2S+PDHIhpSs=",
+=======
+  "dgSpecHash": "5DASnJ3tcps=",
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
   "success": true,
   "projectFilePath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
   "expectedPackageFiles": [
@@ -63,7 +67,11 @@
     "C:\\Users\\begus\\.nuget\\packages\\newtonsoft.json.bson\\1.0.2\\newtonsoft.json.bson.1.0.2.nupkg.sha512",
     "C:\\Users\\begus\\.nuget\\packages\\sharpcompress\\0.30.1\\sharpcompress.0.30.1.nupkg.sha512",
     "C:\\Users\\begus\\.nuget\\packages\\snappier\\1.0.0\\snappier.1.0.0.nupkg.sha512",
+<<<<<<< HEAD
     "C:\\Users\\begus\\.nuget\\packages\\stripe.net\\48.1.0-beta.4\\stripe.net.48.1.0-beta.4.nupkg.sha512",
+=======
+    "C:\\Users\\begus\\.nuget\\packages\\stripe.net\\48.1.0-beta.3\\stripe.net.48.1.0-beta.3.nupkg.sha512",
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     "C:\\Users\\begus\\.nuget\\packages\\swashbuckle.aspnetcore\\8.0.0\\swashbuckle.aspnetcore.8.0.0.nupkg.sha512",
     "C:\\Users\\begus\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\8.0.0\\swashbuckle.aspnetcore.swagger.8.0.0.nupkg.sha512",
     "C:\\Users\\begus\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\8.0.0\\swashbuckle.aspnetcore.swaggergen.8.0.0.nupkg.sha512",
@@ -100,5 +108,12 @@
     "C:\\Users\\begus\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\begus\\.nuget\\packages\\zstdsharp.port\\0.7.3\\zstdsharp.port.0.7.3.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

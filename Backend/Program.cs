@@ -12,8 +12,11 @@ using System.Security.Claims;
 using Backend.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
+<<<<<<< HEAD
 using Backend.SignalR;
 using YourNamespace.SignalR;
+=======
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -150,6 +153,16 @@ builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
 builder.Logging.AddConsole();
+
+
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+{
+    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
+    return new StripeClient(stripeSettings.SecretKey);
+});
+
 
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\begus\OneDrive\Desktop\Test\SmartBuy\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\begus\OneDrive\Desktop\Test\SmartBuy\bin\Debug\net8.0\appsettings.json
 C:\Users\begus\OneDrive\Desktop\Test\SmartBuy\bin\Debug\net8.0\SmartBuy.exe
@@ -56,6 +57,8 @@ C:\Users\begus\OneDrive\Desktop\SmartBuy\bin\Debug\net8.0\Swashbuckle.AspNetCore
 C:\Users\begus\OneDrive\Desktop\SmartBuy\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\begus\OneDrive\Desktop\SmartBuy\bin\Debug\net8.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
 C:\Users\begus\OneDrive\Desktop\SmartBuy\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+=======
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\appsettings.json
 C:\Users\begus\OneDrive\Desktop\SmartBuy\Backend\bin\Debug\net8.0\SmartBuy.staticwebassets.endpoints.json

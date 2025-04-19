@@ -19,6 +19,7 @@ namespace SmartBuy.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+<<<<<<< HEAD
         public DbSet<Message> Messages { get; set; }
 
 
@@ -26,6 +27,13 @@ namespace SmartBuy.Data
         {
             base.OnModelCreating(modelBuilder);
 
+=======
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
             // Review -> User
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.User)

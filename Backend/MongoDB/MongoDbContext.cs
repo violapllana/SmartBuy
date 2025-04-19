@@ -18,7 +18,11 @@ public class MongoDbContext
     public IMongoCollection<MongoReviews> Reviews => _database.GetCollection<MongoReviews>("reviews");
     public IMongoCollection<MongoWishlist> Wishlists => _database.GetCollection<MongoWishlist>("wishlists");
     public IMongoCollection<MongoOrder> Orders => _database.GetCollection<MongoOrder>("orders");
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
 }
 
 

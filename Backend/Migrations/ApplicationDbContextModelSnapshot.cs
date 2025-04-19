@@ -22,6 +22,7 @@ namespace SmartBuy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+<<<<<<< HEAD
             modelBuilder.Entity("Backend.SignalR.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -47,6 +48,8 @@ namespace SmartBuy.Migrations
                     b.ToTable("Messages");
                 });
 
+=======
+>>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
             modelBuilder.Entity("Card", b =>
                 {
                     b.Property<int>("Id")
