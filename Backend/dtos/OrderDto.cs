@@ -11,6 +11,10 @@ public class OrderDto
 
     public List<OrderProductDto> Products { get; set; } = new();
     public decimal TotalPrice { get; set; }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 85eaf15954609c59b9a77659cec3fce0d0b796c7
 }
 
 public class OrderProductDto
