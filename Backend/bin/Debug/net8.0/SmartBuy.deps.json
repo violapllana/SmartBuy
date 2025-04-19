@@ -16,11 +16,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.0",
           "MongoDB.Driver": "3.2.1",
-<<<<<<< HEAD
           "Stripe.net": "48.1.0-beta.4",
-=======
-          "Stripe.net": "48.1.0-beta.3",
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
           "Swashbuckle.AspNetCore": "8.0.0"
         },
         "runtime": {
@@ -760,11 +756,7 @@
           }
         }
       },
-<<<<<<< HEAD
       "Stripe.net/48.1.0-beta.4": {
-=======
-      "Stripe.net/48.1.0-beta.3": {
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
         "dependencies": {
           "Newtonsoft.Json": "13.0.3",
           "System.Configuration.ConfigurationManager": "8.0.0"
@@ -1421,21 +1413,12 @@
       "path": "snappier/1.0.0",
       "hashPath": "snappier.1.0.0.nupkg.sha512"
     },
-<<<<<<< HEAD
     "Stripe.net/48.1.0-beta.4": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-SzyR23HR9u1+jRowK+tJ7GoLYSi8KPoYUA7S39TUmKnpiyuEtnNAtzwPWxCa5lrB4XxqYOGazWznvw/P9++Puw==",
       "path": "stripe.net/48.1.0-beta.4",
       "hashPath": "stripe.net.48.1.0-beta.4.nupkg.sha512"
-=======
-    "Stripe.net/48.1.0-beta.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-sGJuukOptq1N3WH+SfMb5No4kZHv8NOXUxHxc3+B6CJxQLaZqelHkoa1LfWmagJPN7X8S0AVNu3O4lpYJeZV6Q==",
-      "path": "stripe.net/48.1.0-beta.3",
-      "hashPath": "stripe.net.48.1.0-beta.3.nupkg.sha512"
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     },
     "Swashbuckle.AspNetCore/8.0.0": {
       "type": "package",

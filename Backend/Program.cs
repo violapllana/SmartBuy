@@ -12,11 +12,9 @@ using System.Security.Claims;
 using Backend.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
-<<<<<<< HEAD
 using Backend.SignalR;
 using YourNamespace.SignalR;
-=======
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +82,9 @@ if (string.IsNullOrEmpty(stripeSecretKey) || string.IsNullOrEmpty(stripePublisha
 {
     throw new InvalidOperationException("Stripe keys are missing.");
 }
+Console.WriteLine("Stripe SecretKey: " + stripeSecretKey);
+Console.WriteLine("Stripe Publishable Key: " + stripePublishableKey);
+
 
 // Configure Stripe settings
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));

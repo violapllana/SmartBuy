@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
 using SmartBuy.Data;
-=======
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
 using SmartBuy.Models;
 
 
@@ -22,7 +19,6 @@ namespace SmartBuy.Mappers
                     ProductId = op.ProductId,
                     Quantity = op.Quantity,
                     Price = op.Price
-<<<<<<< HEAD
                 }).ToList(),
                 TotalPrice = order.OrderProducts.Sum(op => op.Price * op.Quantity) // Add this line
             };
@@ -49,28 +45,9 @@ namespace SmartBuy.Mappers
                         Quantity = p.Quantity,
                         Price = product?.Price ?? 0
                     };
-=======
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
                 }).ToList()
             };
         }
 
-<<<<<<< HEAD
-=======
-        public static Order ToOrderFromCreateDto(this OrderCreateDto dto)
-        {
-            return new Order
-            {
-                UserId = dto.UserId,
-                OrderDate = DateTime.UtcNow,
-                OrderProducts = dto.Products.Select(p => new OrderProduct
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity,
-                    Price = p.Price
-                }).ToList()
-            };
-        }
->>>>>>> 2d732f72102b85abd0a8f3dc13c7c2ade2ca91d4
     }
 }

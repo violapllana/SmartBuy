@@ -10,6 +10,7 @@ public class OrderDto
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     public List<OrderProductDto> Products { get; set; } = new();
+    public decimal TotalPrice { get; set; }
 }
 
 public class OrderProductDto
