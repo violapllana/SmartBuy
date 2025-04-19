@@ -8,6 +8,9 @@ namespace SmartBuy.Models
 {
     public class User : IdentityUser
     {
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public ICollection<Card> Cards { get; set; } = new List<Card>();
+
 
     }
 }

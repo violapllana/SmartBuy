@@ -9,11 +9,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Backend.Models;
+using Microsoft.Extensions.Options;
+using Stripe;
+using Backend.SignalR;
+using YourNamespace.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
+builder.Services.AddSignalR();  // Add SignalR service
 
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +54,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
 
@@ -65,6 +72,23 @@ builder.Services.AddSingleton(serviceProvider =>
 Console.WriteLine("Mongo Conn String: " + mongoConnectionString);
 Console.WriteLine("Mongo Database Name: " + mongoDatabaseName);
 
+// Get Stripe Secret and Publishable keys from environment variables
+var stripeSecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+var stripePublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+
+// Ensure the environment variables are set
+if (string.IsNullOrEmpty(stripeSecretKey) || string.IsNullOrEmpty(stripePublishableKey))
+{
+    throw new InvalidOperationException("Stripe keys are missing.");
+}
+
+// Configure Stripe settings
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+{
+    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
+    return new StripeClient(stripeSettings.SecretKey); // Use SecretKey for StripeClient
+});
 
 // Database Configuration for SQL Server
 var connectionString = Environment.GetEnvironmentVariable("SMARTBUY_CONNECTION_STRING");
@@ -76,7 +100,6 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 Console.WriteLine("Sql Server Conn String: " + connectionString);
-
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -123,9 +146,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
+builder.Logging.AddConsole();
 
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
@@ -138,6 +162,25 @@ builder.Services.AddAuthorization(options =>
 
 // Build the application
 var app = builder.Build();
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
+// app.UseHttpsRedirection();
+app.MapControllers(); // This should come after the authentication and authorization middlewares.
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseCors("CorsPolicy");
+
+app.MapHub<ChatHub>("/chatHub");
+
+app.Run();
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -157,19 +200,6 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartBuy API v1");
 });
-
-app.UseCors("CorsPolicy");
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-app.UseRouting(); // Ensure Routing is Used
-
-// Authentication & Authorization Middleware
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map Controllers
-app.MapControllers();
-app.Run();
 
 // Ensure Roles Exist
 static async Task EnsureRoles(IServiceProvider serviceProvider)
