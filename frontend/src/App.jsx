@@ -12,6 +12,7 @@ import CookieConsent from './Components/CookieConsent';
 import Profile from './Pages/Profile';
 import Settings from './Pages/Settings';
 import Contact from './Pages/Contact';
+import AddCard from './Components/Card/Card';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -143,6 +144,7 @@ function App() {
           <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           <Route path="/contact" element={<Contact username={username} storedrole={role} />} />
+          <Route path="/card" element={<AddCard username={username}  />} /> 
         </Routes>
       </div>
       <Footer />
