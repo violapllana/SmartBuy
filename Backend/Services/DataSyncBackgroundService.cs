@@ -114,23 +114,52 @@ public class DataSyncBackgroundService : BackgroundService
             var productDeleteFilter = Builders<MongoProducts>.Filter.Nin("Id", sqlProductIds);
             await productCollection.DeleteManyAsync(productDeleteFilter);
 
-            // CARDS
-            foreach (var sqlCard in cards)
+            // // CARDS
+            // foreach (var sqlCard in cards)
+            // {
+            //     var mongoCard = new MongoCard
+            //     {
+            //         Id = sqlCard.Id,
+            //         Title = sqlCard.Title,
+            //         Description = sqlCard.Description,
+            //         Type = sqlCard.Type,
+            //         CreatedAt = sqlCard.CreatedAt
+            //     };
+
+            //     var filter = Builders<MongoCard>.Filter.Eq("Id", mongoCard.Id);
+            //     var update = Builders<MongoCard>.Update
+            //         .Set("Title", mongoCard.Title)
+            //         .Set("Description", mongoCard.Description)
+            //         .Set("Type", mongoCard.Type)
+            //         .Set("CreatedAt", mongoCard.CreatedAt);
+
+            //     await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            // }
+
+            // var sqlCardIds = cards.Select(c => c.Id).ToList();
+            // var cardDeleteFilter = Builders<MongoCard>.Filter.Nin("Id", sqlCardIds);
+            // await cardCollection.DeleteManyAsync(cardDeleteFilter);
+
+
+                  // CARDS
+              foreach (var sqlCard in cards)
             {
                 var mongoCard = new MongoCard
                 {
                     Id = sqlCard.Id,
-                    Title = sqlCard.Title,
-                    Description = sqlCard.Description,
-                    Type = sqlCard.Type,
+                    CardNumber = sqlCard.CardNumber,
+                    ExpirationDate = sqlCard.ExpirationDate,
+                    CVV = sqlCard.CVV,
+                    CardType = sqlCard.CardType,
                     CreatedAt = sqlCard.CreatedAt
                 };
 
                 var filter = Builders<MongoCard>.Filter.Eq("Id", mongoCard.Id);
                 var update = Builders<MongoCard>.Update
-                    .Set("Title", mongoCard.Title)
-                    .Set("Description", mongoCard.Description)
-                    .Set("Type", mongoCard.Type)
+                    .Set("CardNumber", mongoCard.CardNumber)
+                    .Set("ExpirationDate", mongoCard.ExpirationDate)
+                    .Set("CVV", mongoCard.CVV)
+                    .Set("CardType", mongoCard.CardType)
                     .Set("CreatedAt", mongoCard.CreatedAt);
 
                 await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });

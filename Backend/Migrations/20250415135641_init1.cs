@@ -176,27 +176,36 @@ namespace SmartBuy.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cards",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cards", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Cards_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+       name: "Cards",
+       columns: table => new
+       {
+           Id = table.Column<int>(type: "int", nullable: false)
+               .Annotation("SqlServer:Identity", "1, 1"),
+
+           // New card details
+           CardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+           ExpirationDate = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+           CVV = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+           CardType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+
+           // UserId as a foreign key for the user who owns the card
+           UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+
+           CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+       },
+       constraints: table =>
+       {
+           table.PrimaryKey("PK_Cards", x => x.Id);
+
+           // Define the foreign key relationship with the AspNetUsers table
+           table.ForeignKey(
+               name: "FK_Cards_AspNetUsers_UserId",
+               column: x => x.UserId,
+               principalTable: "AspNetUsers",
+               principalColumn: "Id",
+               onDelete: ReferentialAction.Restrict);
+       });
+
 
             migrationBuilder.CreateTable(
                 name: "Orders",
