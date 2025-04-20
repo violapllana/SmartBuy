@@ -14,10 +14,6 @@ using Microsoft.Extensions.Options;
 using Stripe;
 using Backend.SignalR;
 using YourNamespace.SignalR;
-<<<<<<< HEAD
-
-=======
->>>>>>> 85eaf15954609c59b9a77659cec3fce0d0b796c7
 
 var builder = WebApplication.CreateBuilder(args);
 
