@@ -1,47 +1,60 @@
-using Backend.SignalR;  // Ensure correct namespace for Message
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using SmartBuy.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace YourNamespace.SignalR
+public class ChatHub : Hub
 {
-    public class ChatHub : Hub
+    // A thread-safe dictionary to store admin connections (using ConcurrentDictionary)
+    private static readonly ConcurrentDictionary<string, string> AdminConnections = new ConcurrentDictionary<string, string>();
+
+    // Asynchronous method to send a message to a specific admin
+    public async Task SendMessageAsync(string senderId, string receiverId, string messageContent)
     {
-        private readonly ApplicationDbContext _context;
-
-        public ChatHub(ApplicationDbContext context)
+        try
         {
-            _context = context;
-        }
-
-        // Send a message, save to DB, and broadcast to all clients
-        public async Task SendMessage(string senderId, string receiverId, string messageContent)
-        {
-            // Save the message to the database
-            var message = new Message
+            var adminConnectionId = GetAdminConnectionId(receiverId);
+            if (adminConnectionId != null)
             {
-                SenderId = senderId,
-                ReceiverId = receiverId,
-                MessageContent = messageContent,
-                SentAt = DateTime.UtcNow // You can use DateTime.Now if you want local time
-            };
-
-            // Add the message to the DbContext
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
-
-            // Broadcast to all connected clients
-            await Clients.All.SendAsync("ReceiveMessage", senderId, receiverId, messageContent);
+                await Clients.Client(adminConnectionId).SendAsync("ReceiveMessage", senderId, receiverId, messageContent);
+            }
+            else
+            {
+                // Log or handle case where admin is not connected
+                await Clients.Caller.SendAsync("Error", "Admin is not connected.");
+            }
         }
-
-        // Endpoint to retrieve all messages from the database, ordered by timestamp
-        public async Task<List<Message>> GetAllMessages()
+        catch (Exception ex)
         {
-            return await _context.Messages.OrderBy(m => m.SentAt).ToListAsync();
+            // Log the exception
+            await Clients.Caller.SendAsync("Error", $"Failed to send message: {ex.Message}");
         }
+    }
+
+    // Method to register the admin's connection
+    public void RegisterAdmin(string adminId)
+    {
+        var connectionId = Context.ConnectionId;
+        // Add or update the admin's connection if not already registered
+        AdminConnections.AddOrUpdate(adminId, connectionId, (key, oldValue) => connectionId);
+    }
+
+    // Method to retrieve the connection ID for a specific admin
+    private string GetAdminConnectionId(string adminId)
+    {
+        AdminConnections.TryGetValue(adminId, out var connectionId);
+        return connectionId;
+    }
+
+    // Clean up the connection ID when the admin disconnects
+    public override Task OnDisconnectedAsync(Exception exception)
+    {
+        var adminId = AdminConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+
+        if (adminId != null)
+        {
+            AdminConnections.TryRemove(adminId, out _);
+        }
+
+        return base.OnDisconnectedAsync(exception);
     }
 }

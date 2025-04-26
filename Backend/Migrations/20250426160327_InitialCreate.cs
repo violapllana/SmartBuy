@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartBuy.Migrations
 {
     /// <inheritdoc />
-    public partial class init1 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,22 @@ namespace SmartBuy.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,36 +192,28 @@ namespace SmartBuy.Migrations
                 });
 
             migrationBuilder.CreateTable(
-       name: "Cards",
-       columns: table => new
-       {
-           Id = table.Column<int>(type: "int", nullable: false)
-               .Annotation("SqlServer:Identity", "1, 1"),
-
-           // New card details
-           CardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
-           ExpirationDate = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-           CVV = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
-           CardType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-
-           // UserId as a foreign key for the user who owns the card
-           UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-
-           CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-       },
-       constraints: table =>
-       {
-           table.PrimaryKey("PK_Cards", x => x.Id);
-
-           // Define the foreign key relationship with the AspNetUsers table
-           table.ForeignKey(
-               name: "FK_Cards_AspNetUsers_UserId",
-               column: x => x.UserId,
-               principalTable: "AspNetUsers",
-               principalColumn: "Id",
-               onDelete: ReferentialAction.Restrict);
-       });
-
+                name: "Cards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+                    ExpirationDate = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    CVV = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                    CardType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Cards_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
@@ -474,6 +482,9 @@ namespace SmartBuy.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cards");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "OrderProducts");

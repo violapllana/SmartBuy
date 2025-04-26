@@ -13,7 +13,6 @@ using Backend.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Backend.SignalR;
-using YourNamespace.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -132,7 +131,7 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = jwtAudience,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigninKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
         RoleClaimType = ClaimTypes.Role
     };
 });
@@ -152,6 +151,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
+
+
 builder.Logging.AddConsole();
 
 
@@ -168,10 +169,12 @@ builder.Services.AddSingleton<StripeClient>(serviceProvider =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("ADMIN"));
+        policy.RequireRole("Admin"));
     options.AddPolicy("UserOnly", policy =>
-        policy.RequireRole("USER"));
+        policy.RequireRole("User"));
 });
+
+
 
 // Build the application
 var app = builder.Build();
@@ -193,7 +196,6 @@ app.UseCors("CorsPolicy");
 
 app.MapHub<ChatHub>("/chatHub");
 
-app.Run();
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -219,7 +221,7 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    string[] roleNames = { "ADMIN", "USER" };
+    string[] roleNames = { "Admin", "User" };
 
     foreach (var roleName in roleNames)
     {
@@ -230,3 +232,4 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
         }
     }
 }
+app.Run();
