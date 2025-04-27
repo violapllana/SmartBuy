@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartBuy.Data;
 
@@ -11,9 +12,11 @@ using SmartBuy.Data;
 namespace SmartBuy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250427222211_CreateNotificationsTable")]
+    partial class CreateNotificationsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,16 +39,13 @@ namespace SmartBuy.Migrations
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -529,17 +529,6 @@ namespace SmartBuy.Migrations
                     b.ToTable("Wishlists");
                 });
 
-            modelBuilder.Entity("Backend.SignalR.Message", b =>
-                {
-                    b.HasOne("SmartBuy.Models.User", "User")
-                        .WithMany("Messages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -705,8 +694,6 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("SmartBuy.Models.User", b =>
                 {
                     b.Navigation("Cards");
-
-                    b.Navigation("Messages");
 
                     b.Navigation("Payments");
                 });

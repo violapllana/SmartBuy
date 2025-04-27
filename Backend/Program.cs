@@ -16,12 +16,28 @@ using Backend.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
+
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
 builder.Services.AddSignalR();  // Add SignalR service
 
+
+
+
+
+
+
+
+
+
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
+
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     // Specify OpenAPI version
@@ -53,14 +69,36 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+
+
+
+
+
+
+
+
+
+
 // MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
+
+
+
 
 if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(mongoDatabaseName))
 {
     throw new InvalidOperationException("MongoDB configuration is missing.");
 }
+
+
+
+
+
+
+
+
 
 // Register MongoDB context
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -134,6 +172,12 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
         RoleClaimType = ClaimTypes.Role
     };
+}).AddCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
 });
 
 // CORS Configuration
@@ -151,6 +195,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
+builder.Services.AddScoped<ChatHub>(); // Add this
 
 
 builder.Logging.AddConsole();

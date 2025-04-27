@@ -141,8 +141,8 @@ public class DataSyncBackgroundService : BackgroundService
             // await cardCollection.DeleteManyAsync(cardDeleteFilter);
 
 
-                  // CARDS
-              foreach (var sqlCard in cards)
+            // CARDS
+            foreach (var sqlCard in cards)
             {
                 var mongoCard = new MongoCard
                 {
@@ -256,7 +256,7 @@ public class DataSyncBackgroundService : BackgroundService
                 var mongoMessage = new MongoMessage
                 {
                     Id = sqlMessage.Id,
-                    SenderId = sqlMessage.SenderId,
+                    UserId = sqlMessage.UserId,
                     ReceiverId = sqlMessage.ReceiverId,
                     Content = sqlMessage.MessageContent,
                     SentAt = sqlMessage.SentAt
@@ -264,7 +264,7 @@ public class DataSyncBackgroundService : BackgroundService
 
                 var filter = Builders<MongoMessage>.Filter.Eq("Id", mongoMessage.Id);
                 var update = Builders<MongoMessage>.Update
-                    .Set("SenderId", mongoMessage.SenderId)
+                    .Set("UserId", mongoMessage.UserId)
                     .Set("ReceiverId", mongoMessage.ReceiverId)
                     .Set("Content", mongoMessage.Content)
                     .Set("SentAt", mongoMessage.SentAt);

@@ -31,17 +31,16 @@ namespace YourNamespace.Controllers
         public async Task<ActionResult<List<Message>>> GetMessagesWithAdmin()
         {
             var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrEmpty(currentUserId))
                 return Unauthorized();
 
-            var admins = await _userManager.GetUsersInRoleAsync("Admin"); // Fixed role casing
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
             var adminIds = admins.Select(a => a.Id).ToList();
 
             var messages = await _context.Messages
                 .Where(m =>
-                    (m.SenderId == currentUserId && adminIds.Contains(m.ReceiverId)) ||
-                    (m.ReceiverId == currentUserId && adminIds.Contains(m.SenderId)))
+                    (m.UserId == currentUserId && adminIds.Contains(m.ReceiverId)) ||
+                    (m.ReceiverId == currentUserId && adminIds.Contains(m.UserId)))
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
 
@@ -61,18 +60,36 @@ namespace YourNamespace.Controllers
             if (currentUser == null)
                 return NotFound("Current user not found.");
 
-            var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin"); // Fixed role casing
+            var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
             if (!isAdmin)
                 return Forbid(); // Only Admins can access this endpoint
 
             var messages = await _context.Messages
                 .Where(m =>
-                    (m.SenderId == currentUserId && m.ReceiverId == userId) ||
-                    (m.SenderId == userId && m.ReceiverId == currentUserId))
+                    (m.UserId == currentUserId && m.ReceiverId == userId) ||
+                    (m.UserId == userId && m.ReceiverId == currentUserId))
+                .OrderBy(m => m.SentAt)
+                .ToListAsync();
+
+            return Ok(messages);
+        }
+
+        // NEW: User fetching messages sent to them
+        [HttpGet("GetMessagesForUser")]
+        public async Task<ActionResult<List<Message>>> GetMessagesForUser()
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(currentUserId))
+                return Unauthorized();
+
+            var messages = await _context.Messages
+                .Where(m => m.ReceiverId == currentUserId)
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
 
             return Ok(messages);
         }
     }
+
 }

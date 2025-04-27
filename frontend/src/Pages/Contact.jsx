@@ -52,11 +52,19 @@ const Contact = ({ username, role }) => {
 
       if (role === "Admin" && selectedUserId) {
         response = await api.get(`/Chat/GetMessagesWithUser/${selectedUserId}`);
-      } else {
+      } else if (role === "Admin") {
         response = await api.get(`/Chat/GetMessagesWithAdmin`);
+      } else {
+        response = await api.get(`/Chat/GetMessagesForUser`);
       }
 
-      setChat(response.data);
+      setChat(
+        response.data.map(msg => ({
+          senderId: msg.senderId,
+          receiverId: msg.receiverId,
+          messageContent: msg.messageContent || msg.content || msg.text // handle the correct field
+        }))
+      );
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -81,7 +89,6 @@ const Contact = ({ username, role }) => {
             setChat(prev => [...prev, { senderId, receiverId, messageContent }]);
           }
         });
-
       })
       .catch(error => console.error('Connection failed:', error));
   }, [userId]);
@@ -93,17 +100,22 @@ const Contact = ({ username, role }) => {
     try {
       if (role === "Admin" && selectedUserId) {
         await connection.invoke("SendMessageAsync", userId, selectedUserId, message);
+
+        // Immediately add message locally
+        setChat(prev => [...prev, { senderId: userId, receiverId: selectedUserId, messageContent: message }]);
       } else {
-        // Normal user sends to all admins
         const adminsResponse = await axios.get('http://localhost:5108/users/admins');
         const adminList = adminsResponse.data;
 
         for (const admin of adminList) {
           await connection.invoke("SendMessageAsync", userId, admin.id, message);
+
+          // Immediately add message locally for each admin (optional: you could just show it once)
+          setChat(prev => [...prev, { senderId: userId, receiverId: admin.id, messageContent: message }]);
         }
       }
+
       setMessage('');
-      fetchMessages();
     } catch (error) {
       console.error('Error sending message:', error);
     }

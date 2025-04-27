@@ -20,6 +20,8 @@ namespace SmartBuy.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,60 +1,98 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
+using SmartBuy.Data;
+using SmartBuy.Models;
+using System;
 
-public class ChatHub : Hub
+namespace Backend.SignalR
 {
-    // A thread-safe dictionary to store admin connections (using ConcurrentDictionary)
-    private static readonly ConcurrentDictionary<string, string> AdminConnections = new ConcurrentDictionary<string, string>();
-
-    // Asynchronous method to send a message to a specific admin
-    public async Task SendMessageAsync(string senderId, string receiverId, string messageContent)
+    public class ChatHub : Hub
     {
-        try
+        private readonly ApplicationDbContext _context;
+        private static readonly ConcurrentDictionary<string, string> AdminConnections = new ConcurrentDictionary<string, string>();
+
+        public ChatHub(ApplicationDbContext context)
         {
-            var adminConnectionId = GetAdminConnectionId(receiverId);
-            if (adminConnectionId != null)
+            _context = context;
+        }
+
+        public async Task SendMessageAsync(string senderId, string receiverId, string messageContent)
+        {
+            // Store the message in the database
+            var message = new Message
             {
-                await Clients.Client(adminConnectionId).SendAsync("ReceiveMessage", senderId, receiverId, messageContent);
+                UserId = senderId,
+                ReceiverId = receiverId,
+                MessageContent = messageContent,
+                SentAt = DateTime.UtcNow
+            };
+
+            _context.Messages.Add(message);  // Add message to the context
+
+            // Get all connected admins
+            var adminConnections = AdminConnections.Where(admin => admin.Value != null).ToList();
+
+            if (!adminConnections.Any())
+            {
+                Console.WriteLine("No admins connected to notify.");
             }
             else
             {
-                // Log or handle case where admin is not connected
-                await Clients.Caller.SendAsync("Error", "Admin is not connected.");
+                // Create notifications for each connected admin
+                foreach (var adminConnection in adminConnections)
+                {
+                    var notification = new Notification
+                    {
+                        AdminId = adminConnection.Key,  // Admin's ID
+                        UserId = senderId,  // User's ID (sender)
+                        MessageContent = messageContent,
+                        SentAt = DateTime.UtcNow,
+                        IsRead = false  // Initially, the notification is unread
+                    };
+
+                    _context.Notifications.Add(notification);  // Add notification to the context
+                }
+            }
+
+            // Save both message and notifications to the database
+            await _context.SaveChangesAsync();  // Save changes to the database
+
+            Console.WriteLine("Message saved and notifications sent.");
+        }
+
+
+
+
+
+        public void RegisterAdmin(string adminId)
+        {
+            var connectionId = Context.ConnectionId;
+            AdminConnections.AddOrUpdate(adminId, connectionId, (key, oldValue) => connectionId);
+            Console.WriteLine($"Admin {adminId} registered with connection {connectionId}");
+        }
+
+
+
+        public void ListAdminConnections()
+        {
+            foreach (var admin in AdminConnections)
+            {
+                Console.WriteLine($"Admin connected: {admin.Key} with connection {admin.Value}");
             }
         }
-        catch (Exception ex)
+
+
+        public override Task OnDisconnectedAsync(Exception exception)
         {
-            // Log the exception
-            await Clients.Caller.SendAsync("Error", $"Failed to send message: {ex.Message}");
+            // Remove the admin connection when they disconnect
+            var adminId = AdminConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            if (adminId != null)
+            {
+                AdminConnections.TryRemove(adminId, out _);
+            }
+            return base.OnDisconnectedAsync(exception);
         }
-    }
-
-    // Method to register the admin's connection
-    public void RegisterAdmin(string adminId)
-    {
-        var connectionId = Context.ConnectionId;
-        // Add or update the admin's connection if not already registered
-        AdminConnections.AddOrUpdate(adminId, connectionId, (key, oldValue) => connectionId);
-    }
-
-    // Method to retrieve the connection ID for a specific admin
-    private string GetAdminConnectionId(string adminId)
-    {
-        AdminConnections.TryGetValue(adminId, out var connectionId);
-        return connectionId;
-    }
-
-    // Clean up the connection ID when the admin disconnects
-    public override Task OnDisconnectedAsync(Exception exception)
-    {
-        var adminId = AdminConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
-
-        if (adminId != null)
-        {
-            AdminConnections.TryRemove(adminId, out _);
-        }
-
-        return base.OnDisconnectedAsync(exception);
     }
 }

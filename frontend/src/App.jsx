@@ -13,6 +13,7 @@ import Profile from './Pages/Profile';
 import Settings from './Pages/Settings';
 import Contact from './Pages/Contact';
 import AddCard from './Components/Card/Card';
+import AdminNotificationBar from './Components/NotificationBar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -72,6 +73,14 @@ function App() {
     setRedirect(true);  // Trigger redirect
     window.location.href = '/'; // This will navigate to the homepage and reload the page
   };
+
+
+
+  const startChatWithUser = (userId, notificationId) => {
+    // Your logic to start the chat
+    console.log('Start chat with user:', userId, 'Notification ID:', notificationId);
+  };
+  
 
   const handleLogin = async (username, password) => {
     try {
@@ -145,6 +154,8 @@ function App() {
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           <Route path="/contact" element={<Contact username={username} storedrole={role} />} />
           <Route path="/card" element={<AddCard username={username}  />} /> 
+          <Route path="/notificationbar" element={<AdminNotificationBar startChatWithUser={startChatWithUser} />} />
+
         </Routes>
       </div>
       <Footer />
