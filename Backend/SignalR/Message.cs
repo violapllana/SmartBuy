@@ -19,6 +19,7 @@ namespace Backend.SignalR
         public User User { get; set; } = null!;
         public string? ReceiverId { get; set; } // ID of the receiver
         public string? MessageContent { get; set; } // The content of the message
+        public bool ViewedByAdmin { get; set; }
         public DateTime SentAt { get; set; }
     }
 

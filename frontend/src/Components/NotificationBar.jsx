@@ -1,56 +1,101 @@
-// AdminNotificationBar.js
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';  // Import navigate
 
-const AdminNotificationBar = ({ startChatWithUser }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);  // To check if the user is an admin
+function NotificationBar({ username }) {
+  const [unreadMessages, setUnreadMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState('');
+  const navigate = useNavigate();  // Initialize navigate
 
-  // Fetch notifications when the component loads
-  useEffect(() => {
-    const fetchNotifications = async () => {
+  const fetchUserId = useCallback(async () => {
+    if (username) {
       try {
-        const response = await axios.get('/api/chat/GetNotificationsForAdmin');
-        setNotifications(response.data);
+        const response = await axios.get(`http://localhost:5108/users/by-username?username=${username}`);
+        if (response.data?.id) {
+          setUserId(response.data.id);
+        } else {
+          console.error('User ID not found');
+          setUserId('');
+        }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error('Error fetching user ID:', error);
+        setUserId('');
+      }
+    }
+  }, [username]);
+
+  useEffect(() => {
+    setUnreadMessages([]);
+    setLoading(true);
+    fetchUserId();
+  }, [username, fetchUserId]);
+
+  useEffect(() => {
+    const fetchUnreadMessages = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5108/api/Chat/unread/${userId}`);
+        if (response.status === 200) {
+          setUnreadMessages(response.data);
+        } else {
+          setUnreadMessages([]);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 204) {
+          setUnreadMessages([]);
+        } else {
+          console.error('Error fetching unread notifications:', error);
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
-    // Check if user is an admin (can be done via the backend or localStorage/localState)
-    const role = localStorage.getItem('role');  // Or get this from your auth state
-    if (role === 'Admin') {
-      setIsAdmin(true);
-      fetchNotifications();  // Fetch notifications for Admin
+    if (userId) {
+      fetchUnreadMessages();
     }
-  }, []); // Empty dependency array ensures it runs only once
+  }, [userId]);
 
-  // Handle click event to start a chat with the selected user
-  const handleNotificationClick = (userId, notificationId) => {
-    startChatWithUser(userId, notificationId);
+  // This is the function that handles the click on a notification
+  const handleNotificationClick = (senderId) => {
+    // Log the userId and senderId to check which one is which
+    console.log('Logged in userId:', userId);  // this is the logged-in user
+    console.log('Notification senderId:', senderId);  // this is the user who sent the message
+  
+    // If the senderId (the one who sent the message) is the same as the logged-in userId, prevent chat
+    if (senderId === userId) {
+      console.error('Cannot chat with yourself!');
+      return;  // Prevent navigation
+    }
+  
+    // Navigate to the chat page using the logged-in userId and the senderId
+    navigate(`/chat/${userId}/${senderId}`);
   };
-
+  
   return (
-    isAdmin && (
-      <div className="fixed top-0 left-0 w-full bg-yellow-400 text-gray-800 p-4 z-50 shadow-lg">
-        <div className="space-y-2">
-          {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="bg-yellow-500 p-2 rounded-md cursor-pointer hover:bg-yellow-600"
-                onClick={() => handleNotificationClick(notification.userId, notification.id)}
-              >
-                New message from User {notification.userId}
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-lg">No new messages</p>
-          )}
-        </div>
-      </div>
-    )
+    <div className="bg-white shadow-md rounded p-4 mb-4">
+      <h2 className="text-lg font-semibold mb-2">Unread Messages</h2>
+      {loading ? (
+        <p>Loading...</p>
+      ) : unreadMessages.length === 0 ? (
+        <p className="text-gray-500">No unread messages.</p>
+      ) : (
+        <ul className="space-y-2">
+          {[...unreadMessages].reverse().map((message) => (
+            <li
+              key={message.id}
+              className="border-b pb-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+              onClick={() => handleNotificationClick(message.userId)}  // <-- Use message.userId (sender) here
+            >
+              <p className="text-sm text-gray-800">{message.messageContent}</p>
+              <p className="text-xs text-gray-400">{new Date(message.sentAt).toLocaleString()}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
-};
+  
+}
 
-export default AdminNotificationBar;
+export default NotificationBar;

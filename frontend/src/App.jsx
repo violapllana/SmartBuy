@@ -14,6 +14,8 @@ import Settings from './Pages/Settings';
 import Contact from './Pages/Contact';
 import AddCard from './Components/Card/Card';
 import AdminNotificationBar from './Components/NotificationBar';
+import ChatComponent from './Components/ChatComponent';
+import NotificationBar from './Components/NotificationBar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -135,6 +137,13 @@ function App() {
     return null;  // Return nothing since navigation happens
   }
 
+
+
+
+
+
+
+
   return (
     <Router>
       <CookieConsent /> {/* Render the CookieConsent component */}
@@ -154,7 +163,9 @@ function App() {
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           <Route path="/contact" element={<Contact username={username} storedrole={role} />} />
           <Route path="/card" element={<AddCard username={username}  />} /> 
-          <Route path="/notificationbar" element={<AdminNotificationBar startChatWithUser={startChatWithUser} />} />
+          <Route path="/notificationbar" element={<NotificationBar username={username} />} />
+          <Route path="/chat/:userId/:receiverId" element={<ChatComponent />} />
+
 
         </Routes>
       </div>

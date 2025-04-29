@@ -18,11 +18,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
+builder.Services.AddSignalR();  // Add SignalR service
+
+
 
 
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
-builder.Services.AddSignalR();  // Add SignalR service
 
 
 
@@ -183,14 +185,15 @@ builder.Services.AddAuthentication(options =>
 // CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost:3000")  // Your React app URL
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
     });
 });
+
 
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
@@ -236,8 +239,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseWebSockets(); // This allows WebSocket connections for SignalR
 
-app.UseCors("CorsPolicy");
+
+app.UseCors("AllowAll");
+
 
 app.MapHub<ChatHub>("/chatHub");
 
