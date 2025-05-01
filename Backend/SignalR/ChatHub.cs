@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
-
-using System.Threading.Tasks;
-using System;
 using SmartBuy.Data;
+using System.Collections.Concurrent;
 
 namespace Backend.SignalR
 {
@@ -14,45 +12,62 @@ namespace Backend.SignalR
         {
             _context = context;
         }
+        private static readonly ConcurrentDictionary<string, string> UserConnections = new();
 
-        // Method to send a message and save it to the database using MessageDto
-        public async Task SendMessage(MessageDto messageDto)
-        {
-            if (messageDto == null)
-            {
-                throw new ArgumentNullException(nameof(messageDto));
-            }
-
-            // Create a new ChatMessage entity from the MessageDto
-            var message = new Message
-            {
-                UserId = messageDto.UserId,
-                ReceiverId = messageDto.ReceiverId,
-                MessageContent = messageDto.MessageContent,
-                SentAt = messageDto.SentAt,
-                ViewedByAdmin = messageDto.ViewedByAdmin
-            };
-
-            // Save the message to the database
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
-
-            // Send the message to the receiver via SignalR
-            await Clients.User(messageDto.ReceiverId).SendAsync("ReceiveMessage", messageDto.UserId, messageDto.MessageContent);
-        }
-
-        // Optional: Logic when a user connects
         public override Task OnConnectedAsync()
         {
-            // Logic when a user connects
+            var httpContext = Context.GetHttpContext();
+            var userId = httpContext.Request.Query["userId"].ToString();
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                UserConnections[userId] = Context.ConnectionId;
+                Console.WriteLine($"✅ User {userId} connected with ConnectionId: {Context.ConnectionId}");
+            }
+
             return base.OnConnectedAsync();
         }
 
-        // Optional: Logic when a user disconnects
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            // Logic when a user disconnects
+            var userId = UserConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                UserConnections.TryRemove(userId, out _);
+                Console.WriteLine($"❌ User {userId} disconnected.");
+            }
+
             return base.OnDisconnectedAsync(exception);
         }
+
+        public async Task SendPrivateMessage(string receiverUserId, string senderName, string message)
+        {
+            if (UserConnections.TryGetValue(receiverUserId, out var receiverConnectionId))
+            {
+                await Clients.Client(receiverConnectionId)
+                    .SendAsync("ReceiveMessage", senderName, message);
+
+                Console.WriteLine($"📤 Sent from {senderName} to {receiverUserId}: {message}");
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ User {receiverUserId} is not connected.");
+            }
+
+            // Save the message to the database
+            var msg = new Message
+            {
+                UserId = senderName,
+                ReceiverId = receiverUserId,
+                MessageContent = message,
+                SentAt = DateTime.UtcNow,
+                ViewedByAdmin = false
+            };
+
+            _context.Messages.Add(msg);  // ✅ This now works
+            await _context.SaveChangesAsync();
+
+        }
+
     }
 }

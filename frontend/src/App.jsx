@@ -11,11 +11,10 @@ import { jwtDecode } from 'jwt-decode';  // Correct named import for jwt-decode
 import CookieConsent from './Components/CookieConsent';
 import Profile from './Pages/Profile';
 import Settings from './Pages/Settings';
-import Contact from './Pages/Contact';
+// import Contact from './Pages/Contact';
 import AddCard from './Components/Card/Card';
-import AdminNotificationBar from './Components/NotificationBar';
-import ChatComponent from './Components/ChatComponent';
 import NotificationBar from './Components/NotificationBar';
+import ChatComponent from './Components/ChatComponent';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -161,10 +160,10 @@ function App() {
           <Route path="/register" element={<Register handleRegister={handleRegister} />} />
           <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
-          <Route path="/contact" element={<Contact username={username} storedrole={role} />} />
+          {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
           <Route path="/card" element={<AddCard username={username}  />} /> 
           <Route path="/notificationbar" element={<NotificationBar username={username} />} />
-          <Route path="/chat/:userId/:receiverId" element={<ChatComponent />} />
+          <Route path="/chatcomponent" element={<ChatComponent username={username}/>} />
 
 
         </Routes>

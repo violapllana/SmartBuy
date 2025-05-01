@@ -18,7 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-builder.Services.AddSignalR();  // Add SignalR service
 
 
 
@@ -195,6 +194,10 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddSignalR();  // Add SignalR service
+
+
+
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
@@ -239,10 +242,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowAll");
+
 app.UseWebSockets(); // This allows WebSocket connections for SignalR
 
 
-app.UseCors("AllowAll");
 
 
 app.MapHub<ChatHub>("/chatHub");

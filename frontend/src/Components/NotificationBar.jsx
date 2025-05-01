@@ -61,7 +61,7 @@ function NotificationBar({ username }) {
     // Log the userId and senderId to check which one is which
     console.log('Logged in userId:', userId);  // this is the logged-in user
     console.log('Notification senderId:', senderId);  // this is the user who sent the message
-  
+  console.log(unreadMessages);
     // If the senderId (the one who sent the message) is the same as the logged-in userId, prevent chat
     if (senderId === userId) {
       console.error('Cannot chat with yourself!');

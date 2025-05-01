@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../Images/SmartBuyLogo.webp";
-import { FaUserCircle, FaBars, FaTimes, FaArrowLeft, FaBell } from "react-icons/fa"; // Added FaBell for notifications
+import { FaUserCircle, FaBars, FaTimes, FaArrowLeft } from "react-icons/fa"; // Added FaBell for notifications
 import AdminNotificationBar from "./NotificationBar";
 
 const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser }) => {
@@ -64,21 +64,7 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
           } transition-transform duration-300 lg:static lg:w-auto lg:h-auto lg:bg-transparent lg:transform-none lg:flex lg:items-center lg:gap-6`}
         >
           <ul className="flex flex-col items-center gap-6 mt-20 lg:mt-0 lg:flex-row">
-            {/* Conditionally render the notification button for Admin */}
-            {role === "Admin" && (
-  <li>
-    <button
-      className="flex items-center text-lg font-semibold text-yellow-400 hover:text-yellow-600 transform hover:translate-y-[-4px] transition-all"
-      onClick={() => {
-        navigate("/notifications");
-        setMenuOpen(false);
-      }}
-    >
-      <FaBell className="text-xl mr-2" /> {/* Adjusted icon size and added margin */}
-      <span>Notifications</span>
-    </button>
-  </li>
-)}
+           
 
             <li>
               <button
@@ -115,7 +101,7 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
                     setMenuOpen(false);
                   }}
                 />
-                <span>{role === "Admin" ? `${username} (Admin)` : username}</span>
+                <span>{role === "Admin" ? `${username} [Admin]` : username}</span>
 
                 {/* Log Out Button with hover effect */}
                 <button
