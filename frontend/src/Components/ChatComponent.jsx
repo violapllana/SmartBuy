@@ -2,7 +2,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import Cookies from "js-cookie";
 import { useEffect, useState, useCallback } from "react";
 import api from "./api";
-import { FaRegUser, FaCommentDots, FaPaperPlane } from "react-icons/fa"; // Import icons
+import { FaRegUser, FaCommentDots, FaPaperPlane, FaBell} from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
 
 const ChatComponent = ({ username }) => {  // Add `role` prop
@@ -40,30 +40,32 @@ const ChatComponent = ({ username }) => {  // Add `role` prop
 
   const fetchMessages = useCallback(async () => {
     if (!userId) return;
-
+  
     try {
       const res = await api.get(`http://localhost:5108/api/Chat/GetMessagesByReceiver/${userId}`);
       const messages = res.data;
       setAllMessages(messages);
-      const senders = [...new Set(messages.map(m => m.userId))];
+  
+      // Extract unique senders
+      const senders = Array.from(new Set(messages.map(m => m.userId)));
       setUniqueSenders(senders);
-
+  
+      // Build senderId -> username map
       const usernameMap = {};
-      await Promise.all(
-        senders.map(async (senderId) => {
-          try {
-            const userRes = await api.get(`http://localhost:5108/users/getusernamefromid/${senderId}`);
-            usernameMap[senderId] = userRes.data;
-          } catch (err) {
-            console.error(`Failed to fetch username for ${senderId}`, err);
-          }
-        })
-      );
+      for (const senderId of senders) {
+        try {
+          const userRes = await api.get(`http://localhost:5108/users/getusernamefromid/${senderId}`);
+          usernameMap[senderId] = userRes.data;
+        } catch (err) {
+          console.error(`Failed to fetch username for ${senderId}`, err);
+        }
+      }
       setSenderUsernames(usernameMap);
     } catch (err) {
       console.error("Failed to fetch messages", err);
     }
   }, [userId]);
+  
 
   const fetchChatMessages = useCallback(async () => {
     if (!userId || !receiverId) return;
@@ -198,16 +200,29 @@ const ChatComponent = ({ username }) => {  // Add `role` prop
 
         </div>
         <ul className="space-y-4">
-          {uniqueSenders.map(sender => (
-            <li
-              key={sender}
-              onClick={() => setReceiverId(sender)}
-              className="cursor-pointer hover:bg-green-700 rounded-md p-3 flex items-center space-x-3 transition"
-            >
-              <FaRegUser className="text-xl" />
-              <span>{senderUsernames[sender] || sender}</span>
-            </li>
-          ))}
+        {uniqueSenders.map(sender => {
+  const hasUnread = chatMessages.some(
+    msg => msg.userId === sender && msg.viewedByAdmin === false
+  );
+
+  return (
+    <li
+      key={sender}
+      onClick={() => setReceiverId(sender)}
+      className="cursor-pointer hover:bg-green-700 rounded-md p-3 flex items-center space-x-3 transition"
+    >
+      <FaRegUser className="text-xl" />
+      <span>{senderUsernames[sender] || sender}</span>
+      {hasUnread && (
+        <FaBell className="text-yellow-400 ml-2 animate-ping" />
+      )}
+    </li>
+  );
+
+  
+})}
+
+
         </ul>
       </div>
 

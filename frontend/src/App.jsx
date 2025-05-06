@@ -15,6 +15,7 @@ import Settings from './Pages/Settings';
 import AddCard from './Components/Card/Card';
 import NotificationBar from './Components/NotificationBar';
 import ChatComponent from './Components/ChatComponent';
+import ChatComponentForUsers from './Components/ChatComponentForUsers';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -164,6 +165,8 @@ function App() {
           <Route path="/card" element={<AddCard username={username}  />} /> 
           <Route path="/notificationbar" element={<NotificationBar username={username} />} />
           <Route path="/chatcomponent" element={<ChatComponent username={username}/>} />
+          <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}/>} />
+
 
 
         </Routes>

@@ -3,64 +3,59 @@ import Cookies from 'js-cookie';
 
 const CookieConsent = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
-  // Check if consent cookie exists
   useEffect(() => {
     const consent = Cookies.get('cookieConsent');
-    if (consent === undefined) {
+    if (!consent) {
       setIsVisible(true);
-    } else {
-      setIsVisible(false);
     }
   }, []);
 
-  // Handle accepting the cookies
   const handleAccept = () => {
     Cookies.set('cookieConsent', 'accepted', { expires: 365 });
-    setIsVisible(false);
+    setIsExiting(true);
+    setTimeout(() => setIsVisible(false), 1000); // Matches the exit animation duration
   };
 
-  // Handle declining the cookies
   const handleDecline = () => {
     Cookies.set('cookieConsent', 'declined', { expires: 365 });
-    setIsVisible(false);
+    setIsExiting(true);
+    setTimeout(() => setIsVisible(false), 1000); // Matches the exit animation duration
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full py-12 px-10 shadow-xl z-50"
-         style={{
-           background: "linear-gradient(to right, rgba(106, 13, 173, 0.8), rgba(244, 114, 182, 0.8), rgba(239, 68, 68, 0.8))", // Transparent gradient
-         }}>
-      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 sm:space-x-8">
-        <div className="text-center sm:text-left">
-          <h2 className="text-3xl sm:text-4xl font-semibold mb-4">Përdorim Cookies për Përmirësimin e Përvojës Tuaj</h2>
-          <p className="text-lg sm:text-xl mb-6">
-            Faqja jonë përdor cookies për të përmirësuar përvojën tuaj. Duke vazhduar të vizitoni këtë faqe, pajtoheni me përdorimin e cookies.
-          </p>
-        </div>
-        <div className="flex space-x-4 justify-center sm:justify-start">
-          <Button onClick={handleAccept} color="purple">Prano</Button>
-          <Button onClick={handleDecline} color="red">Refuzo</Button>
-        </div>
+    <div
+      className={`fixed bottom-0 right-0 m-6 max-w-md w-full bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 text-white rounded-2xl p-6 shadow-2xl z-50 
+        ${isExiting ? 'animate-snakeOut' : 'animate-snake'} `}
+    >
+      <h2 className="text-2xl font-bold mb-2">We Value Your Privacy</h2>
+      <p className="text-sm mb-4">
+        Our site uses cookies to enhance your experience. Click "Accept" to agree, or "Decline" to opt out.
+      </p>
+      <div className="flex justify-end gap-4">
+        <Button onClick={handleDecline} variant="outline">
+          Decline
+        </Button>
+        <Button onClick={handleAccept} variant="solid">
+          Accept
+        </Button>
       </div>
     </div>
   );
 };
 
-// Button Component
-const Button = ({ onClick, color, children }) => {
-  const colorClasses = {
-    purple: 'bg-purple-500 hover:bg-purple-600',
-    red: 'bg-red-500 hover:bg-red-600',
+const Button = ({ onClick, variant, children }) => {
+  const base =
+    'px-5 py-2 rounded-full font-semibold transition-transform duration-300 hover:scale-110 focus:outline-none';
+  const styles = {
+    solid: 'bg-white text-green-700 hover:bg-gray-100',
+    outline: 'border border-white text-white hover:bg-white hover:text-green-700',
   };
-
   return (
-    <button
-      onClick={onClick}
-      className={`text-white py-4 px-10 rounded-full text-lg shadow-lg transition-all duration-300 transform hover:scale-110 ${colorClasses[color]}`}
-    >
+    <button onClick={onClick} className={`${base} ${styles[variant]}`}>
       {children}
     </button>
   );
