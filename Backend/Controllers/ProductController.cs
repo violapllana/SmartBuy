@@ -35,6 +35,38 @@ public class ProductController : ControllerBase
         return Ok(product.ToProductDto());
     }
 
+
+
+
+    [HttpPut("update-stock/{id}")]
+    public async Task<IActionResult> UpdateProductStock(int id, [FromBody] StockUpdateDto stockUpdateDto)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // Check if the stock is sufficient
+        if (product.StockQuantity < stockUpdateDto.StockQuantity)
+        {
+            return BadRequest("Not enough stock available.");
+        }
+
+        // Update the stock quantity
+        product.StockQuantity -= stockUpdateDto.StockQuantity;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(product.ToProductDto());
+    }
+
+
+
+
+
+
+
     [HttpPost]
     public async Task<ActionResult> CreateProduct(ProductCreateDto productDto)
     {

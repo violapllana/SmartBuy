@@ -9,14 +9,36 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Backend.Models;
+using Microsoft.Extensions.Options;
+using Stripe;
+using Backend.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+
+
+
 
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
 
+
+
+
+
+
+
+
+
+
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
+
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     // Specify OpenAPI version
@@ -48,13 +70,36 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+
+
+
+
+
+
+
+
+
+
+// MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
+
+
+
 
 if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(mongoDatabaseName))
 {
     throw new InvalidOperationException("MongoDB configuration is missing.");
 }
+
+
+
+
+
+
+
+
 
 // Register MongoDB context
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -65,6 +110,26 @@ builder.Services.AddSingleton(serviceProvider =>
 Console.WriteLine("Mongo Conn String: " + mongoConnectionString);
 Console.WriteLine("Mongo Database Name: " + mongoDatabaseName);
 
+// Get Stripe Secret and Publishable keys from environment variables
+var stripeSecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+var stripePublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+
+// Ensure the environment variables are set
+if (string.IsNullOrEmpty(stripeSecretKey) || string.IsNullOrEmpty(stripePublishableKey))
+{
+    throw new InvalidOperationException("Stripe keys are missing.");
+}
+Console.WriteLine("Stripe SecretKey: " + stripeSecretKey);
+Console.WriteLine("Stripe Publishable Key: " + stripePublishableKey);
+
+
+// Configure Stripe settings
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+{
+    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
+    return new StripeClient(stripeSettings.SecretKey); // Use SecretKey for StripeClient
+});
 
 // Database Configuration for SQL Server
 var connectionString = Environment.GetEnvironmentVariable("SMARTBUY_CONNECTION_STRING");
@@ -76,7 +141,6 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 Console.WriteLine("Sql Server Conn String: " + connectionString);
-
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -106,38 +170,87 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = jwtAudience,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigninKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
         RoleClaimType = ClaimTypes.Role
     };
+}).AddCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
 });
 
 // CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost:3000")  // Your React app URL
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
     });
 });
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddSignalR();  // Add SignalR service
+
+
+
+builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
+
+builder.Services.AddScoped<ChatHub>(); // Add this
+
+
+builder.Logging.AddConsole();
+
+
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+{
+    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
+    return new StripeClient(stripeSettings.SecretKey);
+});
 
 
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("ADMIN"));
+        policy.RequireRole("Admin"));
     options.AddPolicy("UserOnly", policy =>
-        policy.RequireRole("USER"));
+        policy.RequireRole("User"));
 });
+
+
 
 // Build the application
 var app = builder.Build();
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
+// app.UseHttpsRedirection();
+app.MapControllers(); // This should come after the authentication and authorization middlewares.
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+app.UseCors("AllowAll");
+
+app.UseWebSockets(); // This allows WebSocket connections for SignalR
+
+
+
+
+app.MapHub<ChatHub>("/chatHub");
+
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -158,25 +271,12 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartBuy API v1");
 });
 
-app.UseCors("CorsPolicy");
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-app.UseRouting(); // Ensure Routing is Used
-
-// Authentication & Authorization Middleware
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map Controllers
-app.MapControllers();
-app.Run();
-
 // Ensure Roles Exist
 static async Task EnsureRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    string[] roleNames = { "ADMIN", "USER" };
+    string[] roleNames = { "Admin", "User" };
 
     foreach (var roleName in roleNames)
     {
@@ -187,3 +287,4 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
         }
     }
 }
+app.Run();

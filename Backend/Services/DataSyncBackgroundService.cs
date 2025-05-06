@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Backend.Models;
+using Backend.SignalR;
 
 public class DataSyncBackgroundService : BackgroundService
 {
@@ -32,7 +32,7 @@ public class DataSyncBackgroundService : BackgroundService
         {
             _logger.LogInformation("Syncing data from SQL Server to MongoDB...");
             await SyncDataAsync();
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); // Sync every 5 minutes
+            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
         }
     }
 
@@ -41,18 +41,24 @@ public class DataSyncBackgroundService : BackgroundService
         using (var scope = _scopeFactory.CreateScope())
         {
             var sqlContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            
+
             var users = await sqlContext.Users.ToListAsync();
             var products = await sqlContext.Products.ToListAsync();
             var cards = await sqlContext.Cards.ToListAsync();
             var reviews = await sqlContext.Reviews.ToListAsync();
+            var wishlists = await sqlContext.Wishlists.ToListAsync();
+            var orders = await sqlContext.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).ToListAsync();
+            var messages = await sqlContext.Messages.ToListAsync();
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
             var cardCollection = _mongoDatabase.GetCollection<MongoCard>("Cards");
             var reviewCollection = _mongoDatabase.GetCollection<MongoReviews>("Reviews");
+            var wishlistCollection = _mongoDatabase.GetCollection<MongoWishlist>("Wishlists");
+            var orderCollection = _mongoDatabase.GetCollection<MongoOrder>("Orders");
+            var messageCollection = _mongoDatabase.GetCollection<MongoMessage>("Messages");
 
-
+            // USERS
             foreach (var sqlUser in users)
             {
                 var mongoUser = new MongoUser
@@ -63,15 +69,20 @@ public class DataSyncBackgroundService : BackgroundService
                     PasswordHash = sqlUser.PasswordHash
                 };
 
-                var filter = Builders<MongoUser>.Filter.Eq(u => u.Id, mongoUser.Id);
+                var filter = Builders<MongoUser>.Filter.Eq("Id", mongoUser.Id);
                 var update = Builders<MongoUser>.Update
-                    .Set(u => u.UserName, mongoUser.UserName)
-                    .Set(u => u.Email, mongoUser.Email)
-                    .Set(u => u.PasswordHash, mongoUser.PasswordHash);
+                    .Set("UserName", mongoUser.UserName)
+                    .Set("Email", mongoUser.Email)
+                    .Set("PasswordHash", mongoUser.PasswordHash);
 
                 await userCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
 
+            var sqlUserIds = users.Select(u => u.Id.ToString()).ToList();
+            var userDeleteFilter = Builders<MongoUser>.Filter.Nin("Id", sqlUserIds);
+            await userCollection.DeleteManyAsync(userDeleteFilter);
+
+            // PRODUCTS
             foreach (var sqlProduct in products)
             {
                 var mongoProduct = new MongoProducts
@@ -86,68 +97,188 @@ public class DataSyncBackgroundService : BackgroundService
                     CreatedAt = sqlProduct.CreatedAt
                 };
 
-                var filter = Builders<MongoProducts>.Filter.Eq(p => p.Id, mongoProduct.Id);
+                var filter = Builders<MongoProducts>.Filter.Eq("Id", mongoProduct.Id);
                 var update = Builders<MongoProducts>.Update
-                    .Set(p => p.Name, mongoProduct.Name)
-                    .Set(p => p.Description, mongoProduct.Description)
-                    .Set(p => p.Price, mongoProduct.Price)
-                    .Set(p => p.StockQuantity, mongoProduct.StockQuantity)
-                    .Set(p => p.Category, mongoProduct.Category)
-                    .Set(p => p.ImageUrl, mongoProduct.ImageUrl)
-                    .Set(p => p.CreatedAt, mongoProduct.CreatedAt);
+                    .Set("Name", mongoProduct.Name)
+                    .Set("Description", mongoProduct.Description)
+                    .Set("Price", mongoProduct.Price)
+                    .Set("StockQuantity", mongoProduct.StockQuantity)
+                    .Set("Category", mongoProduct.Category)
+                    .Set("ImageUrl", mongoProduct.ImageUrl)
+                    .Set("CreatedAt", mongoProduct.CreatedAt);
 
                 await productCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
 
-            
-            
+            var sqlProductIds = products.Select(p => p.Id).ToList();
+            var productDeleteFilter = Builders<MongoProducts>.Filter.Nin("Id", sqlProductIds);
+            await productCollection.DeleteManyAsync(productDeleteFilter);
+
+            // // CARDS
+            // foreach (var sqlCard in cards)
+            // {
+            //     var mongoCard = new MongoCard
+            //     {
+            //         Id = sqlCard.Id,
+            //         Title = sqlCard.Title,
+            //         Description = sqlCard.Description,
+            //         Type = sqlCard.Type,
+            //         CreatedAt = sqlCard.CreatedAt
+            //     };
+
+            //     var filter = Builders<MongoCard>.Filter.Eq("Id", mongoCard.Id);
+            //     var update = Builders<MongoCard>.Update
+            //         .Set("Title", mongoCard.Title)
+            //         .Set("Description", mongoCard.Description)
+            //         .Set("Type", mongoCard.Type)
+            //         .Set("CreatedAt", mongoCard.CreatedAt);
+
+            //     await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            // }
+
+            // var sqlCardIds = cards.Select(c => c.Id).ToList();
+            // var cardDeleteFilter = Builders<MongoCard>.Filter.Nin("Id", sqlCardIds);
+            // await cardCollection.DeleteManyAsync(cardDeleteFilter);
+
+
+            // CARDS
             foreach (var sqlCard in cards)
-{
-    var mongoCard = new MongoCard
-    {
-        Id = sqlCard.Id, 
-        Title = sqlCard.Title,
-        Description = sqlCard.Description,
-        Type = sqlCard.Type,
-        CreatedAt = sqlCard.CreatedAt
-    };
+            {
+                var mongoCard = new MongoCard
+                {
+                    Id = sqlCard.Id,
+                    CardNumber = sqlCard.CardNumber,
+                    ExpirationDate = sqlCard.ExpirationDate,
+                    CVV = sqlCard.CVV,
+                    CardType = sqlCard.CardType,
+                    CreatedAt = sqlCard.CreatedAt
+                };
 
-    var filter = Builders<MongoCard>.Filter.Eq(c => c.Id, mongoCard.Id);
-    var update = Builders<MongoCard>.Update
-        .Set(c => c.Title, mongoCard.Title)
-        .Set(c => c.Description, mongoCard.Description)
-        .Set(c => c.Type, mongoCard.Type)
-        .Set(c => c.CreatedAt, mongoCard.CreatedAt);
+                var filter = Builders<MongoCard>.Filter.Eq("Id", mongoCard.Id);
+                var update = Builders<MongoCard>.Update
+                    .Set("CardNumber", mongoCard.CardNumber)
+                    .Set("ExpirationDate", mongoCard.ExpirationDate)
+                    .Set("CVV", mongoCard.CVV)
+                    .Set("CardType", mongoCard.CardType)
+                    .Set("CreatedAt", mongoCard.CreatedAt);
 
-    await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
-}
- foreach (var sqlReview in reviews)
-{
-    var mongoReview = new MongoReviews
-    {
-        Id = sqlReview.Id,
-        UserId = sqlReview.UserId,
-        ProductId = sqlReview.ProductId,
-        Rating = sqlReview.Rating,
-        Comment = sqlReview.Comment,
-        CreatedAt = sqlReview.CreatedAt
-    };
+                await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
 
-    var filter = Builders<MongoReviews>.Filter.Eq(r => r.Id, mongoReview.Id);
-    var update = Builders<MongoReviews>.Update
-        .Set(r => r.UserId, mongoReview.UserId)
-        .Set(r => r.ProductId, mongoReview.ProductId)
-        .Set(r => r.Rating, mongoReview.Rating)
-        .Set(r => r.Comment, mongoReview.Comment)
-        .Set(r => r.CreatedAt, mongoReview.CreatedAt);
+            var sqlCardIds = cards.Select(c => c.Id).ToList();
+            var cardDeleteFilter = Builders<MongoCard>.Filter.Nin("Id", sqlCardIds);
+            await cardCollection.DeleteManyAsync(cardDeleteFilter);
 
-    await reviewCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
-}
+            // REVIEWS
+            foreach (var sqlReview in reviews)
+            {
+                var mongoReview = new MongoReviews
+                {
+                    Id = sqlReview.Id,
+                    UserId = sqlReview.UserId,
+                    ProductId = sqlReview.ProductId,
+                    Rating = sqlReview.Rating,
+                    Comment = sqlReview.Comment,
+                    CreatedAt = sqlReview.CreatedAt
+                };
 
-           
+                var filter = Builders<MongoReviews>.Filter.Eq("Id", mongoReview.Id);
+                var update = Builders<MongoReviews>.Update
+                    .Set("UserId", mongoReview.UserId)
+                    .Set("ProductId", mongoReview.ProductId)
+                    .Set("Rating", mongoReview.Rating)
+                    .Set("Comment", mongoReview.Comment)
+                    .Set("CreatedAt", mongoReview.CreatedAt);
+
+                await reviewCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            var sqlReviewIds = reviews.Select(r => r.Id).ToList();
+            var reviewDeleteFilter = Builders<MongoReviews>.Filter.Nin("Id", sqlReviewIds);
+            await reviewCollection.DeleteManyAsync(reviewDeleteFilter);
+
+            // WISHLISTS
+            foreach (var sqlWishlist in wishlists)
+            {
+                var mongoWishlist = new MongoWishlist
+                {
+                    Id = sqlWishlist.Id,
+                    UserId = sqlWishlist.UserId,
+                    ProductId = sqlWishlist.ProductId,
+                    CreatedAt = sqlWishlist.CreatedAt
+                };
+
+                var filter = Builders<MongoWishlist>.Filter.Eq("Id", mongoWishlist.Id);
+                var update = Builders<MongoWishlist>.Update
+                    .Set("UserId", mongoWishlist.UserId)
+                    .Set("ProductId", mongoWishlist.ProductId)
+                    .Set("CreatedAt", mongoWishlist.CreatedAt);
+
+                await wishlistCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            var sqlWishlistIds = wishlists.Select(w => w.Id).ToList();
+            var wishlistDeleteFilter = Builders<MongoWishlist>.Filter.Nin("Id", sqlWishlistIds);
+            await wishlistCollection.DeleteManyAsync(wishlistDeleteFilter);
+
+            // ORDERS
+            foreach (var sqlOrder in orders)
+            {
+                var mongoOrder = new MongoOrder
+                {
+                    Id = sqlOrder.Id.ToString(),
+                    UserId = sqlOrder.UserId,
+                    OrderDate = sqlOrder.OrderDate,
+                    Products = sqlOrder.OrderProducts.Select(op => new MongoOrderProduct
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.Product?.Name,
+                        Quantity = op.Quantity,
+                        Price = op.Price
+                    }).ToList()
+                };
+
+                var filter = Builders<MongoOrder>.Filter.Eq("Id", mongoOrder.Id);
+                var update = Builders<MongoOrder>.Update
+                    .Set("UserId", mongoOrder.UserId)
+                    .Set("OrderDate", mongoOrder.OrderDate)
+                    .Set("Products", mongoOrder.Products);
+
+                await orderCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            var sqlOrderIds = orders.Select(o => o.Id.ToString()).ToList();
+            var orderDeleteFilter = Builders<MongoOrder>.Filter.Nin("Id", sqlOrderIds);
+            await orderCollection.DeleteManyAsync(orderDeleteFilter);
+
+            foreach (var sqlMessage in messages)
+            {
+                var mongoMessage = new MongoMessage
+                {
+                    Id = sqlMessage.Id,
+                    UserId = sqlMessage.UserId,
+                    ReceiverId = sqlMessage.ReceiverId,
+                    Content = sqlMessage.MessageContent,
+                    SentAt = sqlMessage.SentAt
+                };
+
+                var filter = Builders<MongoMessage>.Filter.Eq("Id", mongoMessage.Id);
+                var update = Builders<MongoMessage>.Update
+                    .Set("UserId", mongoMessage.UserId)
+                    .Set("ReceiverId", mongoMessage.ReceiverId)
+                    .Set("Content", mongoMessage.Content)
+                    .Set("SentAt", mongoMessage.SentAt);
+
+                await messageCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            // Optional: Delete messages from MongoDB that are no longer in SQL Server
+            var sqlMessageIds = messages.Select(m => m.Id).ToList();
+            var messageDeleteFilter = Builders<MongoMessage>.Filter.Nin("Id", sqlMessageIds);
+            await messageCollection.DeleteManyAsync(messageDeleteFilter);
         }
     }
-    
+
 }
 
 
