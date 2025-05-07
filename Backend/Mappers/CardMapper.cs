@@ -31,7 +31,7 @@ public static class CardMapper
     public static Card ToCardFromCreateDto(this CardCreateDto dto, string userId)
     {
         return new Card
-        {
+        {   
             CardNumber = dto.CardNumber,
             ExpirationDate = dto.ExpirationDate,
             CVV = dto.CVV,
