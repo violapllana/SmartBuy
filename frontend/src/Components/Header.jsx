@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../Images/SmartBuyLogo.webp";
 import { FaUserCircle, FaBars, FaTimes, FaArrowLeft } from "react-icons/fa"; // Added FaBell for notifications
-import AdminNotificationBar from "./NotificationBar";
 
 const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser }) => {
   const [menuOpen, setMenuOpen] = useState(false); // For toggling menu on mobile
@@ -128,8 +127,6 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
         </nav>
       </div>
 
-      {/* Conditionally render the Admin Notification Bar */}
-      {role === "Admin" && <AdminNotificationBar />}
     </header>
   );
 };

@@ -1,13 +1,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-public class CardDto
+
+public class CardUpdateDto
 {
     public int Id { get; set; }
 
     public string CardNumber { get; set; } = string.Empty;
 
-    public string ExpirationDate { get; set; } = string.Empty;
+    public DateTime ExpirationDate { get; set; }
 
     public string CVV { get; set; } = string.Empty;
 

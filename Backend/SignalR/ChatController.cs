@@ -49,6 +49,39 @@ namespace Backend.Controllers
             return Ok(messageDtoList);
         }
 
+
+
+
+        [HttpGet("GetNewMessagesAsync")]
+        public async Task<ActionResult<List<MessageDto>>> GetNewMessagesAsync(string userId, string otherUserId)
+        {
+            // Fetching messages between two users
+            var messages = await _context.Messages
+                .Where(m => (m.UserId == userId && m.ReceiverId == otherUserId) ||
+                            (m.UserId == otherUserId && m.ReceiverId == userId) && m.ViewedByAdmin == false)
+                .OrderBy(m => m.SentAt)
+                .ToListAsync();
+
+            if (!messages.Any())
+                return NotFound("No messages found between these users.");
+
+            // Mapping the fetched messages to MessageDto
+            var messageDtoList = messages.Select(m => new MessageDto
+            {
+                Id = m.Id,
+                UserId = m.UserId,
+                ReceiverId = m.ReceiverId,
+                MessageContent = m.MessageContent,
+                SentAt = m.SentAt
+            }).ToList();
+
+            return Ok(messageDtoList);
+        }
+
+
+
+
+
         // GET: api/Chat/GetMessagesBySender/{userId}
         [HttpGet("GetMessagesBySender/{userId}")]
         public async Task<ActionResult<List<MessageDto>>> GetMessagesBySender(string userId)

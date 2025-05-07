@@ -10,8 +10,8 @@ public class CardCreateDto
     public string CardNumber { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(5)] 
-    public string ExpirationDate { get; set; } = string.Empty;
+    [StringLength(5)]
+    public DateTime ExpirationDate { get; set; }
 
     [Required]
     [StringLength(3)]
@@ -21,5 +21,5 @@ public class CardCreateDto
     [StringLength(50)]
     public string CardType { get; set; } = string.Empty;
 
-            public string UserId { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
 }

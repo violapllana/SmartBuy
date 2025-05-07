@@ -26,5 +26,19 @@ namespace Backend.Mappers
                 OrderId = dto.OrderId
             };
         }
+
+
+        public static ShipmentDto toShipmentDto(this MongoShipment shipment)
+        {
+            return new ShipmentDto
+            {
+                Id = shipment.Id,
+                ShipmentDate = shipment.ShipmentDate,
+                TrackingNumber = shipment.TrackingNumber,
+                OrderId = shipment.OrderId
+            };
+        }
+
+
     }
 }

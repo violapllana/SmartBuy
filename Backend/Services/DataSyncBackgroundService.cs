@@ -32,7 +32,7 @@ public class DataSyncBackgroundService : BackgroundService
         {
             _logger.LogInformation("Syncing data from SQL Server to MongoDB...");
             await SyncDataAsync();
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }
 
@@ -49,6 +49,8 @@ public class DataSyncBackgroundService : BackgroundService
             var wishlists = await sqlContext.Wishlists.ToListAsync();
             var orders = await sqlContext.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).ToListAsync();
             var messages = await sqlContext.Messages.ToListAsync();
+            var shipments = await sqlContext.Shipments.ToListAsync();
+
 
             var userCollection = _mongoDatabase.GetCollection<MongoUser>("Users");
             var productCollection = _mongoDatabase.GetCollection<MongoProducts>("Products");
@@ -57,6 +59,8 @@ public class DataSyncBackgroundService : BackgroundService
             var wishlistCollection = _mongoDatabase.GetCollection<MongoWishlist>("Wishlists");
             var orderCollection = _mongoDatabase.GetCollection<MongoOrder>("Orders");
             var messageCollection = _mongoDatabase.GetCollection<MongoMessage>("Messages");
+            var shipmentCollection = _mongoDatabase.GetCollection<MongoShipment>("Shipments");
+
 
             // USERS
             foreach (var sqlUser in users)
@@ -276,6 +280,34 @@ public class DataSyncBackgroundService : BackgroundService
             var sqlMessageIds = messages.Select(m => m.Id).ToList();
             var messageDeleteFilter = Builders<MongoMessage>.Filter.Nin("Id", sqlMessageIds);
             await messageCollection.DeleteManyAsync(messageDeleteFilter);
+
+
+
+
+            foreach (var sqlShipment in shipments)
+            {
+                var mongoShipment = new MongoShipment
+                {
+                    Id = sqlShipment.Id,
+                    ShipmentDate = sqlShipment.ShipmentDate,
+                    TrackingNumber = sqlShipment.TrackingNumber,
+                    OrderId = sqlShipment.OrderId,
+                };
+
+                var filter = Builders<MongoShipment>.Filter.Eq("Id", mongoShipment.Id);
+                var update = Builders<MongoShipment>.Update
+                    .Set("ShipmentDate", mongoShipment.ShipmentDate)
+                    .Set("TrackingNumber", mongoShipment.TrackingNumber)
+                    .Set("OrderId", mongoShipment.OrderId);  // Missing semicolon here
+
+                await shipmentCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+            }
+
+            // Optional: Delete messages from MongoDB that are no longer in SQL Server
+            var sqlShipmentsIds = shipments.Select(s => s.Id).ToList();  // You should use 'shipments' instead of 'messages'
+            var shipmentDeleteFilter = Builders<MongoShipment>.Filter.Nin("Id", sqlShipmentsIds);
+            await shipmentCollection.DeleteManyAsync(shipmentDeleteFilter);
+
         }
     }
 

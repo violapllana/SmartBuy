@@ -336,10 +336,9 @@ namespace SmartBuy.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ExpirationDate")
-                        .IsRequired()
+                    b.Property<DateTime>("ExpirationDate")
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()

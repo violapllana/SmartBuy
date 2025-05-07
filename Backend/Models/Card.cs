@@ -8,16 +8,16 @@ namespace SmartBuy.Models
     {
         [Key]
         public int Id { get; set; }
-     
+
 
         [Required]
-        [StringLength(16, MinimumLength = 13)] 
+        [StringLength(16, MinimumLength = 13)]
         public string CardNumber { get; set; } = string.Empty;
 
 
         [Required]
-        [StringLength(5)] 
-        public string ExpirationDate { get; set; } = string.Empty;
+        [StringLength(5)]
+        public DateTime ExpirationDate { get; set; }
 
         [Required]
         [StringLength(3)]
@@ -34,7 +34,7 @@ namespace SmartBuy.Models
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
 
-       
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
