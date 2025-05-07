@@ -1,3 +1,4 @@
+using Backend.Models;
 using Backend.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace SmartBuy.Data
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
 
 
 

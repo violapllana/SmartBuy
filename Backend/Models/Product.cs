@@ -30,4 +30,9 @@ public class Product{
     public string? ImageUrl { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    internal object ToShipmentDto()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -12,8 +12,8 @@ using SmartBuy.Data;
 namespace SmartBuy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250427222211_CreateNotificationsTable")]
-    partial class CreateNotificationsTable
+    [Migration("20250506192029_ShipmentMigrations")]
+    partial class ShipmentMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,31 @@ namespace SmartBuy.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Backend.Models.Shipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ShipmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Shipments");
+                });
 
             modelBuilder.Entity("Backend.SignalR.Message", b =>
                 {
@@ -39,13 +64,19 @@ namespace SmartBuy.Migrations
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SenderId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("ViewedByAdmin")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -529,6 +560,28 @@ namespace SmartBuy.Migrations
                     b.ToTable("Wishlists");
                 });
 
+            modelBuilder.Entity("Backend.Models.Shipment", b =>
+                {
+                    b.HasOne("SmartBuy.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Backend.SignalR.Message", b =>
+                {
+                    b.HasOne("SmartBuy.Models.User", "User")
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -694,6 +747,8 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("SmartBuy.Models.User", b =>
                 {
                     b.Navigation("Cards");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("Payments");
                 });
