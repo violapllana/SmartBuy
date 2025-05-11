@@ -2,7 +2,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import Cookies from "js-cookie";
 import { useEffect, useState, useCallback } from "react";
 import api from "./api";
-import { FaRegUser, FaCommentDots, FaPaperPlane } from "react-icons/fa"; // Import icons
+import { FaPaperPlane } from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
 
 const ChatComponentForUsers = ({ username }) => {
