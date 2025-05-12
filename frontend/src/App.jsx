@@ -15,6 +15,7 @@ import Settings from './Pages/Settings';
 import AddCard from './Components/Card/Card';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
+import CustomNotification from './Components/NotificationUtil';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -25,6 +26,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); // State to handle redirection
   const [storedAuthToken, setStoredAuthToken] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+const [showPopup, setShowPopup] = useState(false);
+const [notificationMessage, setNotificationMessage] = useState('');
+
+
 
   const fetchUserId = useCallback(async () => {
     if (username) {
@@ -153,6 +159,14 @@ function App() {
         role={role} // Pass the role to Header
         username={username} // Pass the username here
       />
+      {showPopup && (
+    <CustomNotification
+      message={notificationMessage}
+      onClose={() => setShowPopup(false)}
+    />
+  )}
+
+
       <div className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -162,12 +176,22 @@ function App() {
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
           <Route path="/card" element={<AddCard username={username}  />} /> 
-          <Route path="/chatcomponent" element={<ChatComponent username={username}/>} />
+<Route
+  path="/chatcomponent"
+  element={
+    <ChatComponent
+      username={username}
+      triggerNotification={(sender) => {
+        setNotificationMessage(`You got a new message from ${sender}`);
+        setShowNotification(true);
+      }}
+    />
+  }
+/>
           <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}/>} />
 
-
-
         </Routes>
+        
       </div>
       <Footer />
     </Router>

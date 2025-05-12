@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import api from "./api";
 import { FaRegUser, FaCommentDots, FaPaperPlane, FaBell} from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
+import CustomNotification from "./NotificationUtil"; // adjust path if needed
+
 
 const ChatComponent = ({ username }) => {  // Add role prop
   const [connection, setConnection] = useState(null);
@@ -18,7 +20,15 @@ const ChatComponent = ({ username }) => {  // Add role prop
   const [role, setRole] = useState('');
   const [newMessageSenders, setNewMessageSenders] = useState([]);
   const [loading, setLoading] = useState(true);
+const [showPopup, setShowPopup] = useState(false);
+const [notificationMessage, setNotificationMessage] = useState('');
+const [showNotificationBar, setShowNotificationBar] = useState(false);
 
+
+const triggerNotification = (sender) => {
+  setNotificationMessage(`You have a new message from ${sender}`);
+  setShowPopup(true);
+};
 
 
   const fetchUserId = useCallback(async () => {
@@ -142,6 +152,46 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  const interval = setInterval(async () => {
+    const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
+    const updatedSenders = [];
+
+    for (const sender of savedSenders) {
+      try {
+        const res = await api.get(`http://localhost:5108/api/Chat/view-latest/${sender}`);
+        const latestMsg = res.data;
+
+        if (!latestMsg.viewedByAdmin) {
+          updatedSenders.push(sender);
+                    triggerNotification && triggerNotification(sender);
+
+        }
+      } catch (err) {
+        console.error(`Error checking message for ${sender}:`, err);
+        updatedSenders.push(sender);
+      }
+    }
+
+    setNewMessageSenders(updatedSenders);
+    localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+    setShowNotificationBar(updatedSenders.length > 0); // ✅ show or hide
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
+
+
+useEffect(() => {
+  const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
+  setShowNotificationBar(savedSenders.length > 0);
+}, []);
+
+
+
 
 
 
@@ -159,6 +209,9 @@ const handleSenderClick = (sender) => {
     localStorage.setItem('readSenders', JSON.stringify(updatedReadSenders));
   }
 
+
+
+
   // ✅ Remove sender from newMessageSenders and save to localStorage
   setNewMessageSenders(prev => {
     const updatedSenders = prev.filter(s => s !== sender);
@@ -166,6 +219,11 @@ const handleSenderClick = (sender) => {
     return updatedSenders;
   });
 };
+
+
+
+
+
 
 useEffect(() => {
   const readSenders = JSON.parse(localStorage.getItem('readSenders')) || [];
@@ -344,6 +402,7 @@ if (loading) {
   return <div>Loading...</div>; // You can replace this with a loading spinner or something else
 }
  return (
+  <>
   
   <div className="flex h-screen bg-gray-50">
     
@@ -504,6 +563,7 @@ if (loading) {
       )}
     </div>
   </div>
+</>
 );
 
 };
