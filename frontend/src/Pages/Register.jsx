@@ -21,7 +21,7 @@ const Register = () => {
     try {
       const response = await api.post('http://localhost:5108/register', formData); // Use api instance
       if (response.status === 200) {
-        alert('Regjistrimi u krye me sukses! Mirë se vini.');
+        alert('Registration completed successfully! Welcome.');
         setError('');
         setFormData({
           UserName: '',
@@ -30,11 +30,11 @@ const Register = () => {
         });
         navigate('/'); // Redirect to home page after successful registration
       } else {
-        throw new Error('Regjistrimi dështoi');
+        throw new Error('Registration failed!');
       }
     } catch (error) {
-      console.error('Regjistrimi dështoi:', error.response?.data?.message || error.message);
-      setError('Regjistrimi dështoi. Ju lutem provoni përsëri më vonë.');
+      console.error('Registration failed:', error.response?.data?.message || error.message);
+      setError('Registration failed. Please try again later.');
     }
   };
 

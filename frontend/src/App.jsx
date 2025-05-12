@@ -26,9 +26,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); // State to handle redirection
   const [storedAuthToken, setStoredAuthToken] = useState('');
-  const [showNotification, setShowNotification] = useState(false);
-const [showPopup, setShowPopup] = useState(false);
 const [notificationMessage, setNotificationMessage] = useState('');
+const [showNotification, setShowNotification] = useState(false);
+
 
 
 
@@ -83,11 +83,7 @@ const [notificationMessage, setNotificationMessage] = useState('');
 
 
 
-  const startChatWithUser = (userId, notificationId) => {
-    // Your logic to start the chat
-    console.log('Start chat with user:', userId, 'Notification ID:', notificationId);
-  };
-  
+ 
 
   const handleLogin = async (username, password) => {
     try {
@@ -132,6 +128,43 @@ const [notificationMessage, setNotificationMessage] = useState('');
     }
   };
 
+useEffect(() => {
+  const interval = setInterval(async () => {
+    const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
+    const updatedSenders = [];
+
+    for (const sender of savedSenders) {
+      try {
+        const res = await api.get(`http://localhost:5108/api/Chat/view-latest/${sender}`);
+        const latestMsg = res.data;
+
+        if (!latestMsg.viewedByAdmin) {
+          updatedSenders.push(sender);
+        }
+      } catch (err) {
+        updatedSenders.push(sender); // Still add to show error or retry later
+      }
+    }
+
+    localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+
+    if (updatedSenders.length > 0) {
+      try {
+       
+         updatedSenders.length > 1? setNotificationMessage(`You have new messages`) : setNotificationMessage(`You have a new message`)
+
+        setShowNotification(true);
+      } catch (err) {
+        console.error('Failed to fetch username:', err);
+      }
+    }
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -159,12 +192,15 @@ const [notificationMessage, setNotificationMessage] = useState('');
         role={role} // Pass the role to Header
         username={username} // Pass the username here
       />
-      {showPopup && (
-    <CustomNotification
-      message={notificationMessage}
-      onClose={() => setShowPopup(false)}
-    />
-  )}
+     {showNotification && (
+  <CustomNotification
+    message={notificationMessage}
+    onClose={() => setShowNotification(false)}
+  />
+)}
+
+
+
 
 
       <div className="main-content">
@@ -176,6 +212,8 @@ const [notificationMessage, setNotificationMessage] = useState('');
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
           <Route path="/card" element={<AddCard username={username}  />} /> 
+                    <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
+
 <Route
   path="/chatcomponent"
   element={
@@ -188,7 +226,6 @@ const [notificationMessage, setNotificationMessage] = useState('');
     />
   }
 />
-          <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}/>} />
 
         </Routes>
         

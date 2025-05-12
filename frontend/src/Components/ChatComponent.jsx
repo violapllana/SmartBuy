@@ -4,8 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import api from "./api";
 import { FaRegUser, FaCommentDots, FaPaperPlane, FaBell} from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
-import CustomNotification from "./NotificationUtil"; // adjust path if needed
-
+import CustomNotification from "./NotificationUtil";
 
 const ChatComponent = ({ username }) => {  // Add role prop
   const [connection, setConnection] = useState(null);
