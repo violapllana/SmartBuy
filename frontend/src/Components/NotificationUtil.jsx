@@ -2,32 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const CustomNotification = ({ message, onClose }) => {
-  const [visible, setVisible] = useState(false);
+  const [jumping, setJumping] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (message) {
-      setVisible(true);
+    const jumpTimer = setInterval(() => {
+      setJumping(prev => !prev);
+    }, 5000);
 
-      const timer = setTimeout(() => {
-        setVisible(false);
-        if (onClose) onClose(); // safely call onClose
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [message, onClose]);
+    return () => clearInterval(jumpTimer);
+  }, []);
 
   const handleClick = () => {
     navigate('/chatcomponent');
+    if (onClose) onClose();
   };
-
-  if (!visible) return null;
 
   return (
     <div
       onClick={handleClick}
-      className="fixed bottom-5 left-5 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-green-400 to-yellow-500 text-white font-semibold text-lg rounded-lg shadow-xl cursor-pointer transition-all duration-500 ease-in-out animate-[bounce_1s_ease-in-out] z-50 max-w-xs w-full"
+      className={`fixed bottom-5 left-5 flex items-center gap-4 px-8 py-5 bg-gradient-to-r from-green-600 via-green-500 to-yellow-300 text-white font-semibold text-lg rounded-xl shadow-2xl cursor-pointer transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-xl hover:rounded-2xl ${jumping ? 'animate-[bounce_1s_ease-in-out]' : ''} z-50 max-w-md w-full`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

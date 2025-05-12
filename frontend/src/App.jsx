@@ -207,7 +207,7 @@ useEffect(() => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/register" element={<Register handleRegister={handleRegister} />} />
+          <Route path="/register" element={<Register handleRegister={handleRegister} onLogin={handleLogin}/>} />
           <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
