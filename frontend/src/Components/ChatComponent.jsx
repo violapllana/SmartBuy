@@ -120,34 +120,59 @@ const triggerNotification = (sender) => {
   
   // Update newMessageSenders when new messages arrive via SignalR
 useEffect(() => {
-  if (!connection) return;
+  if (!userId) return;
 
-  connection.on("ReceiveMessage", (senderName, message) => {
-    const newMsg = {
-      id: Date.now(),
-      userId: senderName,
-      receiverId: userId,
-      messageContent: message,
-      sentAt: new Date().toISOString(),
-      viewedByAdmin: false, // Assuming new messages are unread
-    };
+  const newConnection = new HubConnectionBuilder()
+    .withUrl(`http://localhost:5108/chathub?userId=${userId}`, {
+      accessTokenFactory: () => Cookies.get("accessToken")
+    })
+    .withAutomaticReconnect()
+    .build();
 
-    // Add the new message to the chat and all messages
-    setChatMessages(prev => [...prev, newMsg]);
-    setAllMessages(prev => [...prev, newMsg]);
+  newConnection.start()
+    .then(() => {
+      console.log("Connected to SignalR");
 
-    // Update the unread senders
-    setNewMessageSenders(prev => {
-      if (!prev.includes(senderName)) {
-        const updatedSenders = [...prev, senderName];
-        // Persist the updated new message senders to localStorage
-        localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
-        return updatedSenders;
-      }
-      return prev;
-    });
-  });
-}, [connection, userId]);
+      newConnection.on("ReceiveMessage", (senderName, message) => {
+        const newMsg = {
+          id: Date.now(),
+          userId: senderName,
+          receiverId: userId,
+          messageContent: message,
+          sentAt: new Date().toISOString(),
+        };
+
+        // Update chat and all messages
+        setChatMessages((prevMessages) => [...prevMessages, newMsg]);
+        setAllMessages((prevMessages) => [...prevMessages, newMsg]);
+
+        const readSenders = JSON.parse(localStorage.getItem("readSenders")) || [];
+        // Handle new message senders
+        if (!readSenders.includes(senderName)) {
+          setNewMessageSenders((prevSenders) => {
+            if (!prevSenders.includes(senderName)) {
+              const updatedSenders = [...prevSenders, senderName];
+              localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+              return updatedSenders;
+            }
+            return prevSenders;
+          });
+        }
+      });
+    })
+    .catch((err) => console.error("SignalR error:", err));
+
+  // Save connection state
+  setConnection(newConnection);
+
+  // Cleanup the connection on component unmount or userId change
+  return () => {
+    if (newConnection) {
+      newConnection.stop().catch((err) => console.error("Error stopping SignalR connection", err));
+    }
+  };
+}, [userId]);
+
 
 
 
@@ -291,58 +316,7 @@ useEffect(() => {
     setChatMessages(filtered);
   }, [receiverId, allMessages, userId]);
 
-useEffect(() => {
-  if (!userId) return;
 
-  const newConnection = new HubConnectionBuilder()
-    .withUrl(`http://localhost:5108/chathub?userId=${userId}`, {
-      accessTokenFactory: () => Cookies.get("accessToken")
-    })
-    .withAutomaticReconnect()
-    .build();
-
-  newConnection.start()
-    .then(() => {
-      console.log("Connected to SignalR");
-
-      newConnection.on("ReceiveMessage", (senderName, message) => {
-        const newMsg = {
-          id: Date.now(),
-          userId: senderName,
-          receiverId: userId,
-          messageContent: message,
-          sentAt: new Date().toISOString(),
-        };
-
-        setChatMessages(prev => [...prev, newMsg]);
-        setAllMessages(prev => [...prev, newMsg]);
-
-        const readSenders = JSON.parse(localStorage.getItem("readSenders")) || [];
-
-        // Add to newMessageSenders only if not already read
-        if (!readSenders.includes(senderName)) {
-          setNewMessageSenders(prev => {
-            if (!prev.includes(senderName)) {
-              const updatedSenders = [...prev, senderName];
-              // Save the updated newMessageSenders to localStorage immediately after updating the state
-              localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
-              return updatedSenders;
-            }
-            return prev;
-          });
-        }
-      });
-    })
-    .catch(err => console.error("SignalR error:", err));
-
-  setConnection(newConnection);
-
-  return () => {
-    if (newConnection) {
-      newConnection.stop().catch(err => console.error("Error stopping SignalR connection", err));
-    }
-  };
-}, [userId]);
 
 
 
