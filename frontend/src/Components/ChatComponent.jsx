@@ -1,10 +1,16 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import Cookies from "js-cookie";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext} from "react";
 import api from "./api";
 import { FaRegUser, FaCommentDots, FaPaperPlane, FaBell} from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
+<<<<<<< HEAD
 import CustomNotification from "./NotificationUtil";
+=======
+import { MessageContext } from "../Contexts/MessageContext";
+import { useNavigate } from "react-router-dom";
+
+>>>>>>> e2f26a0 (20 Maj)
 
 const ChatComponent = ({ username }) => {  // Add role prop
   const [connection, setConnection] = useState(null);
@@ -13,15 +19,25 @@ const ChatComponent = ({ username }) => {  // Add role prop
   const [receiverId, setReceiverId] = useState("");
   const [receiverUsername, setReceiverUsername] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [chatMessages, setChatMessages] = useState([]);
+  const {chatMessages, setChatMessages} = useContext(MessageContext);
   const [uniqueSenders, setUniqueSenders] = useState([]);
   const [senderUsernames, setSenderUsernames] = useState({});
+<<<<<<< HEAD
   const [role, setRole] = useState('');
   const [newMessageSenders, setNewMessageSenders] = useState([]);
   const [loading, setLoading] = useState(true);
 const [showPopup, setShowPopup] = useState(false);
 const [notificationMessage, setNotificationMessage] = useState('');
 const [showNotificationBar, setShowNotificationBar] = useState(false);
+=======
+  const [role, setRole] = useState('') ;
+  const { newMessageSenders, setNewMessageSenders } = useContext(MessageContext);
+  const navigate = useNavigate();
+
+
+
+
+>>>>>>> e2f26a0 (20 Maj)
 
 
 const triggerNotification = (sender) => {
@@ -52,6 +68,26 @@ const triggerNotification = (sender) => {
 
     }
   }, [role])
+
+useEffect(() => {
+    // Don't redirect if userRole is undefined or null (maybe still loading)
+    if (!role) return;
+
+    if (role !== "Admin") {
+      navigate("/");
+      return; // no need to set interval if redirecting immediately
+    }
+
+    const intervalId = setInterval(() => {
+      if (role !== "Admin") {
+        navigate("/");
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [role, navigate]);
+
+
 
  const fetchMessages = useCallback(async (id) => {
   const targetUserId = id || userId;
@@ -118,6 +154,7 @@ const triggerNotification = (sender) => {
 
 
   
+<<<<<<< HEAD
   // Update newMessageSenders when new messages arrive via SignalR
 useEffect(() => {
   if (!userId) return;
@@ -213,6 +250,38 @@ useEffect(() => {
   const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
   setShowNotificationBar(savedSenders.length > 0);
 }, []);
+=======
+//   // Update newMessageSenders when new messages arrive via SignalR
+// useEffect(() => {
+//   if (!connection) return;
+
+//   connection.on("ReceiveMessage", (senderName, message) => {
+//     const newMsg = {
+//       id: Date.now(),
+//       userId: senderName,
+//       receiverId: userId,
+//       messageContent: message,
+//       sentAt: new Date().toISOString(),
+//       viewedByAdmin: false, // Assuming new messages are unread
+//     };
+
+//     // Add the new message to the chat and all messages
+//     setChatMessages(prev => [...prev, newMsg]);
+//     setAllMessages(prev => [...prev, newMsg]);
+
+//     // Update the unread senders
+//     setNewMessageSenders(prev => {
+//       if (!prev.includes(senderName)) {
+//         const updatedSenders = [...prev, senderName];
+//         // Persist the updated new message senders to localStorage
+//         localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+//         return updatedSenders;
+//       }
+//       return prev;
+//     });
+//   });
+// }, [connection, userId]);
+>>>>>>> e2f26a0 (20 Maj)
 
 
 
@@ -220,30 +289,44 @@ useEffect(() => {
 
 
   
-  // Update unread senders when messages are marked as read
-const handleSenderClick = (sender) => {
-  // Set receiver info
+const handleSenderClick = async (sender) => {
   setReceiverId(sender);
   setReceiverUsername(senderUsernames[sender] || sender);
 
-  // ✅ Mark as read and save to localStorage
-  const readSenders = JSON.parse(localStorage.getItem('readSenders')) || [];
+  // Mark as read
+  const readSenders = JSON.parse(localStorage.getItem("readSenders")) || [];
   if (!readSenders.includes(sender)) {
     const updatedReadSenders = [...readSenders, sender];
-    localStorage.setItem('readSenders', JSON.stringify(updatedReadSenders));
+    localStorage.setItem("readSenders", JSON.stringify(updatedReadSenders));
   }
 
+<<<<<<< HEAD
 
 
 
   // ✅ Remove sender from newMessageSenders and save to localStorage
+=======
+  // Remove from newMessageSenders
+>>>>>>> e2f26a0 (20 Maj)
   setNewMessageSenders(prev => {
     const updatedSenders = prev.filter(s => s !== sender);
-    localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+    localStorage.setItem("newMessageSenders", JSON.stringify(updatedSenders));
     return updatedSenders;
   });
+
+  if(!sender.viewedByAdmin){
+
+  // ✅ CALL THE BACKEND ENDPOINT to mark latest message as viewed
+  try {
+    await api.put(`http://localhost:5108/api/Chat/view-latest/${sender}`);
+    console.log("Marked latest message as viewed for:", sender);
+  } catch (error) {
+    console.error("Failed to mark message as viewed:", error);
+  }
+}
 };
 
+<<<<<<< HEAD
 
 
 
@@ -252,15 +335,10 @@ const handleSenderClick = (sender) => {
 useEffect(() => {
   const readSenders = JSON.parse(localStorage.getItem('readSenders')) || [];
   const storedNewMessageSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
+=======
+>>>>>>> e2f26a0 (20 Maj)
 
-  // Use stored senders if available, otherwise calculate from uniqueSenders
-  const initialNewSenders = storedNewMessageSenders.length > 0
-    ? storedNewMessageSenders
-    : uniqueSenders.filter(sender => !readSenders.includes(sender));
 
-  setNewMessageSenders(initialNewSenders);
-  setLoading(false);
-}, []);
 
 
 
@@ -345,13 +423,30 @@ useEffect(() => {
       console.error("Failed to send message:", err);
     }
   };
+
+
+  
+
+
+
+
+
+
   useEffect(() => {
     fetchUserRole();
   }, [fetchUserRole]);
 
+
+
+
+
   useEffect(() => {
     fetchUserId();
   }, [fetchUserId]);
+
+
+
+
 
   useEffect(() => {
     const savedUserId = localStorage.getItem('selectedUserId');
@@ -360,27 +455,35 @@ useEffect(() => {
       fetchMessages(savedUserId); // Pass it directly
     }
   }, [fetchMessages]);
+
+
+
+
+
   
 
   useEffect(() => {
     fetchReceiverUsername();
   }, [receiverId, fetchReceiverUsername]);
 
+
+
+
+
+
   useEffect(() => {
     fetchChatMessages();
   }, [fetchChatMessages]);
 
 
-if (loading) {
-  return <div>Loading...</div>; // You can replace this with a loading spinner or something else
-}
+
  return (
   <>
   
   <div className="flex h-screen bg-gray-50">
     
     {/* Sidebar */}
-    <div className="w-1/3 bg-green-600 text-white p-6 overflow-y-auto">
+<div className="w-full md:w-1/3 bg-green-600 text-white p-4 md:p-6 overflow-y-auto">
       <h3 className="text-2xl font-bold mb-6">Messages</h3>
       <div className="flex items-center mb-6">
         {role === "Admin" ? (
@@ -451,7 +554,7 @@ if (loading) {
     </div>
 
     {/* Chat Window */}
-    <div className="w-2/3 bg-white p-6 flex flex-col">
+<div className="w-full md:w-2/3 bg-white p-4 md:p-6 flex flex-col">
       {receiverId ? (
         <>
           <h4 className="text-3xl font-semibold mb-6 text-green-700">
