@@ -212,7 +212,7 @@ useEffect(() => {
           <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
           {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
           <Route path="/card" element={<AddCard username={username}  />} /> 
-                    <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
+          <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
 
 <Route
   path="/chatcomponent"
