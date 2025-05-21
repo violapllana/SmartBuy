@@ -11,7 +11,40 @@ export const MessageProvider = ({ children, username, triggerNotification }) => 
   const [newMessageSenders, setNewMessageSenders] = useState([]);
     const [role, setRole] = useState("");
     const [chatMessages, setChatMessages] = useState([]);
+const [showNotification, setShowNotification] = useState(false);
 
+useEffect(() => {
+  const checkLatestMessageViewed = async () => {
+    const storedSenders = JSON.parse(localStorage.getItem("newMessageSenders")) || [];
+    const stillUnviewed = [];
+
+    for (const senderId of storedSenders) {
+      try {
+        const response = await api.get(`http://localhost:5108/api/Chat/view-latest/${senderId}`);
+        const latestMessage = response.data;
+
+        if (latestMessage?.viewedByAdmin === true) {
+          console.log(`Sender ${senderId} messages viewed by admin, removing from localStorage`);
+        } else {
+          stillUnviewed.push(senderId);
+        }
+      } catch (error) {
+        console.error(`Failed to check latest message for sender ${senderId}`, error);
+        stillUnviewed.push(senderId); // keep to be safe
+      }
+    }
+
+    localStorage.setItem("newMessageSenders", JSON.stringify(stillUnviewed));
+    setNewMessageSenders(stillUnviewed);
+    setShowNotification(stillUnviewed.length > 0); // ✅ ADD THIS LINE
+  };
+
+  const intervalId = setInterval(() => {
+    checkLatestMessageViewed().catch(console.error);
+  }, 10000);
+
+  return () => clearInterval(intervalId);
+}, []);
 
 
 
@@ -44,6 +77,10 @@ useEffect(() => {
     const storedSenders = JSON.parse(localStorage.getItem("newMessageSenders")) || [];
     setNewMessageSenders(storedSenders);
   }, []);
+
+
+
+
 
   // Setup SignalR connection
   useEffect(() => {
@@ -148,6 +185,10 @@ useEffect(() => {
   // Cleanup on unmount
   return () => clearInterval(intervalId);
 }, []);
+
+
+
+
 
 
 
