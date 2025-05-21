@@ -2,8 +2,8 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import Cookies from "js-cookie";
 import { useEffect, useState, useCallback } from "react";
 import api from "./api";
-import { FaRegUser, FaCommentDots, FaPaperPlane } from "react-icons/fa"; // Import icons
-import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
+import { FaPaperPlane } from "react-icons/fa";
+import logo from "../Images/SmartBuyLogo.webp";
 
 const ChatComponentForUsers = ({ username }) => {
   const [connection, setConnection] = useState(null);
@@ -17,61 +17,60 @@ const ChatComponentForUsers = ({ username }) => {
     try {
       const res = await api.get(`http://localhost:5108/users/by-username?username=${username}`);
       setUserId(res.data.id);
-      console.log(adminIds)
     } catch (err) {
       console.error("Failed to fetch user ID", err);
     }
   }, [username]);
 
- // Callback to fetch admin IDs
-const fetchAdminIds = useCallback(async () => {
+  const fetchAdminIds = useCallback(async () => {
     try {
       const res = await api.get('http://localhost:5108/users/admins');
-      
-      // Log the full response to see the structure
-      console.log(res.data);
-  
-      // Extract only the admin IDs from the response
-      const ids = res.data.map(admin => admin.id); 
-      console.log("Admin IDs:", ids); // Log the ids to confirm
-  
-      setAdminIds(ids); // Set the adminIds in state
+      const ids = res.data.map(admin => admin.id);
+      setAdminIds(ids);
     } catch (err) {
       console.error("Failed to fetch admin IDs", err);
     }
-  }, []);  // Empty array means this function is created only once on mount
-  
-  // Effect to trigger the fetch when the component mounts
+  }, []);
+
   useEffect(() => {
-    fetchAdminIds();  // Call the fetchAdminIds function
-  }, [fetchAdminIds]);  // Include fetchAdminIds in dependencies for effect
-  
-  
+    fetchAdminIds();
+  }, [fetchAdminIds]);
+
+  // Helper to get messages safely, returns [] on 404
+  const getMessagesSafe = async (url) => {
+    try {
+      const res = await api.get(url);
+      return Array.isArray(res.data) ? res.data : [];
+    } catch (err) {
+      if (err.response?.status === 404) {
+        // No messages found for this user — return empty array instead of throwing
+        return [];
+      }
+      throw err; // rethrow for other errors
+    }
+  };
 
   const fetchMessages = useCallback(async () => {
     if (!userId) return;
 
     try {
-      // Fetch messages sent to the user
-      const receivedMessagesRes = await api.get(`http://localhost:5108/api/Chat/GetMessagesByReceiver/${userId}`);
-      // Fetch messages sent by the user
-      const sentMessagesRes = await api.get(`http://localhost:5108/api/Chat/GetMessagesBySender/${userId}`);
-      
-      const allMessages = [
-        ...receivedMessagesRes.data,
-        ...sentMessagesRes.data
-      ];
+      // Fetch both received and sent messages safely
+      const [receivedMessages, sentMessages] = await Promise.all([
+        getMessagesSafe(`http://localhost:5108/api/Chat/GetMessagesByReceiver/${userId}`),
+        getMessagesSafe(`http://localhost:5108/api/Chat/GetMessagesBySender/${userId}`)
+      ]);
 
-      // Sort messages by sentAt (ascending order)
+      const allMessages = [...receivedMessages, ...sentMessages];
+
+      // Sort messages by sentAt ascending
       allMessages.sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
-      
+
       setChatMessages(allMessages);
     } catch (err) {
       console.error("Failed to fetch messages", err);
+      setChatMessages([]);
     }
   }, [userId]);
-
- 
 
   useEffect(() => {
     fetchUserId();
@@ -81,7 +80,11 @@ const fetchAdminIds = useCallback(async () => {
     fetchMessages();
   }, [fetchMessages]);
 
-  useEffect(() => {
+
+
+
+
+ useEffect(() => {
     if (!userId) return;
 
     const newConnection = new HubConnectionBuilder()
@@ -95,16 +98,18 @@ const fetchAdminIds = useCallback(async () => {
       .then(() => {
         console.log("Connected to SignalR");
         newConnection.on("ReceiveMessage", (senderName, message) => {
+
+
           const newMsg = {
-            id: Date.now(),
-            userId: senderName,
-            receiverId: userId,
-            messageContent: message,
-            sentAt: new Date().toISOString()
+           userId: senderName,
+           messageContent: message
           };
 
           setChatMessages(prev => [...prev, newMsg]);
         });
+
+
+        
       })
       .catch(err => console.error("SignalR error:", err));
 
@@ -117,64 +122,79 @@ const fetchAdminIds = useCallback(async () => {
     };
   }, [userId]);
 
+
+
+
+
+
+
+
+
   const sendMessageToAdmins = async () => {
     if (!connection || !messageInput || !adminIds || adminIds.length === 0) return;
-  
+
     try {
-      // Loop through each admin ID and send the message
-      adminIds.forEach(async (adminId) => {
+      // Send message to each admin
+      for (const adminId of adminIds) {
         try {
           await connection.invoke("SendPrivateMessage", adminId, userId, messageInput);
-  
+
           const newMsg = {
-            id: Date.now(),
+            id: `${userId}-${adminId}-${Date.now()}`, // Unique id per message sent
             userId: userId,
             receiverId: adminId,
             messageContent: messageInput,
             sentAt: new Date().toISOString(),
           };
-  
-          setChatMessages((prev) => [...prev, newMsg]);
+
+          setChatMessages(prev => [...prev, newMsg]);
         } catch (err) {
           console.error(`Failed to send message to admin ${adminId}:`, err);
         }
-      });
-  
-      setMessageInput(""); // Clear the input field after sending the message
+      }
+      setMessageInput(""); // Clear input after sending
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
-  
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Chat Window */}
       <div className="w-full bg-white p-6 flex flex-col">
         <h4 className="text-3xl font-semibold mb-6 text-green-700">Chat with us</h4>
         <div className="flex-1 overflow-y-auto mb-6 border border-gray-300 rounded-lg p-6 bg-gray-50">
           <div className="space-y-4">
-            {chatMessages.map((msg, i) => (
-              <div key={i} className={`text-sm ${msg.userId === userId ? 'text-right' : 'text-left'}`} style={{ display: 'flex', alignItems: 'center', justifyContent: msg.userId === userId ? 'flex-end' : 'flex-start' }}>
-                <p style={{ marginRight: msg.userId === userId ? '20px' : '0', marginLeft: msg.userId !== userId ? '10px' : '0', display: 'flex', alignItems: 'center' }}>
+            {chatMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`text-sm ${msg.userId === userId ? 'text-right' : 'text-left'}`}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: msg.userId === userId ? 'flex-end' : 'flex-start' }}
+              >
+                <p
+                  style={{
+                    marginRight: msg.userId === userId ? '20px' : '0',
+                    marginLeft: msg.userId !== userId ? '10px' : '0',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   {msg.userId === userId ? (
-                    // If the message is from the logged-in user, show "You"
                     <strong>You:</strong>
                   ) : (
-                    // If the message is from the admin
-                    <img 
-                    src={logo} 
-                    alt="Admin Logo" 
-                    style={{
-                      width: "35px", // Size of the logo
-                      height: "35px", 
-                      borderRadius: "50%", // Circle shape
-                      border: "3px solid #4CAF50", // Green border for a cool effect
-                      marginRight: "15px", // More space to the right
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adding a subtle shadow for depth
-                      verticalAlign: 'middle'
-                    }} 
-                  />                  )}
+                    <img
+                      src={logo}
+                      alt="Admin Logo"
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "50%",
+                        border: "3px solid #4CAF50",
+                        marginRight: "15px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                        verticalAlign: 'middle'
+                      }}
+                    />
+                  )}
                   {msg.messageContent}
                 </p>
               </div>
@@ -182,7 +202,6 @@ const fetchAdminIds = useCallback(async () => {
           </div>
         </div>
 
-        {/* Message Input */}
         <div className="flex items-center space-x-4 mt-6">
           <input
             type="text"

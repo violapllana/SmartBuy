@@ -7,7 +7,7 @@ public class CardDto
 
     public string CardNumber { get; set; } = string.Empty;
 
-    public string ExpirationDate { get; set; } = string.Empty;
+    public DateTime ExpirationDate { get; set; }
 
     public string CVV { get; set; } = string.Empty;
 

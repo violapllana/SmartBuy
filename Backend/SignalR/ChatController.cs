@@ -49,6 +49,39 @@ namespace Backend.Controllers
             return Ok(messageDtoList);
         }
 
+
+
+
+        [HttpGet("GetNewMessagesAsync")]
+        public async Task<ActionResult<List<MessageDto>>> GetNewMessagesAsync(string userId, string otherUserId)
+        {
+            // Fetching messages between two users
+            var messages = await _context.Messages
+                .Where(m => (m.UserId == userId && m.ReceiverId == otherUserId) ||
+                            (m.UserId == otherUserId && m.ReceiverId == userId) && m.ViewedByAdmin == false)
+                .OrderBy(m => m.SentAt)
+                .ToListAsync();
+
+            if (!messages.Any())
+                return NotFound("No messages found between these users.");
+
+            // Mapping the fetched messages to MessageDto
+            var messageDtoList = messages.Select(m => new MessageDto
+            {
+                Id = m.Id,
+                UserId = m.UserId,
+                ReceiverId = m.ReceiverId,
+                MessageContent = m.MessageContent,
+                SentAt = m.SentAt
+            }).ToList();
+
+            return Ok(messageDtoList);
+        }
+
+
+
+
+
         // GET: api/Chat/GetMessagesBySender/{userId}
         [HttpGet("GetMessagesBySender/{userId}")]
         public async Task<ActionResult<List<MessageDto>>> GetMessagesBySender(string userId)
@@ -98,19 +131,55 @@ namespace Backend.Controllers
 
 
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<MessageDto>> ViewAdminMessage([FromRoute] int id)
+        [HttpPut("view-latest/{userId}")]
+        public async Task<ActionResult<MessageDto>> ViewLatestMessageByUser([FromRoute] string userId)
         {
-            var message = await _context.Messages.FindAsync(id);
+            // Fetch the latest message for the user
+            var latestMessage = await _context.Messages
+                .Where(m => m.UserId == userId)
+                .OrderByDescending(m => m.SentAt)  // Or OrderByDescending(m => m.Id) if Id is auto-incrementing
+                .FirstOrDefaultAsync();
+
+            if (latestMessage == null)
+            {
+                return NotFound();
+            }
+
+            // Mark the message as viewed by admin
+            latestMessage.ViewedByAdmin = true;
+            await _context.SaveChangesAsync();
+
+            // Map your entity to MessageDto
+            var messageDto = new MessageDto
+            {
+                Id = latestMessage.Id,
+                UserId = latestMessage.UserId,
+                ReceiverId = latestMessage.ReceiverId,
+                MessageContent = latestMessage.MessageContent,
+                ViewedByAdmin = latestMessage.ViewedByAdmin,
+                SentAt = latestMessage.SentAt
+            };
+
+            return Ok(messageDto);
+        }
+
+
+
+
+        [HttpGet("view-latest/{sender}")]
+        public async Task<ActionResult<MessageDto>> ViewLatestMessage([FromRoute] string sender)
+        {
+            var message = await _context.Messages
+                .Where(m => m.UserId == sender)
+                .OrderByDescending(m => m.SentAt) // Sort messages by the timestamp (latest first)
+                .FirstOrDefaultAsync(); // Get the most recent one
+
             if (message == null)
             {
                 return NotFound();
             }
 
-            message.ViewedByAdmin = true;
-            await _context.SaveChangesAsync();
-
-            // Map your entity to MessageDto
+            // Return the message details, such as whether it's been viewed by an admin
             var messageDto = new MessageDto
             {
                 Id = message.Id,
@@ -123,6 +192,8 @@ namespace Backend.Controllers
 
             return Ok(messageDto);
         }
+
+
 
 
 

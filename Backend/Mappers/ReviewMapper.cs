@@ -1,4 +1,5 @@
 using Backend.dtos;
+using Backend.Models;
 
 public static class ReviewMapper
 {
@@ -7,10 +8,10 @@ public static class ReviewMapper
         return new ReviewDto
         {
             Id = review.Id,
-            UserId=review.UserId,
-            ProductId =review.ProductId,
-            Rating=review.Rating,
-            Comment=review.Comment,
+            UserId = review.UserId,
+            ProductId = review.ProductId,
+            Rating = review.Rating,
+            Comment = review.Comment,
             CreatedAt = review.CreatedAt,
 
         };
@@ -20,11 +21,25 @@ public static class ReviewMapper
     {
         return new Review
         {
-            UserId= dto.UserId,
+            UserId = dto.UserId,
             ProductId = dto.ProductId,
             Rating = dto.Rating,
             Comment = dto.Comment,
             CreatedAt = DateTime.UtcNow
+        };
+    }
+
+
+    public static ReviewDto toReviewDto(this MongoReviews review)
+    {
+        return new ReviewDto
+        {
+            Id = review.Id,
+            UserId = review.UserId,
+            ProductId = review.ProductId,
+            Rating = review.Rating,
+            Comment = review.Comment,
+            CreatedAt = review.CreatedAt
         };
     }
 }

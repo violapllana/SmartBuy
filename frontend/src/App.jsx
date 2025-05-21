@@ -11,11 +11,13 @@ import { jwtDecode } from 'jwt-decode';  // Correct named import for jwt-decode
 import CookieConsent from './Components/CookieConsent';
 import Profile from './Pages/Profile';
 import Settings from './Pages/Settings';
-// import Contact from './Pages/Contact';
 import AddCard from './Components/Card/Card';
-import NotificationBar from './Components/NotificationBar';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
+import CustomNotification from './Components/NotificationUtil';
+
+// Import your MessageProvider context here
+import { MessageProvider } from './Contexts/MessageContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -26,6 +28,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); // State to handle redirection
   const [storedAuthToken, setStoredAuthToken] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
 
   const fetchUserId = useCallback(async () => {
     if (username) {
@@ -76,14 +80,6 @@ function App() {
     window.location.href = '/'; // This will navigate to the homepage and reload the page
   };
 
-
-
-  const startChatWithUser = (userId, notificationId) => {
-    // Your logic to start the chat
-    console.log('Start chat with user:', userId, 'Notification ID:', notificationId);
-  };
-  
-
   const handleLogin = async (username, password) => {
     try {
       const response = await api.post('http://localhost:5108/login', { username, password });
@@ -127,6 +123,50 @@ function App() {
     }
   };
 
+
+
+
+ useEffect(() => {
+  const interval = setInterval(async () => {
+    const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
+    const updatedSenders = [];
+
+    for (const sender of savedSenders) {
+      try {
+        const res = await api.get(`http://localhost:5108/api/Chat/view-latest/${sender}`);
+        const latestMsg = res.data;
+
+        if (!latestMsg.viewedByAdmin) {
+          updatedSenders.push(sender);
+        }
+      } catch (err) {
+        updatedSenders.push(sender); // Still add to retry or show error
+      }
+    }
+
+    // Update localStorage
+    localStorage.setItem('newMessageSenders', JSON.stringify(updatedSenders));
+
+    if (updatedSenders.length > 0) {
+      // Show notification
+      if (updatedSenders.length === 1) {
+        setNotificationMessage(`You have a new message`);
+      } else {
+        setNotificationMessage(`You have new messages`);
+      }
+      setShowNotification(true);
+    } else {
+      // Hide notification if no new messages
+      setShowNotification(false);
+      setNotificationMessage(""); // Optional: clear old message
+    }
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -137,12 +177,11 @@ function App() {
     return null;  // Return nothing since navigation happens
   }
 
-
-
-
-
-
-
+  // Define the notification trigger function to pass into context
+  const triggerNotification = (sender) => {
+    setNotificationMessage(`You got a new message from ${sender}`);
+    setShowNotification(true);
+  };
 
   return (
     <Router>
@@ -154,23 +193,39 @@ function App() {
         role={role} // Pass the role to Header
         username={username} // Pass the username here
       />
+
+      {showNotification && (
+        <CustomNotification
+          message={notificationMessage}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
+
       <div className="main-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/register" element={<Register handleRegister={handleRegister} />} />
-          <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
-          <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
-          {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
-          <Route path="/card" element={<AddCard username={username}  />} /> 
-          <Route path="/notificationbar" element={<NotificationBar username={username} />} />
-          <Route path="/chatcomponent" element={<ChatComponent username={username}/>} />
-          <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}/>} />
+        <MessageProvider username={username} triggerNotification={triggerNotification}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register handleRegister={handleRegister} onLogin={handleLogin}/>} />
+            <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
+            <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
+            {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
+            <Route path="/card" element={<AddCard username={username}  />} /> 
+            <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
 
-
-
-        </Routes>
+            <Route
+              path="/chatcomponent"
+              element={
+                <ChatComponent
+                  username={username}
+                  triggerNotification={triggerNotification}
+                />
+              }
+            />
+          </Routes>
+        </MessageProvider>
       </div>
+
       <Footer />
     </Router>
   );

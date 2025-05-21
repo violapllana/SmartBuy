@@ -12,39 +12,54 @@ using SmartBuy.Mappers;
 [ApiController]
 public class CardController : ControllerBase
 {
+    private readonly IMongoCollection<MongoCard> _cardCollection;
+
     private readonly ApplicationDbContext _context;
 
-    public CardController(ApplicationDbContext context)
+    public CardController(ApplicationDbContext context, IMongoClient mongoClient)
     {
         _context = context;
+
+        var database = mongoClient.GetDatabase("SmartBuy");
+        _cardCollection = database.GetCollection<MongoCard>("Cards");
     }
 
     // GET: api/Card
     [HttpGet]
     public async Task<ActionResult> GetCards()
     {
-        var cards = await _context.Cards.Select(c => new CardDto
-        {
-            Id = c.Id,
-            CardNumber = c.CardNumber,
-            ExpirationDate = c.ExpirationDate,
-            CVV = c.CVV,
-            CardType = c.CardType,
-            UserId = c.UserId,
-            CreatedAt = c.CreatedAt
-        }).ToListAsync();
+        // Fetch the cards from the MongoDB collection
+        var cards = await _cardCollection
+            .Find(_ => true) // This will find all cards
+            .Project(c => new CardDto
+            {
+                Id = c.Id,
+                CardNumber = c.CardNumber,
+                ExpirationDate = c.ExpirationDate,
+                CVV = c.CVV,
+                CardType = c.CardType,
+                UserId = c.UserId,
+                CreatedAt = c.CreatedAt
+            })
+            .ToListAsync();
+
         return Ok(cards);
     }
+
 
     // GET: api/Card/5
     [HttpGet("{id}")]
     public async Task<ActionResult> GetCardById(int id)
     {
-        var card = await _context.Cards.FindAsync(id);
+        var card = await _cardCollection
+            .Find(c => c.Id == id)
+            .FirstOrDefaultAsync();
+
         if (card == null)
         {
-            return NotFound();
+            return NotFound(); // If no card is found, return a 404 Not Found
         }
+
         return Ok(new CardDto
         {
             Id = card.Id,
@@ -56,6 +71,7 @@ public class CardController : ControllerBase
             CreatedAt = card.CreatedAt
         });
     }
+
 
     // POST: api/Card
     [HttpPost]

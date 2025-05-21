@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../Images/SmartBuyLogo.webp";
 import { FaUserCircle, FaBars, FaTimes, FaArrowLeft } from "react-icons/fa"; // Added FaBell for notifications
-import AdminNotificationBar from "./NotificationBar";
 
 const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser }) => {
   const [menuOpen, setMenuOpen] = useState(false); // For toggling menu on mobile
@@ -78,15 +77,20 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
               </button>
             </li>
             <li>
-              <button
-                className="text-lg font-semibold text-yellow-400 hover:text-yellow-600 transform hover:translate-y-[-4px] transition-all"
-                onClick={() => {
-                  navigate("/contact");
-                  setMenuOpen(false);
-                }}
-              >
-                Contact
-              </button>
+             <button
+  className="text-lg font-semibold text-yellow-400 hover:text-yellow-600 transform hover:translate-y-[-4px] transition-all"
+  onClick={() => {
+    if (role === "Admin") {
+      navigate("/chatcomponent");
+    } else {
+      navigate("/chatcomponentforusers");
+    }
+    setMenuOpen(false);
+  }}
+>
+  Contact
+</button>
+
             </li>
           </ul>
 
@@ -101,7 +105,12 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
                     setMenuOpen(false);
                   }}
                 />
-                <span>{role === "Admin" ? `${username} [Admin]` : username}</span>
+<span>
+  {username}{" "}
+  {role === "Admin" && (
+    <span className="text-yellow-500 font-bold animate-pulse">[ADMIN]</span>
+  )}
+</span>
 
                 {/* Log Out Button with hover effect */}
                 <button
@@ -128,8 +137,6 @@ const Header = ({ isLoggedIn, handleLogout, role, username, startChatWithUser })
         </nav>
       </div>
 
-      {/* Conditionally render the Admin Notification Bar */}
-      {role === "Admin" && <AdminNotificationBar />}
     </header>
   );
 };

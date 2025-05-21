@@ -186,12 +186,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")  // Your React app URL
+        builder.WithOrigins(
+                   "http://localhost:3000",   // React web app (dev)
+                   "http://localhost:8081"    // React Native Web default port
+               )
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
     });
 });
+
 
 
 builder.Services.AddSignalR();  // Add SignalR service
