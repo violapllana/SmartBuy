@@ -14,12 +14,7 @@ import Settings from './Pages/Settings';
 import AddCard from './Components/Card/Card';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
-<<<<<<< HEAD
 import CustomNotification from './Components/NotificationUtil';
-=======
-import { MessageProvider } from './Contexts/MessageContext';
-import CustomNotification from './Components/CustomNotification';
->>>>>>> e2f26a0 (20 Maj)
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -30,16 +25,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [redirect, setRedirect] = useState(false); // State to handle redirection
   const [storedAuthToken, setStoredAuthToken] = useState('');
-<<<<<<< HEAD
 const [notificationMessage, setNotificationMessage] = useState('');
 const [showNotification, setShowNotification] = useState(false);
 
 
 
-=======
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
->>>>>>> e2f26a0 (20 Maj)
 
   const fetchUserId = useCallback(async () => {
     if (username) {
@@ -90,13 +80,10 @@ const [showNotification, setShowNotification] = useState(false);
     window.location.href = '/'; // This will navigate to the homepage and reload the page
   };
 
-<<<<<<< HEAD
 
 
  
 
-=======
->>>>>>> e2f26a0 (20 Maj)
   const handleLogin = async (username, password) => {
     try {
       const response = await api.post('http://localhost:5108/login', { username, password });
@@ -140,7 +127,6 @@ const [showNotification, setShowNotification] = useState(false);
     }
   };
 
-<<<<<<< HEAD
 useEffect(() => {
   const interval = setInterval(async () => {
     const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
@@ -177,65 +163,6 @@ useEffect(() => {
 }, []);
 
 
-=======
-  const triggerNotification = (sender) => {
-          const storedSenders = JSON.parse(localStorage.getItem("newMessageSenders")) || [];
-if(storedSenders.length > 1){
-    setNotificationMessage(`You got a new message from ${sender} and others`);
-}
-else{
-      setNotificationMessage(`You got a new message from ${sender}`);
-
-}
-    setShowNotification(true);
-  };
-
-
-
-   useEffect(() => {
-    const fetchAndTriggerNotification = async () => {
-      const storedSenders = JSON.parse(localStorage.getItem("newMessageSenders")) || [];
-
-      if (storedSenders.length > 0) {
-        const senderId = storedSenders[0]; // You can handle multiple if you want
-
-        try {
-          const response = await api.get(`http://localhost:5108/users/getusernamefromid/${senderId}`);
-          const username = response.data;
-          triggerNotification(username);
-        } catch (err) {
-          console.error("Failed to get username:", err);
-          triggerNotification("Unknown User");
-        }
-      }
-    };
-
-    fetchAndTriggerNotification();
-  }, []);
-
-   const handleNotificationClose = () => {
-    setShowNotification(false);
-  };
-
-useEffect(() => {
-    const checkLocalStorage = () => {
-      const storedSenders = JSON.parse(localStorage.getItem("newMessageSenders")) || [];
-
-      if (storedSenders.length === 0) {
-        handleNotificationClose(); // Close notification if no senders left
-      }
-    };
-
-    // Check for changes initially
-    checkLocalStorage();
-
-    // Set an interval to check localStorage periodically for changes
-    const intervalId = setInterval(checkLocalStorage, 1000); // Check every second
-
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []); 
->>>>>>> e2f26a0 (20 Maj)
 
   if (loading) {
     return <div>Loading...</div>;
@@ -257,7 +184,6 @@ useEffect(() => {
         role={role} // Pass the role to Header
         username={username} // Pass the username here
       />
-<<<<<<< HEAD
      {showNotification && (
   <CustomNotification
     message={notificationMessage}
@@ -295,37 +221,6 @@ useEffect(() => {
 
         </Routes>
         
-=======
-
-      {showNotification && (
-        <CustomNotification
-          message={notificationMessage}
-          onClose={() => setShowNotification(false)}
-        />
-      )}
-
-      <div className="main-content">
-<MessageProvider username={username} triggerNotification={triggerNotification}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register handleRegister={handleRegister} />} />
-            <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
-            <Route path="/settings" element={<Settings handleLogout={handleLogout} />} />
-            <Route path="/card" element={<AddCard username={username} />} />
-            <Route
-              path="/chatcomponent"
-              element={
-                <ChatComponent
-                  username={username}
-                  triggerNotification={triggerNotification} // Pass the triggerNotification to ChatComponent
-                />
-              }
-            />
-            <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username} />} />
-          </Routes>
-        </MessageProvider>
->>>>>>> e2f26a0 (20 Maj)
       </div>
 
       <Footer />

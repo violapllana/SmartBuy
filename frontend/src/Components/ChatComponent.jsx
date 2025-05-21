@@ -4,13 +4,10 @@ import { useEffect, useState, useCallback, useContext} from "react";
 import api from "./api";
 import { FaRegUser, FaCommentDots, FaPaperPlane, FaBell} from "react-icons/fa"; // Import icons
 import logo from "../Images/SmartBuyLogo.webp"; // Ensure this is the correct path
-<<<<<<< HEAD
 import CustomNotification from "./NotificationUtil";
-=======
 import { MessageContext } from "../Contexts/MessageContext";
 import { useNavigate } from "react-router-dom";
 
->>>>>>> e2f26a0 (20 Maj)
 
 const ChatComponent = ({ username }) => {  // Add role prop
   const [connection, setConnection] = useState(null);
@@ -22,14 +19,11 @@ const ChatComponent = ({ username }) => {  // Add role prop
   const {chatMessages, setChatMessages} = useContext(MessageContext);
   const [uniqueSenders, setUniqueSenders] = useState([]);
   const [senderUsernames, setSenderUsernames] = useState({});
-<<<<<<< HEAD
-  const [role, setRole] = useState('');
-  const [newMessageSenders, setNewMessageSenders] = useState([]);
+
   const [loading, setLoading] = useState(true);
 const [showPopup, setShowPopup] = useState(false);
 const [notificationMessage, setNotificationMessage] = useState('');
 const [showNotificationBar, setShowNotificationBar] = useState(false);
-=======
   const [role, setRole] = useState('') ;
   const { newMessageSenders, setNewMessageSenders } = useContext(MessageContext);
   const navigate = useNavigate();
@@ -37,7 +31,6 @@ const [showNotificationBar, setShowNotificationBar] = useState(false);
 
 
 
->>>>>>> e2f26a0 (20 Maj)
 
 
 const triggerNotification = (sender) => {
@@ -154,7 +147,6 @@ useEffect(() => {
 
 
   
-<<<<<<< HEAD
   // Update newMessageSenders when new messages arrive via SignalR
 useEffect(() => {
   if (!userId) return;
@@ -250,7 +242,6 @@ useEffect(() => {
   const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
   setShowNotificationBar(savedSenders.length > 0);
 }, []);
-=======
 //   // Update newMessageSenders when new messages arrive via SignalR
 // useEffect(() => {
 //   if (!connection) return;
@@ -281,7 +272,6 @@ useEffect(() => {
 //     });
 //   });
 // }, [connection, userId]);
->>>>>>> e2f26a0 (20 Maj)
 
 
 
@@ -300,14 +290,11 @@ const handleSenderClick = async (sender) => {
     localStorage.setItem("readSenders", JSON.stringify(updatedReadSenders));
   }
 
-<<<<<<< HEAD
 
 
 
   // ✅ Remove sender from newMessageSenders and save to localStorage
-=======
   // Remove from newMessageSenders
->>>>>>> e2f26a0 (20 Maj)
   setNewMessageSenders(prev => {
     const updatedSenders = prev.filter(s => s !== sender);
     localStorage.setItem("newMessageSenders", JSON.stringify(updatedSenders));
@@ -326,7 +313,6 @@ const handleSenderClick = async (sender) => {
 }
 };
 
-<<<<<<< HEAD
 
 
 
@@ -335,9 +321,7 @@ const handleSenderClick = async (sender) => {
 useEffect(() => {
   const readSenders = JSON.parse(localStorage.getItem('readSenders')) || [];
   const storedNewMessageSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
-=======
->>>>>>> e2f26a0 (20 Maj)
-
+});
 
 
 

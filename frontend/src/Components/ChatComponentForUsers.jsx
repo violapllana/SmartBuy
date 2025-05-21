@@ -17,19 +17,11 @@ const ChatComponentForUsers = ({ username }) => {
     try {
       const res = await api.get(`http://localhost:5108/users/by-username?username=${username}`);
       setUserId(res.data.id);
-<<<<<<< HEAD
-      console.log(adminIds);
-=======
->>>>>>> e2f26a0 (20 Maj)
     } catch (err) {
       console.error("Failed to fetch user ID", err);
     }
   }, [username]);
 
-<<<<<<< HEAD
-  // Callback to fetch admin IDs
-=======
->>>>>>> e2f26a0 (20 Maj)
   const fetchAdminIds = useCallback(async () => {
     try {
       const res = await api.get('http://localhost:5108/users/admins');
@@ -41,10 +33,6 @@ const ChatComponentForUsers = ({ username }) => {
   }, []);
 
   useEffect(() => {
-<<<<<<< HEAD
-    fetchAdminIds();  // Call the fetchAdminIds function
-  }, [fetchAdminIds]);
-=======
     fetchAdminIds();
   }, [fetchAdminIds]);
 
@@ -61,7 +49,6 @@ const ChatComponentForUsers = ({ username }) => {
       throw err; // rethrow for other errors
     }
   };
->>>>>>> e2f26a0 (20 Maj)
 
   const fetchMessages = useCallback(async () => {
     if (!userId) return;
@@ -177,36 +164,6 @@ const ChatComponentForUsers = ({ username }) => {
         <h4 className="text-3xl font-semibold mb-6 text-green-700">Chat with us</h4>
         <div className="flex-1 overflow-y-auto mb-6 border border-gray-300 rounded-lg p-6 bg-gray-50">
           <div className="space-y-4">
-<<<<<<< HEAD
-            {chatMessages.length === 0 ? (
-              <p className="text-center text-gray-500">No messages yet</p>  
-            ) : (
-              chatMessages.map((msg, i) => (
-                <div key={i} className={`text-sm ${msg.userId === userId ? 'text-right' : 'text-left'}`} style={{ display: 'flex', alignItems: 'center', justifyContent: msg.userId === userId ? 'flex-end' : 'flex-start' }}>
-                  <p style={{ marginRight: msg.userId === userId ? '20px' : '0', marginLeft: msg.userId !== userId ? '10px' : '0', display: 'flex', alignItems: 'center' }}>
-                    {msg.userId === userId ? (
-                      <strong>You:</strong>
-                    ) : (
-                      <img 
-                        src={logo} 
-                        alt="Admin Logo" 
-                        style={{
-                          width: "35px", // Size of the logo
-                          height: "35px", 
-                          borderRadius: "50%", // Circle shape
-                          border: "3px solid #4CAF50", // Green border for a cool effect
-                          marginRight: "15px", // More space to the right
-                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adding a subtle shadow for depth
-                          verticalAlign: 'middle'
-                        }} 
-                      />
-                    )}
-                    {msg.messageContent}
-                  </p>
-                </div>
-              ))
-            )}
-=======
             {chatMessages.map((msg) => (
               <div
                 key={msg.id}
@@ -242,7 +199,6 @@ const ChatComponentForUsers = ({ username }) => {
                 </p>
               </div>
             ))}
->>>>>>> e2f26a0 (20 Maj)
           </div>
         </div>
 
