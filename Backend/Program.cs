@@ -13,16 +13,32 @@ using Backend.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Backend.SignalR;
-using YourNamespace.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
+
+
+
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
-builder.Services.AddSignalR();  // Add SignalR service
+
+
+
+
+
+
+
+
+
 
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
+
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     // Specify OpenAPI version
@@ -54,14 +70,36 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+
+
+
+
+
+
+
+
+
+
 // MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
+
+
+
 
 if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(mongoDatabaseName))
 {
     throw new InvalidOperationException("MongoDB configuration is missing.");
 }
+
+
+
+
+
+
+
+
 
 // Register MongoDB context
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -132,25 +170,43 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = jwtAudience,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigninKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])),
         RoleClaimType = ClaimTypes.Role
     };
+}).AddCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
 });
 
 // CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins(
+                   "http://localhost:3000",   // React web app (dev)
+                   "http://localhost:8081"    // React Native Web default port
+               )
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
     });
 });
 
+
+
+builder.Services.AddSignalR();  // Add SignalR service
+
+
+
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
 builder.Services.AddHostedService<DataSyncBackgroundService>();
+
+builder.Services.AddScoped<ChatHub>(); // Add this
+
 
 builder.Logging.AddConsole();
 
@@ -168,10 +224,12 @@ builder.Services.AddSingleton<StripeClient>(serviceProvider =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("ADMIN"));
+        policy.RequireRole("Admin"));
     options.AddPolicy("UserOnly", policy =>
-        policy.RequireRole("USER"));
+        policy.RequireRole("User"));
 });
+
+
 
 // Build the application
 var app = builder.Build();
@@ -188,12 +246,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowAll");
 
-app.UseCors("CorsPolicy");
+app.UseWebSockets(); // This allows WebSocket connections for SignalR
+
+
+
 
 app.MapHub<ChatHub>("/chatHub");
 
-app.Run();
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -219,7 +280,7 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    string[] roleNames = { "ADMIN", "USER" };
+    string[] roleNames = { "Admin", "User" };
 
     foreach (var roleName in roleNames)
     {
@@ -230,3 +291,4 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
         }
     }
 }
+app.Run();

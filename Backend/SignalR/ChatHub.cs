@@ -1,13 +1,8 @@
-using Backend.SignalR;  // Ensure correct namespace for Message
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using SmartBuy.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
-namespace YourNamespace.SignalR
+namespace Backend.SignalR
 {
     public class ChatHub : Hub
     {
@@ -17,31 +12,62 @@ namespace YourNamespace.SignalR
         {
             _context = context;
         }
+        private static readonly ConcurrentDictionary<string, string> UserConnections = new();
 
-        // Send a message, save to DB, and broadcast to all clients
-        public async Task SendMessage(string senderId, string receiverId, string messageContent)
+        public override Task OnConnectedAsync()
         {
-            // Save the message to the database
-            var message = new Message
+            var httpContext = Context.GetHttpContext();
+            var userId = httpContext.Request.Query["userId"].ToString();
+
+            if (!string.IsNullOrEmpty(userId))
             {
-                SenderId = senderId,
-                ReceiverId = receiverId,
-                MessageContent = messageContent,
-                SentAt = DateTime.UtcNow // You can use DateTime.Now if you want local time
+                UserConnections[userId] = Context.ConnectionId;
+                Console.WriteLine($"✅ User {userId} connected with ConnectionId: {Context.ConnectionId}");
+            }
+
+            return base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            var userId = UserConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                UserConnections.TryRemove(userId, out _);
+                Console.WriteLine($"❌ User {userId} disconnected.");
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task SendPrivateMessage(string receiverUserId, string senderName, string message)
+        {
+            if (UserConnections.TryGetValue(receiverUserId, out var receiverConnectionId))
+            {
+                await Clients.Client(receiverConnectionId)
+                    .SendAsync("ReceiveMessage", senderName, message);
+
+                Console.WriteLine($"📤 Sent from {senderName} to {receiverUserId}: {message}");
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ User {receiverUserId} is not connected.");
+            }
+
+            // Save the message to the database
+            var msg = new Message
+            {
+                UserId = senderName,
+                ReceiverId = receiverUserId,
+                MessageContent = message,
+                SentAt = DateTime.UtcNow,
+                ViewedByAdmin = false
             };
 
-            // Add the message to the DbContext
-            _context.Messages.Add(message);
+            _context.Messages.Add(msg);  // ✅ This now works
             await _context.SaveChangesAsync();
 
-            // Broadcast to all connected clients
-            await Clients.All.SendAsync("ReceiveMessage", senderId, receiverId, messageContent);
         }
 
-        // Endpoint to retrieve all messages from the database, ordered by timestamp
-        public async Task<List<Message>> GetAllMessages()
-        {
-            return await _context.Messages.OrderBy(m => m.SentAt).ToListAsync();
-        }
     }
 }

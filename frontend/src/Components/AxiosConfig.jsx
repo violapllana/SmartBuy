@@ -6,9 +6,6 @@ const api = axios.create({
 });
 
 
-
- 
-
 const setupInterceptors = (handleLogout) => {
   api.interceptors.request.use(config => {
     const token = Cookies.get('accessToken');

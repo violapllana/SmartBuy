@@ -1,3 +1,4 @@
+using Backend.Models;
 using Backend.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -20,6 +21,9 @@ namespace SmartBuy.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

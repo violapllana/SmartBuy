@@ -41,8 +41,8 @@ const Login = ({ onLogin }) => {
       // Redirect to the previous page or default to home
       navigate(from);
     } catch (error) {
-      console.error('Kyqja dështoi:', error.response?.data?.message || error.message);
-      setError('Emri i përdoruesit ose fjalëkalimi është i pasaktë. Ju lutem kontrolloni të dhënat dhe provoni përsëri.');
+      console.error('Log in failed:', error.response?.data?.message || error.message);
+setError('Username or password is incorrect. Please check the details and try again.');
     }
   };
 

@@ -190,6 +190,42 @@ public class AuthController : ControllerBase
     }
 
 
+
+
+
+
+    [HttpGet("users/getusernamefromid/{id}")]
+    public async Task<IActionResult> GetUsernameFromId([FromRoute] string id)
+    {
+        // Check if id is valid
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("User ID is required.");
+        }
+
+        // Fetch the user by ID
+        var user = await _userManager.FindByIdAsync(id);
+
+        // Handle case when the user is not found
+        if (user == null)
+        {
+            return NotFound($"User with ID {id} not found.");
+        }
+
+        // Return the username
+        return Ok(user.UserName);
+    }
+
+
+
+
+
+
+
+
+
+
+
     [HttpGet("users/admins")]
     public async Task<IActionResult> GetAllAdmins()
     {
