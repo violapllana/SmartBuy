@@ -15,6 +15,8 @@ import AddCard from './Components/Card/Card';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
 import CustomNotification from './Components/NotificationUtil';
+import Wishlist from './Components/WishList/Wishlist';
+
 
 // Import your MessageProvider context here
 import { MessageProvider } from './Contexts/MessageContext';
@@ -211,6 +213,7 @@ function App() {
             <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
             {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
             <Route path="/card" element={<AddCard username={username}  />} /> 
+            <Route path="/wishlist" element={<Wishlist username={username} />} />
             <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
 
             <Route
