@@ -4,15 +4,13 @@ import Cookies from 'js-cookie';
 const AddCard = () => {
   const [cardData, setCardData] = useState({
     cardNumber: '',
-    expirationDate: '',
     CVV: '',
     cardType: '',
     userId: '',
-    createdAt: '',
+    expirationDate: '',  
   });
 
   const [successMessage, setSuccessMessage] = useState(''); 
-
 
   useEffect(() => {
     const storedUsername = Cookies.get('username');
@@ -20,7 +18,6 @@ const AddCard = () => {
       fetchUserIdFromUsername(storedUsername); 
     }
   }, []);
-
 
   const fetchUserIdFromUsername = async (username) => {
     try {
@@ -32,24 +29,21 @@ const AddCard = () => {
       setCardData(prev => ({
         ...prev,
         userId: data.id, 
-        createdAt: new Date().toISOString(), 
       }));
     } catch (error) {
       console.error('Error fetching userId:', error);
     }
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCardData({ ...cardData, [name]: value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
+ 
     for (const key in cardData) {
       if (!cardData[key]) {
         alert(`Please fill in the ${key} field.`);
@@ -58,26 +52,31 @@ const AddCard = () => {
     }
 
     try {
+  
+      const payload = {
+        CardNumber: cardData.cardNumber,
+        ExpirationDate: new Date(cardData.expirationDate),  
+        CVV: cardData.CVV,
+        CardType: cardData.cardType,
+        UserId: cardData.userId,
+      };
+
       const res = await fetch('http://localhost:5108/api/Card', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cardData),
+        body: JSON.stringify(payload),
         credentials: 'include',
       });
 
       if (res.ok) {
-
         setSuccessMessage('Card created successfully!');
-        
-
-        setCardData(prev => ({
-          ...prev,
+        setCardData({
           cardNumber: '',
-          expirationDate: '',
           CVV: '',
           cardType: '',
-          createdAt: new Date().toISOString(),
-        }));
+          userId: cardData.userId,
+          expirationDate: '',
+        });
       } else {
         alert('Failed to add card.');
       }
@@ -92,13 +91,6 @@ const AddCard = () => {
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-xl w-full">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="flex justify-center mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h.01M12 14v.01M4.93 4.93l.01.01M19.07 4.93l.01.01M4.93 19.07l.01.01M19.07 19.07l.01.01M2 12h.01M22 12h.01M12 2v.01M12 22v.01" />
-              </svg>
-            </div>
-          </div>
           <h1 className="text-xl font-semibold text-blue-600">SmartBuy</h1>
           <div className="bg-gray-100 text-gray-700 mt-4 p-3 rounded-md">
             <h2 className="text-lg font-medium">Credit Card Payment Form</h2>
@@ -126,16 +118,14 @@ const AddCard = () => {
 
           {/* Expiration Date */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Expiration Date (MM/YY)*</label>
+            <label className="block text-gray-700 font-medium mb-1">Expiration Date*</label>
             <input
-              type="text"
+              type="month"              
               name="expirationDate"
               value={cardData.expirationDate}
               onChange={handleChange}
               required
-              maxLength={5}
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="MM/YY"
             />
           </div>
 
