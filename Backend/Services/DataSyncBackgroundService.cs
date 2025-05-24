@@ -32,7 +32,7 @@ public class DataSyncBackgroundService : BackgroundService
         {
             _logger.LogInformation("Syncing data from SQL Server to MongoDB...");
             await SyncDataAsync();
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(4), stoppingToken);
         }
     }
 

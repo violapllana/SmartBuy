@@ -203,6 +203,10 @@ builder.Services.AddSignalR();  // Add SignalR service
 
 
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
+
+
+
+
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
 builder.Services.AddScoped<ChatHub>(); // Add this
@@ -275,6 +279,12 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartBuy API v1");
 });
 
+
+
+
+
+
+
 // Ensure Roles Exist
 static async Task EnsureRoles(IServiceProvider serviceProvider)
 {
@@ -291,4 +301,10 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
         }
     }
 }
+
+
+
+
+
+
 app.Run();

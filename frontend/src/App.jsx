@@ -128,6 +128,7 @@ function App() {
 
  useEffect(() => {
   const interval = setInterval(async () => {
+
     const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
     const updatedSenders = [];
 
@@ -178,10 +179,13 @@ function App() {
   }
 
   // Define the notification trigger function to pass into context
-  const triggerNotification = (sender) => {
-    setNotificationMessage(`You got a new message from ${sender}`);
-    setShowNotification(true);
-  };
+ const triggerNotification = (sender) => {
+  const token = Cookies.get('accessToken');
+
+
+  setNotificationMessage(`You got a new message from ${sender}`);
+  setShowNotification(true);
+};
 
   return (
     <Router>
