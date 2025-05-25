@@ -1,12 +1,19 @@
 {
   "Version": 1,
-  "Hash": "XpH/qeznyYDGn+T2L1p6rJ5PJFgQpNqt24RwqcyL9DE=",
+  "Hash": "pBBdJnjszovboPs8/HXqEAtb4XG9+9UZcvOv4VJSxqQ=",
   "Source": "SmartBuy",
   "BasePath": "_content/SmartBuy",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "SmartBuy\\wwwroot",
+      "Source": "SmartBuy",
+      "ContentRoot": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\Lab2\\SmartBuy\\backend\\wwwroot\\",
+      "BasePath": "_content/SmartBuy",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
 }

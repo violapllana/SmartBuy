@@ -4,17 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SmartBuy.Data;
-
+using SmartBuy.Models;
+using SmartBuy.Mappers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _env;
 
-    public ProductController(ApplicationDbContext context)
+    public ProductController(ApplicationDbContext context, IWebHostEnvironment env)
     {
         _context = context;
+        _env = env;
     }
 
     [HttpGet]
@@ -35,9 +40,6 @@ public class ProductController : ControllerBase
         return Ok(product.ToProductDto());
     }
 
-
-
-
     [HttpPut("update-stock/{id}")]
     public async Task<IActionResult> UpdateProductStock(int id, [FromBody] StockUpdateDto stockUpdateDto)
     {
@@ -47,30 +49,50 @@ public class ProductController : ControllerBase
             return NotFound();
         }
 
-        // Check if the stock is sufficient
         if (product.StockQuantity < stockUpdateDto.StockQuantity)
         {
             return BadRequest("Not enough stock available.");
         }
 
-        // Update the stock quantity
         product.StockQuantity -= stockUpdateDto.StockQuantity;
-
         await _context.SaveChangesAsync();
 
         return Ok(product.ToProductDto());
     }
 
-
-
-
-
-
-
     [HttpPost]
-    public async Task<ActionResult> CreateProduct(ProductCreateDto productDto)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult> CreateProduct([FromForm] ProductCreateDto productDto)
     {
-        var product = productDto.ToProductFromCreateDto();
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            StockQuantity = productDto.StockQuantity,
+            Category = productDto.Category,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        if (productDto.ImageFile != null)
+        {
+            var imagesPath = Path.Combine(_env.WebRootPath, "images");
+
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.ImageFile.FileName);
+            var filePath = Path.Combine(imagesPath, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await productDto.ImageFile.CopyToAsync(stream);
+            }
+
+            product.ImageFile = "/images/" + uniqueFileName;
+        }
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
@@ -79,7 +101,8 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductUpdateDto productDto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductUpdateDto productDto)
     {
         var product = await _context.Products.FindAsync(id);
         if (product == null)
@@ -92,8 +115,27 @@ public class ProductController : ControllerBase
         product.Price = productDto.Price;
         product.StockQuantity = productDto.StockQuantity;
         product.Category = productDto.Category;
-        product.ImageUrl = productDto.ImageUrl;
         product.CreatedAt = productDto.CreatedAt;
+
+        if (productDto.ImageFile != null)
+        {
+            var imagesPath = Path.Combine(_env.WebRootPath, "images");
+
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.ImageFile.FileName);
+            var filePath = Path.Combine(imagesPath, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await productDto.ImageFile.CopyToAsync(stream);
+            }
+
+            product.ImageFile = "/images/" + uniqueFileName;
+        }
 
         await _context.SaveChangesAsync();
         return Ok(product.ToProductDto());
@@ -113,3 +155,4 @@ public class ProductController : ControllerBase
         return NoContent();
     }
 }
+
