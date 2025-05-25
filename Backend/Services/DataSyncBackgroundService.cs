@@ -97,7 +97,7 @@ public class DataSyncBackgroundService : BackgroundService
                     Price = sqlProduct.Price,
                     StockQuantity = sqlProduct.StockQuantity,
                     Category = sqlProduct.Category,
-                    ImageUrl = sqlProduct.ImageUrl,
+                    ImageFile = sqlProduct.ImageFile,
                     CreatedAt = sqlProduct.CreatedAt
                 };
 
@@ -108,7 +108,7 @@ public class DataSyncBackgroundService : BackgroundService
                     .Set("Price", mongoProduct.Price)
                     .Set("StockQuantity", mongoProduct.StockQuantity)
                     .Set("Category", mongoProduct.Category)
-                    .Set("ImageUrl", mongoProduct.ImageUrl)
+                    .Set("ImageFile", mongoProduct.ImageFile)
                     .Set("CreatedAt", mongoProduct.CreatedAt);
 
                 await productCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
