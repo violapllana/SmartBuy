@@ -16,6 +16,9 @@ import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
 import CustomNotification from './Components/NotificationUtil';
 import Wishlist from './Components/WishList/Wishlist';
+import Products from './Components/Products/Index';
+import ProductList from './Components/Products/List';
+
 
 
 // Import your MessageProvider context here
@@ -215,6 +218,8 @@ function App() {
             <Route path="/card" element={<AddCard username={username}  />} /> 
             <Route path="/wishlist" element={<Wishlist username={username} />} />
             <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
+            <Route path="/products" element={<Products username={username} />} />
+            <Route path="/productlist" element={<ProductList username={username} />} />
 
             <Route
               path="/chatcomponent"
