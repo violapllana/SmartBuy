@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import api from '../api';
 
 const categoryOptions = [
   'Smartphones dhe Aksesore',
@@ -28,12 +29,32 @@ const nameOptions = [
   'Smart TV'
 ];
 
-const ProductList = () => {
+const ProductList = ({username}) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortOption, setSortOption] = useState('newest');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [nameFilter, setNameFilter] = useState('');
+    const [userId, setUserId] = useState(null);
+  
+
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      if (!username) return;
+
+      try {
+        const response = await api.get(`http://localhost:5108/users/by-username?username=${username}`);
+        if (response.data && response.data.id) {
+          setUserId(response.data.id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch userId:", err);
+      }
+    };
+
+    fetchUserId();
+  }, [username]);
 
   useEffect(() => {
     fetchProducts();
@@ -109,9 +130,51 @@ const ProductList = () => {
     setNameFilter(e.target.value);
   };
 
-  const addToCart = (product) => {
-    // implement add to cart logic
-  };
+const handleAddToCart = async (productId, quantity) => {
+  if (!userId) {
+    console.error("User ID not available.");
+    return;
+  }
+
+  try {
+    // 1. Check if user has a pending order (returns boolean)
+    const { data: hasPendingOrder } = await api.get(`/Order/HasPendingOrder/${userId}`);
+
+    if (!hasPendingOrder) {
+      // 2a. No pending order, create a new order with product
+      // Backend expects DTO like: { userId, products: [{ productId, quantity }] }
+      await api.post(`/Order`, {
+        userId,
+        products: [{ productId, quantity }],
+      });
+
+    } else {
+      // 2b. Pending order exists, get that pending order's Id
+      const { data: orders } = await api.get(`/Order/GetOrdersByUser/${userId}`);
+
+      // Find the pending order from orders list
+      const pendingOrder = orders.find(o => o.status === "Pending");
+      if (!pendingOrder) {
+        console.error("Pending order not found after check.");
+        return;
+      }
+
+      // 3. Add product to existing pending order
+      // Backend expects AddProductToOrderRequestDto: { orderId, productId, quantity }
+      await api.post(`/Order/AddProductToOrder`, {
+        orderId: pendingOrder.id,
+        productId,
+        quantity,
+      });
+    }
+
+    alert("Product added to cart!");
+  } catch (err) {
+    console.error("Failed to add product to cart", err);
+  }
+};
+
+
 
   const addToWishlist = (product) => {
     // implement add to wishlist logic
@@ -194,25 +257,26 @@ const ProductList = () => {
 
             {/* Buttons */}
             <div className="flex items-center justify-between w-full gap-2 mt-auto">
-              <button
-                onClick={() => addToCart(product)}
-                className="border border-orange-500 text-orange-500 hover:bg-orange-100 font-semibold rounded-full px-3 py-1 text-xs flex items-center gap-1"
-              >
-                ADD TO
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="orange"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                </svg>
-              </button>
+             <button
+  onClick={() => handleAddToCart(product.id, 1)}
+  className="border border-orange-500 text-orange-500 hover:bg-orange-100 font-semibold rounded-full px-3 py-1 text-xs flex items-center gap-1"
+>
+  ADD TO
+  <svg
+    className="w-4 h-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="orange"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="9" cy="21" r="1" />
+    <circle cx="20" cy="21" r="1" />
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+  </svg>
+</button>
+
               <button
                 onClick={() => addToWishlist(product)}
                 className="border border-gray-300 hover:border-yellow-400 rounded-full px-2 py-1"

@@ -23,6 +23,10 @@ namespace SmartBuy.Controllers
             _mongoCollection = mongoDatabase.GetCollection<MongoOrder>("orders");
         }
 
+
+
+
+
         // Get Orders from SQL Database
         [HttpGet]
         public async Task<ActionResult> GetOrders()
@@ -35,6 +39,137 @@ namespace SmartBuy.Controllers
 
             return Ok(orders);
         }
+
+
+
+
+
+
+        [HttpGet("GetOrdersByUser/{userId}")]
+        public async Task<ActionResult> GetOrdersByUser([FromRoute] string userId)
+        {
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)                   // filter by userId
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Select(o => o.ToOrderDto())
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
+
+
+        [HttpGet("HasPendingOrder/{userId}")]
+        public async Task<ActionResult<bool>> HasPendingOrder(string userId)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == userId);
+
+            bool hasOrder = order != null;
+
+            return Ok(hasOrder);
+        }
+
+
+
+
+
+        [HttpPost("AddProductToOrder")]
+        public async Task<IActionResult> AddProductToOrder([FromBody] AddProductToOrderRequestDto request)
+        {
+            // Load order including OrderProducts and their Products (to get price)
+            var order = await _context.Orders
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(o => o.Id == request.OrderId && o.Status == "Pending");
+
+            if (order == null)
+                return NotFound("Pending order not found.");
+
+            // Check if product already in order
+            var orderProduct = order.OrderProducts.FirstOrDefault(op => op.ProductId == request.ProductId);
+
+            if (orderProduct != null)
+            {
+                // Just increase quantity
+                orderProduct.Quantity += request.Quantity;
+            }
+            else
+            {
+                // Find product to add
+                var product = await _context.Products.FindAsync(request.ProductId);
+                if (product == null)
+                    return NotFound("Product not found.");
+
+                // Add new OrderProduct and assign the Product reference (important)
+                order.OrderProducts.Add(new OrderProduct
+                {
+                    ProductId = product.Id,
+                    Quantity = request.Quantity,
+                    OrderId = order.Id,
+                    Product = product,
+                    Price = product.Price   // <== ADD THIS
+
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Reload order with product info to make sure Product.Price is populated
+            order = await _context.Orders
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(o => o.Id == request.OrderId);
+
+            // Calculate total price using loaded products
+            var totalPrice = order.OrderProducts.Sum(op => op.Quantity * op.Product.Price);
+
+            // Prepare response DTO with product prices
+            var orderDto = new OrderDto
+            {
+                Id = order.Id,
+                UserId = order.UserId,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                TotalPrice = order.OrderProducts.Sum(op => op.Quantity * op.Product.Price),
+                Products = order.OrderProducts.Select(op => new OrderProductDto
+                {
+                    ProductId = op.ProductId,
+                    Quantity = op.Quantity,
+                    Price = op.Product.Price,
+                    ProductName = op.Product?.Name ?? "",
+                    ProductImage = op.Product?.ImageFile
+                }).ToList()
+            };
+
+
+            return Ok(orderDto);
+        }
+
+
+
+
+
+
+
+
+
+        [HttpPatch("UpdateStatus/{orderId}")]
+        public async Task<ActionResult> UpdateStatus([FromRoute] int orderId, [FromBody] string newStatus)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return NotFound($"Order with id {orderId} not found.");
+            }
+
+            order.Status = newStatus;
+            await _context.SaveChangesAsync();
+
+            return NoContent(); // 204 No Content means success with no response body
+        }
+
 
         // Get a specific Order from SQL Database by ID
         [HttpGet("{id}")]

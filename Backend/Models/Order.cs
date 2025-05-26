@@ -21,6 +21,7 @@ namespace SmartBuy.Models
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public string Status { get; set; } = "Pending";  // <-- add this
 
     }
 
@@ -48,6 +49,7 @@ namespace SmartBuy.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
+        public string Status { get; set; } = "Pending";  // <-- add this
 
 
 
