@@ -10,7 +10,7 @@ public static class ProductMapper
             Price = productModel.Price,
             StockQuantity = productModel.StockQuantity,
             Category = productModel.Category,
-            ImageUrl = productModel.ImageUrl, 
+            ImageFile = productModel.ImageFile, // ndryshuar nga ImageUrl
             CreatedAt = productModel.CreatedAt
         };
     }
@@ -24,8 +24,9 @@ public static class ProductMapper
             Price = productDto.Price,
             StockQuantity = productDto.StockQuantity,
             Category = productDto.Category,
-            ImageUrl = productDto.ImageUrl,
-            CreatedAt = DateTime.UtcNow 
+            CreatedAt = DateTime.UtcNow
+            // ImagePath vendoset në controller pas ruajtjes së skedarit
         };
     }
 }
+

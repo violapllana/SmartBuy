@@ -21,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
 
@@ -33,10 +32,8 @@ builder.Services.AddControllers(); // Register controllers
 
 
 
-
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
-
 
 
 builder.Services.AddSwaggerGen(c =>
@@ -80,11 +77,9 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-
 // MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
-
 
 
 
@@ -92,7 +87,6 @@ if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(mongoDat
 {
     throw new InvalidOperationException("MongoDB configuration is missing.");
 }
-
 
 
 
@@ -121,7 +115,6 @@ if (string.IsNullOrEmpty(stripeSecretKey) || string.IsNullOrEmpty(stripePublisha
 }
 Console.WriteLine("Stripe SecretKey: " + stripeSecretKey);
 Console.WriteLine("Stripe Publishable Key: " + stripePublishableKey);
-
 
 // Configure Stripe settings
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
@@ -197,9 +190,7 @@ builder.Services.AddCors(options =>
 });
 
 
-
 builder.Services.AddSignalR();  // Add SignalR service
-
 
 
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
@@ -211,9 +202,7 @@ builder.Services.AddHostedService<DataSyncBackgroundService>();
 
 builder.Services.AddScoped<ChatHub>(); // Add this
 
-
 builder.Logging.AddConsole();
-
 
 
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
@@ -223,7 +212,6 @@ builder.Services.AddSingleton<StripeClient>(serviceProvider =>
     return new StripeClient(stripeSettings.SecretKey);
 });
 
-
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
@@ -232,7 +220,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserOnly", policy =>
         policy.RequireRole("User"));
 });
-
 
 
 // Build the application
@@ -256,9 +243,7 @@ app.UseWebSockets(); // This allows WebSocket connections for SignalR
 
 
 
-
 app.MapHub<ChatHub>("/chatHub");
-
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -272,6 +257,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage(); // Enable detailed errors in dev
 }
+
+ 
+ app.UseStaticFiles(); // për të lejuar servimin e imazheve
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -308,3 +296,4 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
 
 
 app.Run();
+

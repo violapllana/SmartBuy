@@ -6301,31 +6301,43 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\begus\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+=======
+    "C:\\Users\\reaja.DESKTOP-RA6KKDK\\.nuget\\packages\\": {}
+>>>>>>> a5cf6832cf5184296dd42c5c5e13d3d55a15e7ab
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
       "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+=======
+      "projectUniqueName": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\Lab2\\SmartBuy\\backend\\SmartBuy.csproj",
+      "projectName": "SmartBuy",
+      "projectPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\Lab2\\SmartBuy\\backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\reaja.DESKTOP-RA6KKDK\\OneDrive\\Desktop\\Lab2\\SmartBuy\\backend\\obj\\",
+>>>>>>> a5cf6832cf5184296dd42c5c5e13d3d55a15e7ab
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
+<<<<<<< HEAD
         "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+=======
+        "C:\\Users\\reaja.DESKTOP-RA6KKDK\\AppData\\Roaming\\NuGet\\NuGet.Config"
+>>>>>>> a5cf6832cf5184296dd42c5c5e13d3d55a15e7ab
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -6343,8 +6355,12 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
+<<<<<<< HEAD
       },
       "SdkAnalysisLevel": "9.0.200"
+=======
+      }
+>>>>>>> a5cf6832cf5184296dd42c5c5e13d3d55a15e7ab
     },
     "frameworks": {
       "net8.0": {
@@ -6414,7 +6430,11 @@
             "privateAssets": "all"
           }
         },
+<<<<<<< HEAD
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+=======
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+>>>>>>> a5cf6832cf5184296dd42c5c5e13d3d55a15e7ab
       }
     }
   }
