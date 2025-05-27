@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "KiwveuhJiAa4bVmApbm5hN2zN+ofWOcl1izFbrExEog=",
+  "Hash": "0acochT+hV0pb/qwR1HwVLeRkFxevRa9klQIkdeDUBY=",
   "Source": "SmartBuy",
   "BasePath": "_content/SmartBuy",
   "Mode": "Default",
@@ -36,6 +36,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\12828b20-9705-43f4-80b1-0b0cddb786e3.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\440281.webp",
+      "SourceId": "SmartBuy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\",
+      "BasePath": "_content/SmartBuy",
+      "RelativePath": "images/440281#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "z0p9s4iqmb",
+      "Integrity": "DU2NTxhEugLhcDaVniFD5B9wjoQfVjYoWoNdCZKZ3Fo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\440281.webp"
     },
     {
       "Identity": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg",
@@ -181,6 +202,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-W4cwYj7VGvPm+/U7kF47G+TFG3mbyElIiAluXE0AFeE="
+        }
+      ]
+    },
+    {
+      "Route": "images/440281.webp",
+      "AssetFile": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\440281.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "44840"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DU2NTxhEugLhcDaVniFD5B9wjoQfVjYoWoNdCZKZ3Fo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 26 May 2025 22:13:27 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-DU2NTxhEugLhcDaVniFD5B9wjoQfVjYoWoNdCZKZ3Fo="
+        }
+      ]
+    },
+    {
+      "Route": "images/440281.z0p9s4iqmb.webp",
+      "AssetFile": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\440281.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "44840"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DU2NTxhEugLhcDaVniFD5B9wjoQfVjYoWoNdCZKZ3Fo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 26 May 2025 22:13:27 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "z0p9s4iqmb"
+        },
+        {
+          "Name": "label",
+          "Value": "images/440281.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-DU2NTxhEugLhcDaVniFD5B9wjoQfVjYoWoNdCZKZ3Fo="
         }
       ]
     },

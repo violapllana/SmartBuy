@@ -24,6 +24,7 @@ import ProductList from './Components/Products/List';
 // Import your MessageProvider context here
 import { MessageProvider } from './Contexts/MessageContext';
 import Order from './Components/Order';
+import StripePayment from './Components/Stripe/StripePayment';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -226,6 +227,8 @@ function App() {
             <Route path="/products" element={<Products username={username} />} />
             <Route path="/productlist" element={<ProductList username={username} />} />
             <Route path="/order" element={<Order username={username} />} />
+                        <Route path="/stripepayment" element={<StripePayment username={username} />} />
+
 
 
             <Route

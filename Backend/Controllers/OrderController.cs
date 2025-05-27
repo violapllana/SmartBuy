@@ -154,21 +154,40 @@ namespace SmartBuy.Controllers
 
 
 
-        [HttpPatch("UpdateStatus/{orderId}")]
-        public async Task<ActionResult> UpdateStatus([FromRoute] int orderId, [FromBody] string newStatus)
+        public enum OrderStatus
         {
-            var order = await _context.Orders.FindAsync(orderId);
+            Pending,
+            Paid,
+            Shipped,
+            Delivered,
+            Cancelled
+        }
 
+        public class StatusUpdateDto
+        {
+            public string NewStatus { get; set; } = string.Empty;
+        }
+
+        [HttpPatch("UpdateStatus/{orderId}")]
+        public async Task<ActionResult> UpdateStatus([FromRoute] int orderId, [FromBody] StatusUpdateDto dto)
+        {
+            if (!Enum.TryParse(typeof(OrderStatus), dto.NewStatus, true, out var statusEnum))
+            {
+                return BadRequest("Invalid status.");
+            }
+
+            var order = await _context.Orders.FindAsync(orderId);
             if (order == null)
             {
                 return NotFound($"Order with id {orderId} not found.");
             }
 
-            order.Status = newStatus;
+            order.Status = dto.NewStatus;
             await _context.SaveChangesAsync();
 
-            return NoContent(); // 204 No Content means success with no response body
+            return NoContent();
         }
+
 
 
         // Get a specific Order from SQL Database by ID
