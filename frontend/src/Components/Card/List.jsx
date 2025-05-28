@@ -5,27 +5,31 @@ const CardList = () => {
   const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
- const fetchCards = async () => {
-  try {
-    const response = await fetch('http://localhost:5108/api/Card');
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    const storedUsername = Cookies.get('username');
+    if (storedUsername) {
+      setIsLoggedIn(true);
+      fetchCards();
+    } else {
+      setIsLoggedIn(false);
     }
-
-    const text = await response.text(); // Lexo si tekst fillimisht
-
-    const data = text ? JSON.parse(text) : []; // Nëse ka tekst, bëje JSON, përndryshe kthe një array bosh
-    setCards(data);
-  } catch (error) {
-    console.error('Error fetching cards:', error);
-  }
-};
-
-    fetchCards();
   }, []);
+
+  const fetchCards = async () => {
+    try {
+      const response = await fetch('http://localhost:5108/api/Card');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : [];
+      setCards(data);
+    } catch (error) {
+      console.error('Error fetching cards:', error);
+    }
+  };
 
   const deleteCard = async (id) => {
     if (window.confirm('Are you sure you want to delete this card?')) {
@@ -61,18 +65,28 @@ const CardList = () => {
     if (res.ok) {
       alert('Card updated!');
       setEditMode(false);
-      window.location.reload(); // ose rifresko vetëm state-in
+      fetchCards();
     } else {
       alert('Failed to update.');
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <p className="text-red-600 text-lg text-center">
+          You must be logged in to see a cardlist and manage.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow">
       <h2 className="text-xl font-bold mb-4 text-center text-blue-600">All Cards</h2>
 
       {cards.length === 0 ? (
-        <p className="text-gray-600">No cards available.</p>
+        <p className="text-gray-600 text-center">No cards available.</p>
       ) : (
         <table className="w-full table-auto border-collapse border border-gray-200">
           <thead className="bg-gray-100">
@@ -111,7 +125,6 @@ const CardList = () => {
         </table>
       )}
 
-      {/* Edit Modal */}
       {editMode && selectedCard && (
         <div className="mt-6 border-t pt-4">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Edit Card</h3>

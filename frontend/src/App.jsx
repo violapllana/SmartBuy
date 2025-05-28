@@ -15,7 +15,7 @@ import AddCard from './Components/Card/Card';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
 import CustomNotification from './Components/NotificationUtil';
-import Wishlist from './Components/WishList/Wishlist';
+import Wishlist from './Components/WishList/Index';
 import Products from './Components/Products/Index';
 import ProductList from './Components/Products/List';
 import CardList from './Components/Card/List';

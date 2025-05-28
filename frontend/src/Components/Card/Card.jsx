@@ -10,12 +10,16 @@ const AddCard = () => {
     expirationDate: '',  
   });
 
-  const [successMessage, setSuccessMessage] = useState(''); 
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const storedUsername = Cookies.get('username');
     if (storedUsername) {
+      setIsLoggedIn(true);
       fetchUserIdFromUsername(storedUsername); 
+    } else {
+      setIsLoggedIn(false);
     }
   }, []);
 
@@ -43,7 +47,6 @@ const AddCard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
- 
     for (const key in cardData) {
       if (!cardData[key]) {
         alert(`Please fill in the ${key} field.`);
@@ -52,7 +55,6 @@ const AddCard = () => {
     }
 
     try {
-  
       const payload = {
         CardNumber: cardData.cardNumber,
         ExpirationDate: new Date(cardData.expirationDate),  
@@ -85,6 +87,14 @@ const AddCard = () => {
       alert('Something went wrong.');
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600 text-lg">You must be logged in to add a card.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -160,7 +170,6 @@ const AddCard = () => {
               <option value="American Express">American Express</option>
             </select>
           </div>
-
 
           {/* Submit Button */}
           <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300">
