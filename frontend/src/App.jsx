@@ -18,6 +18,8 @@ import CustomNotification from './Components/NotificationUtil';
 import Wishlist from './Components/WishList/Wishlist';
 import Products from './Components/Products/Index';
 import ProductList from './Components/Products/List';
+import CardList from './Components/Card/List';
+import UserCardList from './Components/Card/UserCardList';
 
 
 
@@ -226,6 +228,8 @@ function App() {
             <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
             <Route path="/products" element={<Products username={username} />} />
             <Route path="/productlist" element={<ProductList username={username} />} />
+            <Route path="/cardlist" element={<CardList username={username} />} />
+            <Route path="/usercardlist" element={<UserCardList username={username} />} />
             <Route path="/order" element={<Order username={username} />} />
                         <Route path="/stripepayment" element={<StripePayment username={username} />} />
 

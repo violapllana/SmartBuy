@@ -155,6 +155,7 @@ public class DataSyncBackgroundService : BackgroundService
                     ExpirationDate = sqlCard.ExpirationDate,
                     CVV = sqlCard.CVV,
                     CardType = sqlCard.CardType,
+                     UserId = sqlCard.UserId,
                     CreatedAt = sqlCard.CreatedAt
                 };
 
@@ -164,6 +165,7 @@ public class DataSyncBackgroundService : BackgroundService
                     .Set("ExpirationDate", mongoCard.ExpirationDate)
                     .Set("CVV", mongoCard.CVV)
                     .Set("CardType", mongoCard.CardType)
+                     .Set("UserId", mongoCard.UserId)
                     .Set("CreatedAt", mongoCard.CreatedAt);
 
                 await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
