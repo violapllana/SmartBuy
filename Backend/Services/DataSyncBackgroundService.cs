@@ -155,6 +155,7 @@ public class DataSyncBackgroundService : BackgroundService
                     ExpirationDate = sqlCard.ExpirationDate,
                     CVV = sqlCard.CVV,
                     CardType = sqlCard.CardType,
+                     UserId = sqlCard.UserId,
                     CreatedAt = sqlCard.CreatedAt
                 };
 
@@ -164,6 +165,7 @@ public class DataSyncBackgroundService : BackgroundService
                     .Set("ExpirationDate", mongoCard.ExpirationDate)
                     .Set("CVV", mongoCard.CVV)
                     .Set("CardType", mongoCard.CardType)
+                     .Set("UserId", mongoCard.UserId)
                     .Set("CreatedAt", mongoCard.CreatedAt);
 
                 await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
@@ -204,13 +206,25 @@ public class DataSyncBackgroundService : BackgroundService
             // WISHLISTS
             foreach (var sqlWishlist in wishlists)
             {
-                var mongoWishlist = new MongoWishlist
-                {
-                    Id = sqlWishlist.Id,
-                    UserId = sqlWishlist.UserId,
-                    ProductId = sqlWishlist.ProductId,
-                    CreatedAt = sqlWishlist.CreatedAt
-                };
+              var mongoWishlist = new MongoWishlist
+{
+    Id = sqlWishlist.Id,
+    UserId = sqlWishlist.UserId,
+    ProductId = sqlWishlist.ProductId,
+    Product = new ProductDto
+    {
+        Id = sqlWishlist.Product.Id,
+        Name = sqlWishlist.Product.Name,
+        Description = sqlWishlist.Product.Description,
+        Price = sqlWishlist.Product.Price,
+        StockQuantity = sqlWishlist.Product.StockQuantity,
+        Category = sqlWishlist.Product.Category,
+        ImageFile = sqlWishlist.Product.ImageFile,
+        CreatedAt = sqlWishlist.Product.CreatedAt
+    },
+    CreatedAt = sqlWishlist.CreatedAt
+};
+
 
                 var filter = Builders<MongoWishlist>.Filter.Eq("Id", mongoWishlist.Id);
                 var update = Builders<MongoWishlist>.Update

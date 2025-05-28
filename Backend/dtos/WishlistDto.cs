@@ -11,5 +11,7 @@ namespace Backend.dtos
         public string? UserId { get; set; }
         public int ProductId { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public ProductDto? Product { get; set; } 
     }
 }

@@ -161,18 +161,6 @@ const AddCard = () => {
             </select>
           </div>
 
-          {/* User ID */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">User ID (auto-filled)</label>
-            <input
-              type="text"
-              name="userId"
-              value={cardData.userId}
-              readOnly
-              className="w-full p-3 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
-            />
-            <p className="text-xs text-gray-400 mt-1">This is automatically fetched based on your logged-in session.</p>
-          </div>
 
           {/* Submit Button */}
           <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300">
