@@ -206,13 +206,25 @@ public class DataSyncBackgroundService : BackgroundService
             // WISHLISTS
             foreach (var sqlWishlist in wishlists)
             {
-                var mongoWishlist = new MongoWishlist
-                {
-                    Id = sqlWishlist.Id,
-                    UserId = sqlWishlist.UserId,
-                    ProductId = sqlWishlist.ProductId,
-                    CreatedAt = sqlWishlist.CreatedAt
-                };
+              var mongoWishlist = new MongoWishlist
+{
+    Id = sqlWishlist.Id,
+    UserId = sqlWishlist.UserId,
+    ProductId = sqlWishlist.ProductId,
+    Product = new ProductDto
+    {
+        Id = sqlWishlist.Product.Id,
+        Name = sqlWishlist.Product.Name,
+        Description = sqlWishlist.Product.Description,
+        Price = sqlWishlist.Product.Price,
+        StockQuantity = sqlWishlist.Product.StockQuantity,
+        Category = sqlWishlist.Product.Category,
+        ImageFile = sqlWishlist.Product.ImageFile,
+        CreatedAt = sqlWishlist.Product.CreatedAt
+    },
+    CreatedAt = sqlWishlist.CreatedAt
+};
+
 
                 var filter = Builders<MongoWishlist>.Filter.Eq("Id", mongoWishlist.Id);
                 var update = Builders<MongoWishlist>.Update
