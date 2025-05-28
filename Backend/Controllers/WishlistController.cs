@@ -60,6 +60,18 @@ public async Task<IActionResult> Get(string userId, int productId)
 
             return CreatedAtAction(nameof(Get), new { userId = wishlistModel.UserId, productId = wishlistModel.ProductId }, wishlistModel.toWishlistDto());
         }
+// GET: api/Wishlist/user/{userId}
+[HttpGet("user/{userId}")]
+public async Task<IActionResult> GetByUserId(string userId)
+{
+    var wishlists = await _context.Wishlists
+        .Where(w => w.UserId == userId)
+        .Include(w => w.Product)
+        .Select(w => w.toWishlistDto())
+        .ToListAsync();
+
+    return Ok(wishlists);
+}
 
         // DELETE: api/wishlist/{userId}/{productId}
         [HttpDelete("{userId}/{productId}")]

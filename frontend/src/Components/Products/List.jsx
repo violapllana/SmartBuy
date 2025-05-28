@@ -175,10 +175,29 @@ const handleAddToCart = async (productId, quantity) => {
 };
 
 
+const addToWishlist = async (product) => {
+  if (!userId) {
+    console.error("User ID not available.");
+    return;
+  }
 
-  const addToWishlist = (product) => {
-    // implement add to wishlist logic
-  };
+  try {
+    await api.post(`/Wishlist`, {
+      userId,
+      productId: product.id
+    });
+
+    alert("Product added to wishlist!");
+  } catch (err) {
+    if (err.response && err.response.status === 400) {
+      // Backend responded with "Product X is already in wishlist"
+      alert("Product is already in wishlist.");
+    } else {
+      console.error("Failed to add product to wishlist", err);
+      alert("An error occurred while adding the product to wishlist.");
+    }
+  }
+};
 
   return (
     <div className="p-6">
