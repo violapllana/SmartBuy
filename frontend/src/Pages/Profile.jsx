@@ -6,98 +6,89 @@ import api from "../Components/api";
 const Profile = ({ username, role, handleLogout }) => {
   const navigate = useNavigate();
 
-  // Fetch user ID based on username
   const fetchUserId = useCallback(async () => {
     if (username) {
       try {
         const response = await api.get(`http://localhost:5177/users/by-username?username=${username}`);
-        if (response.data && response.data.id) {
-          return response.data.id; // Return the user ID
-        } else {
-          console.error("User ID not found");
-          return null;
-        }
+        return response.data?.id || null;
       } catch (error) {
         console.error("Error fetching user ID:", error);
         return null;
       }
     }
-  }, [username]); // Add username as dependency
+  }, [username]);
 
-  // Fetch user data or any additional info (if needed)
   const fetchUserData = useCallback(async () => {
     try {
-      const userId = await fetchUserId(); // Fetch user ID
+      const userId = await fetchUserId();
       if (userId) {
-        // You can fetch additional user-related data here
         const response = await api.get(`http://localhost:5177/api/UserData/${userId}`);
-        // Process the response as needed
         console.log(response.data);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  }, [fetchUserId]); // Add fetchUserId as a dependency
+  }, [fetchUserId]);
 
-  // Fetch data on component mount or when username changes
   useEffect(() => {
     fetchUserData();
-  }, [fetchUserData]); // Include fetchUserData as a dependency
+  }, [fetchUserData]);
 
-  // Fix for role display based on role value
   const getRoleText = () => {
-    if (role === "ADMIN") {
-      return "Administrator";
-    } else if (role === "USER") {
-      return "User";
-    } else {
-      return "Unknown Role";
+    switch (role) {
+      case "Admin":
+        return "Administrator";
+      case "User":
+        return "User";
+      default:
+        return "Unknown Role";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white flex flex-col items-center justify-center">
-      {/* Profile Card */}
-      <div className="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-80 hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-        {/* Profile Header */}
-        <div className="flex items-center justify-center mb-6">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
+      <div className="bg-white shadow-2xl rounded-xl flex flex-col md:flex-row w-full max-w-4xl overflow-hidden">
+        
+        {/* Sidebar Profile Section */}
+        <div className="bg-green-700 text-white flex flex-col items-center p-8 md:w-1/3">
+          <div className="bg-white text-green-700 rounded-full w-24 h-24 flex items-center justify-center text-4xl font-bold shadow-md mb-4">
             {username ? username[0].toUpperCase() : "U"}
           </div>
+          <h2 className="text-2xl font-semibold">{username}</h2>
+          <p className="mt-1 text-sm text-green-100">{getRoleText()}</p>
         </div>
 
-        {/* Welcome Text */}
-        <h1 className="text-2xl font-bold mb-4 text-center text-green-600">
-          Welcome to Your Profile
-        </h1>
+        {/* Details Section */}
+        <div className="flex-1 p-8 flex flex-col justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Profile Overview</h1>
 
-        {/* Username and Role */}
-        <div className="text-center">
-          <p className="text-lg mb-2">
-            <FaUserAlt className="inline-block text-green-600 mr-2" />
-            <strong>Username:</strong> {username}
-          </p>
-          <p className="text-lg mb-4">
-            <FaShieldAlt className="inline-block text-green-600 mr-2" />
-            <strong>Role:</strong> {getRoleText()}
-          </p>
-        </div>
+            <div className="space-y-4">
+              <div className="flex items-center text-lg text-gray-700">
+                <FaUserAlt className="mr-3 text-green-600" />
+                <span><strong>Username:</strong> {username}</span>
+              </div>
+              <div className="flex items-center text-lg text-gray-700">
+                <FaShieldAlt className="mr-3 text-green-600" />
+                <span><strong>Role:</strong> {getRoleText()}</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Settings and Logout Buttons */}
-        <div className="mt-6">
-          <button
-            onClick={() => navigate("/settings")}
-            className="w-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white font-semibold py-2 rounded-md mb-3 transition duration-300 ease-in-out hover:opacity-90 flex items-center justify-center"
-          >
-            <FaCog className="mr-2" /> Settings
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="w-full bg-red-500 text-white font-semibold py-2 rounded-md transition duration-300 ease-in-out hover:opacity-90 flex items-center justify-center"
-          >
-            <FaSignOutAlt className="mr-2" /> Logout
-          </button>
+          <div className="mt-8 space-y-3">
+            <button
+              onClick={() => navigate("/settings")}
+              className="w-full flex items-center justify-center bg-green-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition"
+            >
+              <FaCog className="mr-2" /> Account Settings
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition"
+            >
+              <FaSignOutAlt className="mr-2" /> Logout
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -23,7 +23,6 @@ const Settings = ({ handleLogout }) => {
     e.preventDefault();
     setMessage("");
     setError("");
-
     try {
       const response = await api.put("http://localhost:5177/users/update-username", usernameData);
       setMessage(response.data.Message);
@@ -38,12 +37,10 @@ const Settings = ({ handleLogout }) => {
     e.preventDefault();
     setMessage("");
     setError("");
-
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setError("New password and confirm password do not match.");
       return;
     }
-
     try {
       const response = await api.put("http://localhost:5177/users/update-password", passwordData);
       setMessage(response.data.Message);
@@ -59,27 +56,27 @@ const Settings = ({ handleLogout }) => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white via-gray-100 to-gray-200 min-h-screen">
-      
+    <div className="bg-gray-100 min-h-screen py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-center text-green-700 mb-8">Account Settings</h1>
 
-      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-        <h1>Settings</h1>
-        {message && (
-          <div className="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-300">
-            {message}
+        {(message || error) && (
+          <div
+            className={`mb-6 p-4 rounded-lg border ${
+              message
+                ? 'bg-green-100 text-green-800 border-green-300'
+                : 'bg-red-100 text-red-800 border-red-300'
+            }`}
+          >
+            {message || error}
           </div>
         )}
-        {error && (
-          <div className="mb-4 p-4 text-red-800 bg-red-100 rounded-lg border border-red-300">
-            {error}
-          </div>
-        )}
 
-        {/* Update Username */}
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-green-900">Update Username</h2>
-          <form onSubmit={updateUsername} className="mt-4">
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="newUsername">
+        {/* Username Update */}
+        <div className="bg-white p-6 rounded-xl shadow-md mb-8">
+          <h2 className="text-xl font-semibold text-green-800 mb-4">Change Username</h2>
+          <form onSubmit={updateUsername}>
+            <label htmlFor="newUsername" className="block font-medium text-gray-700 mb-1">
               New Username
             </label>
             <input
@@ -88,24 +85,24 @@ const Settings = ({ handleLogout }) => {
               id="newUsername"
               value={usernameData.newUsername}
               onChange={handleUsernameChange}
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Enter new username"
-              className="w-full p-3 border border-gray-700 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-900"
               required
             />
             <button
               type="submit"
-              className="mt-4 w-full p-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-lg hover:shadow-md hover:from-yellow-300 hover:to-yellow-500 transition duration-300"
-              >
+              className="w-full p-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+            >
               Update Username
             </button>
           </form>
-        </section>
+        </div>
 
-        {/* Update Password */}
-        <section>
-          <h2 className="text-xl font-semibold text-green-900">Update Password</h2>
-          <form onSubmit={updatePassword} className="mt-4">
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="currentPassword">
+        {/* Password Update */}
+        <div className="bg-white p-6 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold text-green-800 mb-4">Change Password</h2>
+          <form onSubmit={updatePassword}>
+            <label htmlFor="currentPassword" className="block font-medium text-gray-700 mb-1">
               Current Password
             </label>
             <input
@@ -114,11 +111,12 @@ const Settings = ({ handleLogout }) => {
               id="currentPassword"
               value={passwordData.currentPassword}
               onChange={handlePasswordChange}
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Enter current password"
-              className="w-full p-3 border border-gray-700 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-900"
               required
             />
-            <label className="block text-gray-700 font-medium mt-4 mb-2" htmlFor="newPassword">
+
+            <label htmlFor="newPassword" className="block font-medium text-gray-700 mb-1">
               New Password
             </label>
             <input
@@ -127,11 +125,12 @@ const Settings = ({ handleLogout }) => {
               id="newPassword"
               value={passwordData.newPassword}
               onChange={handlePasswordChange}
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Enter new password"
-              className="w-full p-3 border border-gray-700 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-900"
               required
             />
-            <label className="block text-gray-700 font-medium mt-4 mb-2" htmlFor="confirmPassword">
+
+            <label htmlFor="confirmPassword" className="block font-medium text-gray-700 mb-1">
               Confirm New Password
             </label>
             <input
@@ -140,18 +139,19 @@ const Settings = ({ handleLogout }) => {
               id="confirmPassword"
               value={passwordData.confirmPassword}
               onChange={handlePasswordChange}
+              className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Confirm new password"
-              className="w-full p-3 border border-gray-700 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-900"
               required
             />
+
             <button
               type="submit"
-              className="mt-4 w-full p-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-semibold rounded-lg hover:shadow-md hover:from-yellow-300 hover:to-yellow-500 transition duration-300"
+              className="w-full p-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
             >
               Update Password
             </button>
           </form>
-        </section>
+        </div>
       </div>
     </div>
   );
