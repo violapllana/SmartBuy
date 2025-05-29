@@ -36,6 +36,18 @@
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"k71mc1mvjv"},{"Name":"integrity","Value":"sha256-YAAuKyjSN/PoOSs9ey1Ckku35lz9aF6/v9wyQPxko0g="},{"Name":"label","Value":"_content/SmartBuy/images/4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg"}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"55233"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022YAAuKyjSN/PoOSs9ey1Ckku35lz9aF6/v9wyQPxko0g=\u0022"},{"Name":"Last-Modified","Value":"Wed, 28 May 2025 12:25:30 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SmartBuy/images/9f84f5b5-9c76-487a-98f7-f78f35213dab.9ecdq7x0vs.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"9ecdq7x0vs"},{"Name":"integrity","Value":"sha256-AWYOPwggegJ2KSZ3tjo/O77n1u\u002By6HEGe1AQCOTbG9c="},{"Name":"label","Value":"_content/SmartBuy/images/9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"210500"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022AWYOPwggegJ2KSZ3tjo/O77n1u\u002By6HEGe1AQCOTbG9c=\u0022"},{"Name":"Last-Modified","Value":"Wed, 28 May 2025 14:24:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/SmartBuy/images/9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-AWYOPwggegJ2KSZ3tjo/O77n1u\u002By6HEGe1AQCOTbG9c="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"210500"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022AWYOPwggegJ2KSZ3tjo/O77n1u\u002By6HEGe1AQCOTbG9c=\u0022"},{"Name":"Last-Modified","Value":"Wed, 28 May 2025 14:24:56 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/SmartBuy/images/Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
