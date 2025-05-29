@@ -1,6 +1,10 @@
 {
   "Version": 1,
+<<<<<<< HEAD
   "Hash": "tbklwP6fB43OwrvLgtt89A/SCoUdOCuq/56LHyZijyU=",
+=======
+  "Hash": "z92OAo4HQyfzcC/SZqP6QSNaYU+oqovRhnpg0I+7k1U=",
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
   "Source": "SmartBuy",
   "BasePath": "_content/SmartBuy",
   "Mode": "Default",
@@ -80,7 +84,32 @@
       "OriginalItemSpec": "wwwroot\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg"
     },
     {
+<<<<<<< HEAD
       "Identity": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+=======
+      "Identity": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+      "SourceId": "SmartBuy",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\wwwroot\\",
+      "BasePath": "_content/SmartBuy",
+      "RelativePath": "images/9f84f5b5-9c76-487a-98f7-f78f35213dab#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "9ecdq7x0vs",
+      "Integrity": "AWYOPwggegJ2KSZ3tjo/O77n1u+y6HEGe1AQCOTbG9c=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\wwwroot\\images\\Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg",
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
       "SourceId": "SmartBuy",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\",
@@ -392,7 +421,11 @@
     },
     {
       "Route": "images/9f84f5b5-9c76-487a-98f7-f78f35213dab.9ecdq7x0vs.jpg",
+<<<<<<< HEAD
       "AssetFile": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+=======
+      "AssetFile": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -413,7 +446,11 @@
         },
         {
           "Name": "Last-Modified",
+<<<<<<< HEAD
           "Value": "Wed, 28 May 2025 15:47:03 GMT"
+=======
+          "Value": "Wed, 28 May 2025 14:24:56 GMT"
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
         },
         {
           "Name": "Cache-Control",
@@ -437,7 +474,11 @@
     },
     {
       "Route": "images/9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+<<<<<<< HEAD
       "AssetFile": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+=======
+      "AssetFile": "C:\\Users\\dell\\Documents\\Lab2_Projekti\\project\\SmartBuy\\backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -458,7 +499,11 @@
         },
         {
           "Name": "Last-Modified",
+<<<<<<< HEAD
           "Value": "Wed, 28 May 2025 15:47:03 GMT"
+=======
+          "Value": "Wed, 28 May 2025 14:24:56 GMT"
+>>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
         },
         {
           "Name": "Cache-Control",
