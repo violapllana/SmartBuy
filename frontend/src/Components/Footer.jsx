@@ -1,8 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import Cookies from 'js-cookie';
 
 const Footer = () => {
+  const role = Cookies.get("role");  // replace "role" with your actual cookie name for role
+
   return (
     <footer className="bg-gradient-to-r from-black via-black to-green-900 text-white py-8 mt-auto">
       <div className="container mx-auto px-4 lg:px-8">
@@ -20,10 +23,12 @@ const Footer = () => {
             <h2 className="text-lg font-bold mb-4">Fast Connections</h2>
             <ul>
               {[
-                { label: 'Home', href: '/' },
-                // { label: 'Ushqimet', href: '/ushqimi' },
-                // { label: 'Kontakt', href: '/kontakt' },
-                // { label: 'Rreth Nesh', href: '/aboutus' },
+                { label: "Home", href: "/" },
+  { 
+    label: "Contact", 
+    href: role === "Admin" ? "/chatcomponent" : "/chatcomponentforusers" 
+  },
+  { label: "Products", href: "/productlist" },
               ].map(({ label, href }, i) => (
                 <li key={i} className="mb-2">
                   <a

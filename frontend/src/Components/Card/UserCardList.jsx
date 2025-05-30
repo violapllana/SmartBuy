@@ -1,5 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import CreditCard from "./CreditCard";
+
+const getCardLogo = (type) => {
+  switch (type?.toLowerCase()) {
+    case "visa":
+      return "/logos/visa.png";
+    case "mastercard":
+      return "/logos/mastercard.png";
+    case "amex":
+    case "american express":
+      return "/logos/amex.png";
+    case "discover":
+      return "/logos/discover.png";
+    default:
+      return "/logos/generic-card.png";
+  }
+};
+
+const maskCardNumber = (number) => {
+  if (!number || number.length < 4) return number;
+  return number.slice(0, -4).replace(/\d/g, "*") + number.slice(-4);
+};
+
+const cardTypes = ["Visa", "Mastercard", "Amex", "Discover"];
 
 const UserCardList = () => {
   const [cards, setCards] = useState([]);
@@ -8,27 +32,29 @@ const UserCardList = () => {
 
   const [selectedCard, setSelectedCard] = useState(null);
   const [editCard, setEditCard] = useState(null);
+  const [originalCard, setOriginalCard] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showCVV, setShowCVV] = useState(false);
 
   useEffect(() => {
-    const storedUsername = Cookies.get('username');
+    const storedUsername = Cookies.get("username");
     if (storedUsername) {
       fetchUserId(storedUsername);
     } else {
-      setLoading(false); // nuk ka user, mbaron ngarkimi
+      setLoading(false);
     }
   }, []);
 
   const fetchUserId = async (username) => {
     try {
       const res = await fetch(`http://localhost:5108/users/by-username?username=${username}`);
-      if (!res.ok) throw new Error('Failed to fetch user ID');
+      if (!res.ok) throw new Error("Failed to fetch user ID");
       const data = await res.json();
       setUserId(data.id);
       fetchCards(data.id);
     } catch (err) {
-      console.error('Failed to fetch user ID:', err);
+      console.error(err);
       setLoading(false);
     }
   };
@@ -36,181 +62,266 @@ const UserCardList = () => {
   const fetchCards = async (userId) => {
     try {
       const res = await fetch(`http://localhost:5108/api/Card/user/${userId}`);
-      if (!res.ok) throw new Error('Failed to fetch cards');
+      if (!res.ok) throw new Error("Failed to fetch cards");
       const data = await res.json();
       setCards(data);
     } catch (err) {
-      console.error('Failed to fetch cards:', err);
+      console.error(err);
       setCards([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // DELETE Card me konfirmim
   const handleDelete = async (cardId) => {
-    const confirm = window.confirm('Are you sure you want to delete this card?');
-    if (!confirm) return;
-
+    if (!window.confirm("Are you sure you want to delete this card?")) return;
     try {
-      const res = await fetch(`http://localhost:5108/api/Card/${cardId}`, {
-        method: 'DELETE'
-      });
-      if (!res.ok) throw new Error('Failed to delete card');
-
-      // Hiq kartën nga lista lokalisht
-      setCards(cards.filter(card => card.id !== cardId));
+      const res = await fetch(`http://localhost:5108/api/Card/${cardId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete card");
+      setCards(cards.filter((card) => card.id !== cardId));
     } catch (err) {
-      alert('Error deleting card');
+      alert("Error deleting card");
       console.error(err);
     }
   };
 
-  // OPEN edit form
   const openEdit = (card) => {
-    setEditCard({...card}); // klonojme kartën për editim
+    setEditCard({ ...card });
+    setOriginalCard({ ...card });
     setIsEditing(true);
   };
 
-  // HANDLE CHANGE në form
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setEditCard(prev => ({ ...prev, [name]: value }));
+    setEditCard((prev) => ({ ...prev, [name]: value }));
   };
 
-  // SAVE edit
+  const isChanged = () => {
+    return JSON.stringify(editCard) !== JSON.stringify(originalCard);
+  };
+
   const saveEdit = async () => {
     try {
       const res = await fetch(`http://localhost:5108/api/Card/${editCard.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editCard)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editCard),
       });
-
-      if (!res.ok) throw new Error('Failed to update card');
-
-      // Përditëso kartën në listë
-      setCards(cards.map(card => card.id === editCard.id ? editCard : card));
+      if (!res.ok) throw new Error("Failed to update card");
+      setCards(cards.map((card) => (card.id === editCard.id ? editCard : card)));
       setIsEditing(false);
       setEditCard(null);
     } catch (err) {
-      alert('Error updating card');
+      alert("Error updating card");
       console.error(err);
     }
   };
 
-  // SHOW details
   const viewDetails = (card) => {
     setSelectedCard(card);
+    setShowCVV(false);
     setShowDetails(true);
   };
 
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading cards...</p>;
-  }
+  if (loading)
+    return <p className="text-center text-gray-500 mt-20 text-lg font-medium">Loading cards...</p>;
 
-  if (!userId) {
-    return <p className="text-center text-red-500">User not found or not logged in.</p>;
-  }
+  if (!userId)
+    return (
+      <p className="text-center text-red-600 font-semibold mt-20 text-lg">
+        User not found or not logged in.
+      </p>
+    );
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold text-center mb-4 text-blue-700">Your Credit Cards</h2>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h2 className="text-center text-3xl font-semibold text-indigo-700 mb-8">Your Credit Cards</h2>
 
       {cards.length === 0 ? (
-        <p className="text-center text-gray-500">No cards found.</p>
+        <p className="text-center text-gray-500 text-lg">No cards found.</p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 justify-center">
           {cards.map((card) => (
-            <div key={card.id} className="border rounded-lg p-4 shadow-sm bg-white">
-              <p><strong>Card Number:</strong> {card.cardNumber}</p>
-              <p><strong>Type:</strong> {card.cardType}</p>
-              <p><strong>Expiration:</strong> {new Date(card.expirationDate).toLocaleDateString()}</p>
-              <p><strong>CVV:</strong> {card.cvv}</p>
+  <div
+    key={card.id}
+    className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm min-h-[320px] flex flex-col"
+  >
+    <img
+      src={getCardLogo(card.cardType)}
+      alt={`${card.cardType} logo`}
+      className="w-16 h-10 object-contain mb-4"
+    />
+    <CreditCard card={{ ...card, cardNumber: maskCardNumber(card.cardNumber) }} />
 
-              <div className="mt-4 flex gap-2">
-                <button onClick={() => viewDetails(card)} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Details</button>
-                <button onClick={() => openEdit(card)} className="px-3 py-1 bg-yellow-400 text-black rounded hover:bg-yellow-500">Edit</button>
-                <button onClick={() => handleDelete(card.id)} className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
-              </div>
-            </div>
-          ))}
+    <div className="mt-auto flex justify-between gap-3 pt-6 border-t border-gray-200">
+      <button
+        onClick={() => viewDetails(card)}
+        className="flex-1 px-3 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition"
+      >
+        Details
+      </button>
+      <button
+        onClick={() => openEdit(card)}
+        className="flex-1 px-3 py-2 bg-yellow-400 text-black font-semibold rounded-lg shadow hover:bg-yellow-500 transition"
+      >
+        Edit
+      </button>
+      <button
+        onClick={() => handleDelete(card.id)}
+        className="flex-1 px-3 py-2 bg-red-600 text-white font-semibold rounded-lg shadow hover:bg-red-700 transition"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+))}
+
         </div>
       )}
 
-      {/* Modal për Details */}
       {showDetails && selectedCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
-            <button onClick={() => setShowDetails(false)} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
-            <h3 className="text-xl font-bold mb-4">Card Details</h3>
-            <p><strong>Card Number:</strong> {selectedCard.cardNumber}</p>
-            <p><strong>Type:</strong> {selectedCard.cardType}</p>
-            <p><strong>Expiration:</strong> {new Date(selectedCard.expirationDate).toLocaleDateString()}</p>
-            <p><strong>CVV:</strong> {selectedCard.cvv}</p>
-            <p><strong>Created At:</strong> {new Date(selectedCard.createdAt).toLocaleString()}</p>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+          onClick={() => setShowDetails(false)}
+        >
+          <div
+            className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-semibold mb-6 text-indigo-700 flex items-center gap-3">
+              <img
+                src={getCardLogo(selectedCard.cardType)}
+                alt={`${selectedCard.cardType} logo`}
+                className="w-12 h-7 object-contain"
+              />
+              Card Details
+            </h3>
+            <div className="space-y-3 text-gray-700">
+              <p>
+                <strong>Card Number:</strong> {maskCardNumber(selectedCard.cardNumber)}
+              </p>
+              <p>
+                <strong>Type:</strong> {selectedCard.cardType}
+              </p>
+              <p>
+                <strong>Expiration:</strong>{" "}
+                {new Date(selectedCard.expirationDate).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>CVV:</strong>{" "}
+                {showCVV ? selectedCard.cvv : "•••"}{" "}
+                <button
+                  onClick={() => setShowCVV((prev) => !prev)}
+                  className="text-indigo-600 ml-2 text-sm"
+                >
+                  {showCVV ? "Hide" : "Show"}
+                </button>
+              </p>
+              <p>
+                <strong>Created At:</strong>{" "}
+                {new Date(selectedCard.createdAt).toLocaleString()}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowDetails(false)}
+              className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
 
-      {/* Modal për Edit */}
       {isEditing && editCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
-            <button onClick={() => setIsEditing(false)} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
-            <h3 className="text-xl font-bold mb-4">Edit Card</h3>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+          onClick={() => setIsEditing(false)}
+        >
+          <div
+            className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-semibold mb-6 text-indigo-700">Edit Card</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                saveEdit();
+              }}
+              className="space-y-5"
+            >
+              <div>
+                <label className="block mb-1 font-medium">Card Number</label>
+                <input
+                  type="text"
+                  name="cardNumber"
+                  value={editCard.cardNumber}
+                  onChange={handleEditChange}
+                  maxLength={16}
+                  minLength={13}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
 
-            <label className="block mb-2">
-              Card Number:
-              <input
-                type="text"
-                name="cardNumber"
-                value={editCard.cardNumber}
-                onChange={handleEditChange}
-                className="border rounded w-full p-2"
-                maxLength={16}
-                minLength={13}
-              />
-            </label>
+              <div>
+                <label className="block mb-1 font-medium">Expiration Date</label>
+                <input
+                  type="date"
+                  name="expirationDate"
+                  value={editCard.expirationDate.slice(0, 10)}
+                  onChange={handleEditChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
 
-            <label className="block mb-2">
-              Expiration Date:
-              <input
-                type="date"
-                name="expirationDate"
-                value={editCard.expirationDate.slice(0,10)}
-                onChange={handleEditChange}
-                className="border rounded w-full p-2"
-              />
-            </label>
+              <div>
+                <label className="block mb-1 font-medium">CVV</label>
+                <input
+                  type="text"
+                  name="cvv"
+                  value={editCard.cvv}
+                  onChange={handleEditChange}
+                  maxLength={3}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
 
-            <label className="block mb-2">
-              CVV:
-              <input
-                type="text"
-                name="cvv"
-                value={editCard.cvv}
-                onChange={handleEditChange}
-                className="border rounded w-full p-2"
-                maxLength={3}
-              />
-            </label>
+              <div>
+                <label className="block mb-1 font-medium">Card Type</label>
+                <select
+                  name="cardType"
+                  value={editCard.cardType}
+                  onChange={handleEditChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                >
+                  {cardTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <label className="block mb-2">
-              Card Type:
-              <input
-                type="text"
-                name="cardType"
-                value={editCard.cardType}
-                onChange={handleEditChange}
-                className="border rounded w-full p-2"
-              />
-            </label>
-
-            <div className="mt-4 flex justify-end gap-2">
-              <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-              <button onClick={saveEdit} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Save</button>
-            </div>
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!isChanged()}
+                  className={`px-5 py-2 rounded-lg text-white ${
+                    isChanged()
+                      ? "bg-indigo-600 hover:bg-indigo-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  Save
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

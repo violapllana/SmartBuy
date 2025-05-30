@@ -13,11 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartBuy")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b054f9ed57dcffce85b342ca2c146721d0bad78e")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+651f03415ade8fa265e2008f1005adf5d15ca792")]
->>>>>>> def341fa8b3f699a6f6d0c48fb35306658dee14d
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d2d7f9f920d01a4c79cdd84a322115a17593ff3")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartBuy")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartBuy")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

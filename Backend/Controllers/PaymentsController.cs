@@ -3,11 +3,13 @@ using SmartBuy.Data;
 using SmartBuy.Models;
 using Stripe;
 using Microsoft.EntityFrameworkCore;
+using Backend.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Backend.Mappers;
 
 namespace SmartBuy.Controllers
 {
@@ -91,6 +93,9 @@ namespace SmartBuy.Controllers
                 var intent = await intentService.GetAsync(request.TransactionId);
 
                 var payment = await _context.Payments
+                    .Include(p => p.Order)
+                    .ThenInclude(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
                     .FirstOrDefaultAsync(p => p.TransactionId == request.TransactionId);
 
                 if (payment == null)
@@ -98,6 +103,27 @@ namespace SmartBuy.Controllers
 
                 payment.PaymentStatus = intent.Status == "succeeded" ? "Success" : "Failed";
                 payment.PaidAt = DateTime.UtcNow;
+
+                if (payment.PaymentStatus == "Success")
+                {
+                    var order = payment.Order;
+
+                    if (order == null)
+                        return NotFound(new { message = "Order not found." });
+
+                    // Update stock for each product in the order
+                    foreach (var op in order.OrderProducts)
+                    {
+                        var product = op.Product;
+                        if (product.StockQuantity < op.Quantity)
+                        {
+                            return BadRequest(new { message = $"Insufficient stock for product {product.Name}" });
+                        }
+                        product.StockQuantity -= op.Quantity;
+                    }
+
+                    order.Status = "Completed"; // Or whatever status means finished order
+                }
 
                 await _context.SaveChangesAsync();
 
@@ -109,18 +135,50 @@ namespace SmartBuy.Controllers
                 return BadRequest(new { error = e.Message });
             }
         }
-    }
 
-    public class PaymentRequest
-    {
-        public string? UserId { get; set; }
-        public int OrderId { get; set; }
-        public decimal Amount { get; set; }
-        public string? Email { get; set; }
-    }
 
-    public class PaymentConfirmation
-    {
-        public string? TransactionId { get; set; }
+
+
+
+
+        [HttpDelete("{orderId}")]
+        public async Task<IActionResult> DeletePayment([FromRoute] int orderId)
+        {
+            var payments = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .ToListAsync();
+
+            if (payments == null || !payments.Any())
+                return NotFound();
+
+            _context.Payments.RemoveRange(payments);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetAllPayments()
+        {
+            var payments = await _context.Payments
+                .Select(p => PaymentMapper.ToPaymentDto(p)) // or p.ToPaymentDto() if you made it an extension
+                .ToListAsync();
+
+            return Ok(payments);
+        }
+
+        public class PaymentRequest
+        {
+            public string? UserId { get; set; }
+            public int OrderId { get; set; }
+            public decimal Amount { get; set; }
+            public string? Email { get; set; }
+        }
+
+        public class PaymentConfirmation
+        {
+            public string? TransactionId { get; set; }
+        }
     }
 }

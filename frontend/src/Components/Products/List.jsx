@@ -175,6 +175,18 @@ const handleAddToCart = async (productId, quantity) => {
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 const addToWishlist = async (product) => {
   if (!userId) {
     console.error("User ID not available.");

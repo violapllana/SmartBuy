@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using SmartBuy.Mappers;
+using Backend.DTOs;
 
 namespace SmartBuy.Controllers
 {
@@ -148,6 +149,61 @@ namespace SmartBuy.Controllers
 
 
 
+
+
+        [HttpPost("RemoveProductFromOrder")]
+        public async Task<IActionResult> RemoveProductFromOrder([FromBody] RemoveProductFromOrderRequestDto request)
+        {
+            // Load the order with its products
+            var order = await _context.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .FirstOrDefaultAsync(o => o.Id == request.OrderId && o.Status == "Pending");
+
+            if (order == null)
+                return NotFound("Pending order not found.");
+
+            // Find the product in the order
+            var orderProduct = order.OrderProducts.FirstOrDefault(op => op.ProductId == request.ProductId);
+            if (orderProduct == null)
+                return NotFound("Product not found in the order.");
+
+            // Remove the product from the order
+            order.OrderProducts.Remove(orderProduct);
+
+            await _context.SaveChangesAsync();
+
+            // Check if there are no products left in the order
+            if (!order.OrderProducts.Any())
+            {
+                // Remove the order itself
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+
+                // Return something to indicate order is deleted, e.g. null or 204 No Content
+                return NoContent();
+            }
+
+            // Otherwise return updated order DTO
+            var orderDto = new OrderDto
+            {
+                Id = order.Id,
+                UserId = order.UserId,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                TotalPrice = order.OrderProducts.Sum(op => op.Quantity * op.Product.Price),
+                Products = order.OrderProducts.Select(op => new OrderProductDto
+                {
+                    ProductId = op.ProductId,
+                    Quantity = op.Quantity,
+                    Price = op.Product.Price,
+                    ProductName = op.Product?.Name ?? "",
+                    ProductImage = op.Product?.ImageFile
+                }).ToList()
+            };
+
+            return Ok(orderDto);
+        }
 
 
 
