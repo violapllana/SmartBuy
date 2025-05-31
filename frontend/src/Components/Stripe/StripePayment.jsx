@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
 import api from "../api";
 import { useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId }) => {
+const CheckoutForm = ({
+  initialEmail = "",
+  initialAmount = "",
+  initialOrderId = "",
+  initialPaymentMethodId = "",
+}) => {
   const stripe = useStripe();
   const elements = useElements();
-
   const [userId, setUserId] = useState("");
   const [orderId, setOrderId] = useState(initialOrderId || "");
   const [amount, setAmount] = useState(initialAmount || "");
   const [email, setEmail] = useState(initialEmail || "");
-
+  const [paymentMethodId] = useState(initialPaymentMethodId || "");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
 
-  // Fetch userId using username
+  // Fetch userId by username
   useEffect(() => {
-    if (!username) return;
-
     const fetchUserId = async () => {
       try {
+        const username = Cookies.get("username");
+        setUsername(username);
         const response = await api.get(
           `http://localhost:5108/users/by-username?username=${username}`
         );
@@ -37,12 +43,28 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
     };
 
     fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (!username) return;
+    const fetchUserEmail = async () => {
+      try {
+        const response = await api.get(
+          `http://localhost:5108/users/email?username=${username}`
+        );
+        setEmail(response.data.email);
+      } catch (err) {
+        console.error("Failed to fetch email:", err);
+      }
+    };
+
+    fetchUserEmail();
   }, [username]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe) {
       setError("Stripe has not loaded yet.");
       return;
     }
@@ -52,13 +74,23 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
       return;
     }
 
+    if (!paymentMethodId) {
+      setError("No saved payment method available.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(false);
 
-    const cardElement = elements.getElement(CardElement);
-
     try {
+      console.log("Creating payment intent with:", {
+        userId,
+        orderId,
+        amount,
+        email,
+      });
+
       const res = await fetch("http://localhost:5108/api/Payments/charge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -71,25 +103,47 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
       });
 
       const data = await res.json();
+      console.log("Received from backend:", data);
 
-      if (!data.clientSecret) {
+      if (!data.clientSecret || !data.transactionId) {
         setError("Failed to create payment intent.");
         setLoading(false);
         return;
       }
 
+      // Confirm payment using saved paymentMethodId — no card element needed
       const result = await stripe.confirmCardPayment(data.clientSecret, {
-        payment_method: { card: cardElement },
+        payment_method: paymentMethodId,
       });
+
+      console.log("Stripe confirm result:", result);
 
       if (result.error) {
         setError(result.error.message);
-      } else if (result.paymentIntent.status === "succeeded") {
+        setLoading(false);
+        return;
+      }
+
+      if (result.paymentIntent.status === "succeeded") {
+        const confirmRes = await fetch("http://localhost:5108/api/Payments/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ transactionId: data.transactionId }),
+        });
+
+        if (!confirmRes.ok) {
+          const errorData = await confirmRes.json();
+          setError("Payment confirmation failed: " + (errorData.message || "Unknown error"));
+          setLoading(false);
+          return;
+        }
+
         setSuccess(true);
       } else {
         setError("Payment failed.");
       }
     } catch (err) {
+      console.error("Payment error:", err);
       setError("Payment error: " + err.message);
     }
 
@@ -97,10 +151,12 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded shadow-md space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto p-6 bg-white rounded shadow-md space-y-6"
+    >
       <h2 className="text-2xl font-semibold text-center">Complete Payment</h2>
 
-     
       {/* Order ID */}
       <div>
         <label className="block mb-1 font-medium">Order ID</label>
@@ -109,7 +165,6 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
           value={orderId}
           onChange={(e) => setOrderId(e.target.value)}
           className="w-full px-3 py-2 border rounded"
-          placeholder="Enter order ID"
           required
         />
       </div>
@@ -123,7 +178,6 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="w-full px-3 py-2 border rounded"
-          placeholder="Enter amount"
           required
         />
       </div>
@@ -136,19 +190,13 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-3 py-2 border rounded"
-          placeholder="Enter email"
           required
         />
       </div>
 
-      {/* Card */}
-      <div>
-        <label className="block mb-1 font-medium">Card Details</label>
-        <div className="p-3 border rounded">
-          <CardElement options={{ hidePostalCode: true }} />
-        </div>
-      </div>
+      {/* Note: No CardElement here because we use saved payment method */}
 
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={!stripe || loading}
@@ -167,15 +215,15 @@ const CheckoutForm = ({ username, initialEmail, initialAmount, initialOrderId })
 
 const StripePayment = () => {
   const { state } = useLocation();
-  const { username, email, amount, orderId } = state || {};
+  const { email, amount, orderId, paymentMethodId } = state || {};
 
   return (
     <Elements stripe={stripePromise}>
       <CheckoutForm
-        username={username}
         initialEmail={email}
         initialAmount={amount}
         initialOrderId={orderId}
+        initialPaymentMethodId={paymentMethodId} // passing saved payment method ID here
       />
     </Elements>
   );

@@ -190,6 +190,23 @@ public class AuthController : ControllerBase
     }
 
 
+    [HttpGet("users/email")]
+    public async Task<IActionResult> GetUserEmail([FromQuery] string username)
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            return BadRequest(new { Message = "Username is required." });
+        }
+
+        var user = await _userManager.FindByNameAsync(username);
+
+        if (user == null)
+        {
+            return NotFound(new { Message = "User not found." });
+        }
+
+        return Ok(new { Email = user.Email });
+    }
 
 
 

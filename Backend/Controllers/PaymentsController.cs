@@ -74,7 +74,7 @@ namespace SmartBuy.Controllers
                 _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { clientSecret = intent.ClientSecret });
+                return Ok(new { clientSecret = intent.ClientSecret, transactionId = intent.Id });
             }
             catch (StripeException e)
             {
@@ -90,44 +90,51 @@ namespace SmartBuy.Controllers
 
             try
             {
+                // Retrieve the Stripe PaymentIntent
                 var intent = await intentService.GetAsync(request.TransactionId);
 
+                // Find the local payment by TransactionId
                 var payment = await _context.Payments
                     .Include(p => p.Order)
-                    .ThenInclude(o => o.OrderProducts)
-                    .ThenInclude(op => op.Product)
+                        .ThenInclude(o => o.OrderProducts)
+                            .ThenInclude(op => op.Product)
                     .FirstOrDefaultAsync(p => p.TransactionId == request.TransactionId);
 
                 if (payment == null)
                     return NotFound(new { message = "Payment not found." });
 
-                payment.PaymentStatus = intent.Status == "succeeded" ? "Success" : "Failed";
+                // Update payment status based on Stripe response
+                var isSucceeded = intent.Status == "succeeded";
+                payment.PaymentStatus = isSucceeded ? "Succeeded" : "Failed";
                 payment.PaidAt = DateTime.UtcNow;
 
-                if (payment.PaymentStatus == "Success")
+                // If succeeded, update order and stock
+                if (isSucceeded)
                 {
                     var order = payment.Order;
-
                     if (order == null)
                         return NotFound(new { message = "Order not found." });
 
-                    // Update stock for each product in the order
                     foreach (var op in order.OrderProducts)
                     {
                         var product = op.Product;
+                        if (product == null)
+                            return BadRequest(new { message = $"Product not found for productId {op.ProductId}" });
+
                         if (product.StockQuantity < op.Quantity)
                         {
                             return BadRequest(new { message = $"Insufficient stock for product {product.Name}" });
                         }
+
                         product.StockQuantity -= op.Quantity;
                     }
 
-                    order.Status = "Completed"; // Or whatever status means finished order
+                    order.Status = "Paid"; // You can also use "Completed" if preferred
                 }
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new { message = "Payment updated", status = payment.PaymentStatus });
+                return Ok(new { message = "Payment confirmed successfully.", status = payment.PaymentStatus });
             }
             catch (StripeException e)
             {
@@ -135,8 +142,6 @@ namespace SmartBuy.Controllers
                 return BadRequest(new { error = e.Message });
             }
         }
-
-
 
 
 
