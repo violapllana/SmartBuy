@@ -1,17 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using SmartBuy.Data;
-using SmartBuy.Models;
-using Backend.DTOs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-
+using Backend.DTOs;
+using SmartBuy.Models;
 
 namespace Backend.Mappers
 {
-
     public static class CardMapper
     {
         public static CardDto ToCardDto(this Card card)
@@ -19,12 +11,11 @@ namespace Backend.Mappers
             return new CardDto
             {
                 Id = card.Id,
-                CardNumber = card.CardNumber,
-                ExpirationDate = card.ExpirationDate,
-                CVV = card.CVV,
+                // Removed CardNumber, ExpirationDate, CVV
                 CardType = card.CardType,
                 UserId = card.UserId,
-                CreatedAt = card.CreatedAt
+                CreatedAt = card.CreatedAt,
+                StripePaymentMethodId = card.StripePaymentMethodId
             };
         }
 
@@ -32,29 +23,25 @@ namespace Backend.Mappers
         {
             return new Card
             {
-                CardNumber = dto.CardNumber,
-                ExpirationDate = dto.ExpirationDate,
-                CVV = dto.CVV,
                 CardType = dto.CardType,
                 UserId = userId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                StripePaymentMethodId = dto.StripePaymentMethodId
+                // No ExpirationDate here since Stripe manages it
             };
         }
-
 
         public static CardDto ToCardDto(this MongoCard card)
         {
             return new CardDto
             {
                 Id = card.Id,
-                CardNumber = card.CardNumber,
-                ExpirationDate = card.ExpirationDate,
-                CVV = card.CVV,
+                // Removed CardNumber, ExpirationDate, CVV
                 CardType = card.CardType,
                 UserId = card.UserId,
-                CreatedAt = card.CreatedAt
+                CreatedAt = card.CreatedAt,
+                StripePaymentMethodId = card.StripePaymentMethodId
             };
         }
     }
-
 }

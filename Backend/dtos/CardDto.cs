@@ -1,17 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 public class CardDto
 {
     public int Id { get; set; }
 
-    public string CardNumber { get; set; } = string.Empty;
+    public string StripePaymentMethodId { get; set; } = string.Empty;
 
-    public DateTime ExpirationDate { get; set; }
+    public string Brand { get; set; } = string.Empty; // e.g., Visa, MasterCard
 
-    public string CVV { get; set; } = string.Empty;
+    public string Last4 { get; set; } = string.Empty; // Only last 4 digits
 
-    public string CardType { get; set; } = string.Empty;
+    public int ExpMonth { get; set; }
+
+    public int ExpYear { get; set; }
+
+    public string CardType { get; set; } = string.Empty; // optional display label
 
     public string UserId { get; set; } = string.Empty;
 

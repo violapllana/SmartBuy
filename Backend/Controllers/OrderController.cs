@@ -209,7 +209,6 @@ namespace SmartBuy.Controllers
 
 
 
-
         public enum OrderStatus
         {
             Pending,
@@ -221,29 +220,26 @@ namespace SmartBuy.Controllers
 
         public class StatusUpdateDto
         {
-            public string NewStatus { get; set; } = string.Empty;
+            public string Status { get; set; } = string.Empty; // renamed from NewStatus to Status to match usage
         }
 
         [HttpPatch("UpdateStatus/{orderId}")]
-        public async Task<ActionResult> UpdateStatus([FromRoute] int orderId, [FromBody] StatusUpdateDto dto)
+        public async Task<ActionResult> UpdateStatus(int orderId, [FromBody] StatusUpdateDto dto)
         {
-            if (!Enum.TryParse(typeof(OrderStatus), dto.NewStatus, true, out var statusEnum))
+            if (!Enum.TryParse<OrderStatus>(dto.Status, true, out var statusEnum))
             {
                 return BadRequest("Invalid status.");
             }
 
             var order = await _context.Orders.FindAsync(orderId);
             if (order == null)
-            {
                 return NotFound($"Order with id {orderId} not found.");
-            }
 
-            order.Status = dto.NewStatus;
+            order.Status = statusEnum.ToString();
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
 
 
         // Get a specific Order from SQL Database by ID

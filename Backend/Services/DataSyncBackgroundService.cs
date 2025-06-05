@@ -32,7 +32,7 @@ public class DataSyncBackgroundService : BackgroundService
         {
             _logger.LogInformation("Syncing data from SQL Server to MongoDB...");
             await SyncDataAsync();
-            await Task.Delay(TimeSpan.FromMinutes(4), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }
 
@@ -151,21 +151,26 @@ public class DataSyncBackgroundService : BackgroundService
                 var mongoCard = new MongoCard
                 {
                     Id = sqlCard.Id,
-                    CardNumber = sqlCard.CardNumber,
-                    ExpirationDate = sqlCard.ExpirationDate,
-                    CVV = sqlCard.CVV,
+                    StripePaymentMethodId = sqlCard.StripePaymentMethodId,
+                    Brand = sqlCard.Brand,
+                    Last4 = sqlCard.Last4,
+                    ExpMonth = sqlCard.ExpMonth,
+                    ExpYear = sqlCard.ExpYear,
                     CardType = sqlCard.CardType,
-                     UserId = sqlCard.UserId,
+                    UserId = sqlCard.UserId,
                     CreatedAt = sqlCard.CreatedAt
+
                 };
 
                 var filter = Builders<MongoCard>.Filter.Eq("Id", mongoCard.Id);
                 var update = Builders<MongoCard>.Update
-                    .Set("CardNumber", mongoCard.CardNumber)
-                    .Set("ExpirationDate", mongoCard.ExpirationDate)
-                    .Set("CVV", mongoCard.CVV)
+                    .Set("StripePaymentMethodId", mongoCard.StripePaymentMethodId)
+                    .Set("Brand", mongoCard.Brand)
+                    .Set("Last4", mongoCard.Last4)
+                    .Set("ExpMonth", mongoCard.ExpMonth)
+                     .Set("ExpYear", mongoCard.ExpYear)
                     .Set("CardType", mongoCard.CardType)
-                     .Set("UserId", mongoCard.UserId)
+                    .Set("UserId", mongoCard.UserId)
                     .Set("CreatedAt", mongoCard.CreatedAt);
 
                 await cardCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
@@ -206,24 +211,24 @@ public class DataSyncBackgroundService : BackgroundService
             // WISHLISTS
             foreach (var sqlWishlist in wishlists)
             {
-              var mongoWishlist = new MongoWishlist
-{
-    Id = sqlWishlist.Id,
-    UserId = sqlWishlist.UserId,
-    ProductId = sqlWishlist.ProductId,
-    Product = new ProductDto
-    {
-        Id = sqlWishlist.Product.Id,
-        Name = sqlWishlist.Product.Name,
-        Description = sqlWishlist.Product.Description,
-        Price = sqlWishlist.Product.Price,
-        StockQuantity = sqlWishlist.Product.StockQuantity,
-        Category = sqlWishlist.Product.Category,
-        ImageFile = sqlWishlist.Product.ImageFile,
-        CreatedAt = sqlWishlist.Product.CreatedAt
-    },
-    CreatedAt = sqlWishlist.CreatedAt
-};
+                var mongoWishlist = new MongoWishlist
+                {
+                    Id = sqlWishlist.Id,
+                    UserId = sqlWishlist.UserId,
+                    ProductId = sqlWishlist.ProductId,
+                    Product = new ProductDto
+                    {
+                        Id = sqlWishlist.Product.Id,
+                        Name = sqlWishlist.Product.Name,
+                        Description = sqlWishlist.Product.Description,
+                        Price = sqlWishlist.Product.Price,
+                        StockQuantity = sqlWishlist.Product.StockQuantity,
+                        Category = sqlWishlist.Product.Category,
+                        ImageFile = sqlWishlist.Product.ImageFile,
+                        CreatedAt = sqlWishlist.Product.CreatedAt
+                    },
+                    CreatedAt = sqlWishlist.CreatedAt
+                };
 
 
                 var filter = Builders<MongoWishlist>.Filter.Eq("Id", mongoWishlist.Id);

@@ -8,14 +8,14 @@ const CardSelectorModal = ({ userId, showCardSelector, onClose, onSelectCard }) 
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
-        if (!userId) return; // guard clause
+        if (!userId) return; 
 
         const response = await api.get(`/Card/user/${userId}`);
 
         setCards(response.data || []);
       } catch (error) {
         console.error("Error fetching cards:", error);
-        setCards([]); // clear on error for safety
+        setCards([]); 
       }
     };
 
@@ -28,17 +28,21 @@ const CardSelectorModal = ({ userId, showCardSelector, onClose, onSelectCard }) 
 
 
 
-  const maskCardNumber = (number) => {
-  const clean = number.replace(/\D/g, ''); // Remove non-digit chars
-  if (clean.length < 4) return clean;
+const maskCardNumber = (number, last4) => {
+  if (last4) return `**** **** **** ${last4}`;
+  if (!number || typeof number !== 'string') return "";
+  
+  const clean = number.replace(/\D/g, '');
+  if (clean.length <= 4) return clean;
 
-  // First 4 digits shown, rest masked
-  const firstFour = clean.slice(0, 4);
-  // For simplicity mask rest as groups of **** (total 16 digits assumed)
-  const masked = "**** **** ****";
+  const lastFour = clean.slice(-4);
+  const maskedSection = clean.slice(0, -4).replace(/\d/g, '*');
 
-  return `${firstFour} ${masked}`;
+  const maskedWithSpaces = maskedSection.replace(/(.{4})/g, '$1 ').trim();
+
+  return `${maskedWithSpaces} ${lastFour}`;
 };
+
 
 
   if (!showCardSelector) return null;
@@ -65,7 +69,7 @@ const CardSelectorModal = ({ userId, showCardSelector, onClose, onSelectCard }) 
       key={card.id}
       className="flex-shrink-0 cursor-pointer transform hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
       onClick={() => {
-        onSelectCard(card.id);
+        onSelectCard(card);
         onClose();
       }}
       role="button"
@@ -73,7 +77,7 @@ const CardSelectorModal = ({ userId, showCardSelector, onClose, onSelectCard }) 
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onSelectCard(card.id);
+          onSelectCard(card.stripePaymentMethodId);
           onClose();
         }
       }}

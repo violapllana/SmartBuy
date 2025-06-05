@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import api from "./api";
-import CreditCardSelector from "./Card/CreditCardSelector";
-  import { useNavigate } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_ORDERS = "http://localhost:5108/api/Order/GetOrdersByUser";
 const BASE_URL = "http://localhost:5108";
@@ -12,24 +9,8 @@ const BASE_URL = "http://localhost:5108";
 const Order = ({ username }) => {
   const [userId, setUserId] = useState(null);
   const [order, setOrder] = useState(null);
-  const [showCardSelector, setShowCardSelector] = useState(false); // Modal visibility
-  const [selectedCard, setSelectedCard] = useState(null); // now holds full card info object
 
-const navigate = useNavigate();
-
-
-const handleSelectCard = (card) => {
-  const paymentMethodId = card.paymentMethod;  // <-- Use the paymentMethod string here
-
-  const paymentData = {
-    orderId: order.id,
-    amount: order.totalPrice,
-    paymentMethodId,  // pass this along
-  };
-
-  console.log("Navigating with paymentMethodId:", paymentMethodId);
-  navigate("/stripepayment", { state: { orderId: order.id, amount: order.totalPrice, paymentMethodId } });
-};
+  const navigate = useNavigate();
 
   // Fetch user ID from username
   useEffect(() => {
@@ -88,17 +69,10 @@ const handleSelectCard = (card) => {
     }
   };
 
-  // Open card selector modal on place order click
+  // Simplified: navigate directly to stripe payment page with order info
   const handlePlaceOrderClick = () => {
-    setShowCardSelector(true);
-    
+    navigate("/stripepayment", { state: { orderId: order.id, amount: order.totalPrice } });
   };
-
-  // Close card selector modal
-  const handleCloseCardSelector = () => {
-    setShowCardSelector(false);
-  };
-
 
   if (!order)
     return (
@@ -247,30 +221,6 @@ const handleSelectCard = (card) => {
           Place order
         </button>
       </main>
-
-      {/* Modal popup for card selection */}
-
-
-  {showCardSelector && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-0 flex items-center justify-center z-50"
-    aria-modal="true"
-    role="dialog"
-  >
-    <div className="bg-gray-100 bg-opacity-20 p-6 rounded-lg shadow-lg max-w-max w-auto">
-      <CreditCardSelector
-        userId={userId}
-        showCardSelector={showCardSelector}
-        onClose={handleCloseCardSelector}
-        onSelectCard={handleSelectCard}
-      />
-    </div>
-  </div>
-)}
-
-
-
-
     </section>
   );
 };

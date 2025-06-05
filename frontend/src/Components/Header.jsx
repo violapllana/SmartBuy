@@ -90,6 +90,27 @@ const Header = ({ isLoggedIn, handleLogout, role, username }) => {
                 Products
               </button>
             </li>
+            {role === "Admin" && (
+              <>
+              <li>
+              <button
+                className="text-lg font-semibold text-yellow-400 hover:text-yellow-600 transform hover:-translate-y-1 transition-all"
+                onClick={() => navigateAndCloseMenu("/orderforadmins")}
+              >
+                Order List
+              </button>
+            </li>
+             <li>
+              <button
+                className="text-lg font-semibold text-yellow-400 hover:text-yellow-600 transform hover:-translate-y-1 transition-all"
+                onClick={() => navigateAndCloseMenu("/products")}
+              >
+                Products List
+              </button>
+            </li>
+            </>
+            )}
+            
           </ul>
 
           {/* User Section & Icons */}

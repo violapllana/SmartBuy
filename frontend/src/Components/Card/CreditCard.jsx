@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-// Logos
+// Logos (same as before)
 const VisaLogo = () => (
   <svg width="48" height="20" viewBox="0 0 48 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path fill="#1A1F71" d="M0 0h48v20H0z" fillOpacity="0" />
@@ -23,13 +23,8 @@ const AmexLogo = () => (
   </svg>
 );
 
-// Format card number
-const formatCardNumber = (number) =>
-  number.replace(/\s?/g, "").replace(/(\d{4})/g, "$1 ").trim();
-
-// Get card logo
 const getCardLogo = (type) => {
-  switch (type.toLowerCase()) {
+  switch ((type || "").toLowerCase()) {
     case "visa":
       return <VisaLogo />;
     case "mastercard":
@@ -42,9 +37,8 @@ const getCardLogo = (type) => {
   }
 };
 
-// Fallback gradient by type
 const getDefaultGradient = (type) => {
-  switch (type.toLowerCase()) {
+  switch ((type || "").toLowerCase()) {
     case "visa":
       return "from-blue-600 via-blue-800 to-indigo-900";
     case "mastercard":
@@ -57,7 +51,24 @@ const getDefaultGradient = (type) => {
 };
 
 const CreditCard = ({ card }) => {
+  useEffect(() => {
+    console.log("Card prop received:", card);
+
+    const cardGradient = card.gradient || getDefaultGradient(card.cardType);
+    console.log("Using gradient:", cardGradient);
+
+    const maskedNumber = `**** **** **** ${card.last4 || "0000"}`;
+    console.log("Masked card number:", maskedNumber);
+
+    const expMonth = card.expMonth?.toString().padStart(2, "0") || "00";
+    const expYear = card.expYear ? card.expYear.toString().slice(-2) : "00";
+    console.log("Expiration:", expMonth + "/" + expYear);
+  }, [card]);
+
   const cardGradient = card.gradient || getDefaultGradient(card.cardType);
+  const maskedNumber = `**** **** **** ${card.last4 || "0000"}`;
+  const expMonth = card.expMonth?.toString().padStart(2, "0") || "00";
+  const expYear = card.expYear ? card.expYear.toString().slice(-2) : "00";
 
   return (
     <div
@@ -77,28 +88,21 @@ const CreditCard = ({ card }) => {
 
       {/* Card number */}
       <div className="mt-12 font-mono text-xl tracking-widest break-words select-none">
-        {formatCardNumber(card.cardNumber)}
+        {maskedNumber}
       </div>
 
-      {/* Name */}
+      {/* Cardholder name */}
       {card.cardholderName && (
         <div className="uppercase text-sm tracking-widest mt-2 select-none">
           {card.cardholderName}
         </div>
       )}
 
-      {/* Expiration + CVV */}
+      {/* Expiration */}
       <div className="flex justify-between text-sm mt-6 select-none">
         <div>
           <span className="block text-gray-300 text-xs">Expires</span>
-          {new Date(card.expirationDate).toLocaleDateString("en-US", {
-            month: "2-digit",
-            year: "2-digit",
-          })}
-        </div>
-        <div>
-          <span className="block text-gray-300 text-xs">CVV</span>
-          {card.cvv}
+          {`${expMonth}/${expYear}`}
         </div>
       </div>
     </div>

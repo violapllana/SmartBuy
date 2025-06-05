@@ -20,7 +20,9 @@ import Products from './Components/Products/Index';
 import ProductList from './Components/Products/List';
 import CardList from './Components/Card/List';
 import UserCardList from './Components/Card/UserCardList';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
 
 
 
@@ -28,6 +30,7 @@ import UserCardList from './Components/Card/UserCardList';
 import { MessageProvider } from './Contexts/MessageContext';
 import Order from './Components/Order';
 import StripePayment from './Components/Stripe/StripePayment';
+import OrderForAdmins from './Components/OrderForAdmins';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -40,6 +43,9 @@ function App() {
   const [storedAuthToken, setStoredAuthToken] = useState('');
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showNotification, setShowNotification] = useState(false);
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
 
   const fetchUserId = useCallback(async () => {
     if (username) {
@@ -218,36 +224,39 @@ function App() {
       )}
 
       {/* Main content should grow to fill space */}
-      <main className="flex-grow">
-        <MessageProvider username={username} triggerNotification={triggerNotification}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register handleRegister={handleRegister} onLogin={handleLogin} />} />
-            <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
-            <Route path="/settings" element={<Settings handleLogout={handleLogout} />} />
-            {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
-            <Route path="/card" element={<AddCard username={username} />} />
-            <Route path="/wishlist" element={<Wishlist username={username} />} />
-            <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username} />} />
-            <Route path="/products" element={<Products username={username} />} />
-            <Route path="/productlist" element={<ProductList username={username} />} />
-            <Route path="/cardlist" element={<CardList username={username} />} />
-            <Route path="/usercardlist" element={<UserCardList username={username} />} />
-            <Route path="/order" element={<Order username={username} />} />
-            <Route path="/stripepayment" element={<StripePayment username={username} />} />
-            <Route
-              path="/chatcomponent"
-              element={
-                <ChatComponent
-                  username={username}
-                  triggerNotification={triggerNotification}
-                />
-              }
-            />
-          </Routes>
-        </MessageProvider>
-      </main>
+     <main className="flex-grow">
+  <MessageProvider username={username} triggerNotification={triggerNotification}>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login onLogin={handleLogin} />} />
+      <Route path="/register" element={<Register handleRegister={handleRegister} onLogin={handleLogin} />} />
+      <Route path="/profile" element={<Profile username={username} role={role} handleLogout={handleLogout} />} />
+      <Route path="/settings" element={<Settings handleLogout={handleLogout} />} />
+    <Route path="/card" element={<AddCard username={username} />} />
+
+      <Route path="/wishlist" element={<Wishlist username={username} />} />
+      <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username} />} />
+      <Route path="/products" element={<Products username={username} />} />
+      <Route path="/productlist" element={<ProductList username={username} />} />
+      <Route path="/cardlist" element={<CardList username={username} />} />
+      <Route path="/usercardlist" element={<UserCardList username={username} />} />
+      <Route path="/order" element={<Order username={username} />} />
+            <Route path="/orderforadmins" element={<OrderForAdmins username={username} />} />
+
+      <Route path="/stripepayment" element={<StripePayment username={username} />} />
+      <Route
+        path="/chatcomponent"
+        element={
+          <ChatComponent
+            username={username}
+            triggerNotification={triggerNotification}
+          />
+        }
+      />
+    </Routes>
+  </MessageProvider>
+</main>
+
 
       <Footer />
     </div>

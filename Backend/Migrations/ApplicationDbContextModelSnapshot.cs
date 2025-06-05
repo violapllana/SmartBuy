@@ -44,7 +44,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Shipments", (string)null);
+                    b.ToTable("Shipments");
                 });
 
             modelBuilder.Entity("Backend.SignalR.Message", b =>
@@ -75,7 +75,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Backend.SignalR.Notification", b =>
@@ -103,7 +103,7 @@ namespace SmartBuy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -275,7 +275,7 @@ namespace SmartBuy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Review", b =>
@@ -307,7 +307,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.Card", b =>
@@ -318,15 +318,10 @@ namespace SmartBuy.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CVV")
+                    b.Property<string>("Brand")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CardType")
                         .IsRequired()
@@ -336,9 +331,20 @@ namespace SmartBuy.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasMaxLength(5)
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ExpMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExpYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Last4")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.Property<string>("StripePaymentMethodId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -348,7 +354,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Cards", (string)null);
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.Order", b =>
@@ -374,7 +380,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.OrderProduct", b =>
@@ -407,7 +413,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts", (string)null);
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.Payment", b =>
@@ -452,7 +458,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.RefreshToken", b =>
@@ -470,7 +476,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.User", b =>
@@ -561,7 +567,7 @@ namespace SmartBuy.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("Backend.Models.Shipment", b =>

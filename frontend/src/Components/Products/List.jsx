@@ -137,44 +137,41 @@ const handleAddToCart = async (productId, quantity) => {
   }
 
   try {
-    // 1. Check if user has a pending order (returns boolean)
+    // Step 1: Check if the user has a pending order
     const { data: hasPendingOrder } = await api.get(`/Order/HasPendingOrder/${userId}`);
 
-    if (!hasPendingOrder) {
-      // 2a. No pending order, create a new order with product
-      // Backend expects DTO like: { userId, products: [{ productId, quantity }] }
-      await api.post(`/Order`, {
-        userId,
-        products: [{ productId, quantity }],
-      });
-
-    } else {
-      // 2b. Pending order exists, get that pending order's Id
+    if (hasPendingOrder) {
+      // Step 2a: Get all orders and find the one with "Pending" status
       const { data: orders } = await api.get(`/Order/GetOrdersByUser/${userId}`);
-
-      // Find the pending order from orders list
       const pendingOrder = orders.find(o => o.status === "Pending");
-      if (!pendingOrder) {
-        console.error("Pending order not found after check.");
+
+      if (pendingOrder) {
+        // Step 3: Add product to existing pending order
+        await api.post(`/Order/AddProductToOrder`, {
+          orderId: pendingOrder.id,
+          productId,
+          quantity,
+        });
+
+        alert("Product added to existing cart!");
         return;
       }
 
-      // 3. Add product to existing pending order
-      // Backend expects AddProductToOrderRequestDto: { orderId, productId, quantity }
-      await api.post(`/Order/AddProductToOrder`, {
-        orderId: pendingOrder.id,
-        productId,
-        quantity,
-      });
+      // If hasPendingOrder is true but no pending order is found (edge case), log it
+      console.warn("HasPendingOrder returned true, but no pending order found.");
     }
 
-    alert("Product added to cart!");
+    // Step 2b: No pending order (or not found), create a new order
+    await api.post(`/Order`, {
+      userId,
+      products: [{ productId, quantity }],
+    });
+
+    alert("Product added to new cart!");
   } catch (err) {
     console.error("Failed to add product to cart", err);
   }
 };
-
-
 
 
 
