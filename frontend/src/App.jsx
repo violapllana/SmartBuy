@@ -15,9 +15,18 @@ import AddCard from './Components/Card/Card';
 import ChatComponent from './Components/ChatComponent';
 import ChatComponentForUsers from './Components/ChatComponentForUsers';
 import CustomNotification from './Components/NotificationUtil';
+import Wishlist from './Components/WishList/Index';
+import Products from './Components/Products/Index';
+import ProductList from './Components/Products/List';
+import CardList from './Components/Card/List';
+import UserCardList from './Components/Card/UserCardList';
+
+
 
 // Import your MessageProvider context here
 import { MessageProvider } from './Contexts/MessageContext';
+import Order from './Components/Order';
+import StripePayment from './Components/Stripe/StripePayment';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -128,6 +137,7 @@ function App() {
 
  useEffect(() => {
   const interval = setInterval(async () => {
+
     const savedSenders = JSON.parse(localStorage.getItem('newMessageSenders')) || [];
     const updatedSenders = [];
 
@@ -178,10 +188,13 @@ function App() {
   }
 
   // Define the notification trigger function to pass into context
-  const triggerNotification = (sender) => {
-    setNotificationMessage(`You got a new message from ${sender}`);
-    setShowNotification(true);
-  };
+ const triggerNotification = (sender) => {
+  const token = Cookies.get('accessToken');
+
+
+  setNotificationMessage(`You got a new message from ${sender}`);
+  setShowNotification(true);
+};
 
   return (
     <Router>
@@ -211,7 +224,16 @@ function App() {
             <Route path="/settings" element={<Settings  handleLogout={handleLogout} />} />
             {/* <Route path="/contact" element={<Contact username={username} storedrole={role} />} /> */}
             <Route path="/card" element={<AddCard username={username}  />} /> 
+            <Route path="/wishlist" element={<Wishlist username={username} />} />
             <Route path="/chatcomponentforusers" element={<ChatComponentForUsers username={username}  />} /> 
+            <Route path="/products" element={<Products username={username} />} />
+            <Route path="/productlist" element={<ProductList username={username} />} />
+            <Route path="/cardlist" element={<CardList username={username} />} />
+            <Route path="/usercardlist" element={<UserCardList username={username} />} />
+            <Route path="/order" element={<Order username={username} />} />
+                        <Route path="/stripepayment" element={<StripePayment username={username} />} />
+
+
 
             <Route
               path="/chatcomponent"

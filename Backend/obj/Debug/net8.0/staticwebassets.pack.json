@@ -1,0 +1,49 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\12828b20-9705-43f4-80b1-0b0cddb786e3.jpg",
+      "PackagePath": "staticwebassets\\images\\12828b20-9705-43f4-80b1-0b0cddb786e3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\440281.webp",
+      "PackagePath": "staticwebassets\\images\\440281.webp"
+    },
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg",
+      "PackagePath": "staticwebassets\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+      "PackagePath": "staticwebassets\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg",
+      "PackagePath": "staticwebassets\\images\\Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\ce47f246-75f5-4c32-a8f2-58f3c0a334c8.jpg",
+      "PackagePath": "staticwebassets\\images\\ce47f246-75f5-4c32-a8f2-58f3c0a334c8.jpg"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.SmartBuy.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.SmartBuy.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.SmartBuy.props",
+      "PackagePath": "build\\SmartBuy.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.SmartBuy.props",
+      "PackagePath": "buildMultiTargeting\\SmartBuy.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.SmartBuy.props",
+      "PackagePath": "buildTransitive\\SmartBuy.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

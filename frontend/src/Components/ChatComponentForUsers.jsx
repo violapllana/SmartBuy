@@ -12,6 +12,19 @@ const ChatComponentForUsers = ({ username }) => {
   const [adminIds, setAdminIds] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
 
+
+
+
+
+  
+
+
+
+
+
+
+
+
   const fetchUserId = useCallback(async () => {
     if (!username) return;
     try {

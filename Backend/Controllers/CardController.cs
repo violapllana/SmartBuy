@@ -100,6 +100,31 @@ public class CardController : ControllerBase
             CreatedAt = card.CreatedAt
         });
     }
+    [HttpGet("user/{userId}")]
+public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsByUserId(string userId)
+{
+    var cards = await _cardCollection
+        .Find(c => c.UserId == userId)
+        .Project(c => new CardDto
+        {
+            Id = c.Id,
+            CardNumber = c.CardNumber,
+            ExpirationDate = c.ExpirationDate,
+            CVV = c.CVV,
+            CardType = c.CardType,
+            UserId = c.UserId,
+            CreatedAt = c.CreatedAt
+        })
+        .ToListAsync();
+
+    if (cards == null || cards.Count == 0)
+    {
+        return NotFound();
+    }
+
+    return Ok(cards);
+}
+
 
     // PUT: api/Card/5
     [HttpPut("{id}")]

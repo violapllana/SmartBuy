@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SmartBuy.Data;
 using SmartBuy.Models;
 
-
 namespace SmartBuy.Mappers
 {
     public static class OrderMapper
@@ -14,13 +13,17 @@ namespace SmartBuy.Mappers
                 Id = order.Id,
                 UserId = order.UserId,
                 OrderDate = order.OrderDate,
+                Status = order.Status,
                 Products = order.OrderProducts.Select(op => new OrderProductDto
                 {
                     ProductId = op.ProductId,
                     Quantity = op.Quantity,
-                    Price = op.Price
+                    Price = op.Price,
+                    ProductName = op.Product?.Name ?? "Unknown",        // <-- add this
+                    ProductImage = op.Product?.ImageFile                  // <-- add this (replace with actual image field)
                 }).ToList(),
-                TotalPrice = order.OrderProducts.Sum(op => op.Price * op.Quantity) // Add this line
+
+                TotalPrice = order.OrderProducts.Sum(op => op.Price * op.Quantity)
             };
         }
 
@@ -48,6 +51,5 @@ namespace SmartBuy.Mappers
                 }).ToList()
             };
         }
-
     }
 }

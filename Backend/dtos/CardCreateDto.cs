@@ -10,7 +10,6 @@ public class CardCreateDto
     public string CardNumber { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(5)]
     public DateTime ExpirationDate { get; set; }
 
     [Required]

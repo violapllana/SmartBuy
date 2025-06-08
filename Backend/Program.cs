@@ -21,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-
 // Add Controllers
 builder.Services.AddControllers(); // Register controllers
 
@@ -33,10 +32,8 @@ builder.Services.AddControllers(); // Register controllers
 
 
 
-
 // Add Swagger Services
 builder.Services.AddEndpointsApiExplorer();
-
 
 
 builder.Services.AddSwaggerGen(c =>
@@ -80,11 +77,9 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-
 // MongoDB Configuration
 var mongoConnectionString = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
 var mongoDatabaseName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
-
 
 
 
@@ -92,7 +87,6 @@ if (string.IsNullOrEmpty(mongoConnectionString) || string.IsNullOrEmpty(mongoDat
 {
     throw new InvalidOperationException("MongoDB configuration is missing.");
 }
-
 
 
 
@@ -110,26 +104,34 @@ builder.Services.AddSingleton(serviceProvider =>
 Console.WriteLine("Mongo Conn String: " + mongoConnectionString);
 Console.WriteLine("Mongo Database Name: " + mongoDatabaseName);
 
-// Get Stripe Secret and Publishable keys from environment variables
-var stripeSecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
-var stripePublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+var stripeSettings = new StripeSettings
+{
+    SecretKey = Environment.GetEnvironmentVariable("STRIPE__SECRETKEY"),
+    PublishableKey = Environment.GetEnvironmentVariable("STRIPE__PUBLISHABLEKEY")
 
-// Ensure the environment variables are set
-if (string.IsNullOrEmpty(stripeSecretKey) || string.IsNullOrEmpty(stripePublishableKey))
+};
+
+if (string.IsNullOrEmpty(stripeSettings.SecretKey) || string.IsNullOrEmpty(stripeSettings.PublishableKey))
 {
     throw new InvalidOperationException("Stripe keys are missing.");
 }
-Console.WriteLine("Stripe SecretKey: " + stripeSecretKey);
-Console.WriteLine("Stripe Publishable Key: " + stripePublishableKey);
 
+Console.WriteLine("Stripe SecretKey: " + stripeSettings.SecretKey);
+Console.WriteLine("Stripe Publishable Key: " + stripeSettings.PublishableKey);
 
-// Configure Stripe settings
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-builder.Services.AddSingleton<StripeClient>(serviceProvider =>
+// Set Stripe's global API key (optional if using StripeClient)
+Stripe.StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+
+// Register StripeSettings instance
+builder.Services.AddSingleton(stripeSettings);
+
+// Register StripeClient with secret key from StripeSettings
+builder.Services.AddSingleton<StripeClient>(sp =>
 {
-    var stripeSettings = serviceProvider.GetRequiredService<IOptions<StripeSettings>>().Value;
-    return new StripeClient(stripeSettings.SecretKey); // Use SecretKey for StripeClient
+    var settings = sp.GetRequiredService<StripeSettings>();
+    return new StripeClient(settings.SecretKey);
 });
+
 
 // Database Configuration for SQL Server
 var connectionString = Environment.GetEnvironmentVariable("SMARTBUY_CONNECTION_STRING");
@@ -197,18 +199,20 @@ builder.Services.AddCors(options =>
 });
 
 
-
 builder.Services.AddSignalR();  // Add SignalR service
 
 
-
 builder.Services.AddScoped<ITokenService, SmartBuy.Services.TokenService>();
+
+
+
+
 builder.Services.AddHostedService<DataSyncBackgroundService>();
 
 builder.Services.AddScoped<ChatHub>(); // Add this
 
-
 builder.Logging.AddConsole();
+
 
 
 
@@ -219,7 +223,6 @@ builder.Services.AddSingleton<StripeClient>(serviceProvider =>
     return new StripeClient(stripeSettings.SecretKey);
 });
 
-
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
@@ -228,7 +231,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserOnly", policy =>
         policy.RequireRole("User"));
 });
-
 
 
 // Build the application
@@ -252,9 +254,7 @@ app.UseWebSockets(); // This allows WebSocket connections for SignalR
 
 
 
-
 app.MapHub<ChatHub>("/chatHub");
-
 
 // Ensure roles exist at startup
 using (var scope = app.Services.CreateScope())
@@ -269,11 +269,20 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage(); // Enable detailed errors in dev
 }
 
+
+app.UseStaticFiles(); // për të lejuar servimin e imazheve
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartBuy API v1");
 });
+
+
+
+
+
+
 
 // Ensure Roles Exist
 static async Task EnsureRoles(IServiceProvider serviceProvider)
@@ -291,4 +300,11 @@ static async Task EnsureRoles(IServiceProvider serviceProvider)
         }
     }
 }
+
+
+
+
+
+
 app.Run();
+

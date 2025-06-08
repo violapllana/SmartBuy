@@ -14,7 +14,7 @@ const Home = () => {
             Explore powerful features that make your shopping experience smarter, faster, and more enjoyable. Tech has never been this accessible!
           </p>
           <Link 
-            to="/products" 
+            to="/productlist" 
             className="inline-block bg-yellow-400 text-black py-3 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-semibold hover:bg-amber-500 transition-all duration-300"
           >
             Start Shopping

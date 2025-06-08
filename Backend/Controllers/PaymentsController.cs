@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using SmartBuy.Data;
 using SmartBuy.Models;
 using Stripe;
-using Stripe.Checkout;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,18 +18,18 @@ namespace SmartBuy.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<PaymentsController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly StripeClient _stripeClient;
 
         public PaymentsController(
             ApplicationDbContext context,
             ILogger<PaymentsController> logger,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            StripeClient stripeClient)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
-
-            // Set the Stripe API key
-            StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
+            _stripeClient = stripeClient;
         }
 
         [HttpPost("charge")]
@@ -41,7 +40,7 @@ namespace SmartBuy.Controllers
                 return BadRequest("Invalid payment data.");
             }
 
-            var paymentIntentService = new PaymentIntentService();
+            var paymentIntentService = new PaymentIntentService(_stripeClient);
 
             var options = new PaymentIntentCreateOptions
             {
@@ -85,7 +84,7 @@ namespace SmartBuy.Controllers
         [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmPayment([FromBody] PaymentConfirmation request)
         {
-            var intentService = new PaymentIntentService();
+            var intentService = new PaymentIntentService(_stripeClient);
 
             try
             {
@@ -97,16 +96,7 @@ namespace SmartBuy.Controllers
                 if (payment == null)
                     return NotFound(new { message = "Payment not found." });
 
-                // Update the payment status
-                if (intent.Status == "succeeded")
-                {
-                    payment.PaymentStatus = "Success";
-                }
-                else
-                {
-                    payment.PaymentStatus = "Failed";
-                }
-
+                payment.PaymentStatus = intent.Status == "succeeded" ? "Success" : "Failed";
                 payment.PaidAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();

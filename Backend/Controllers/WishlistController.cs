@@ -16,31 +16,31 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        // GET: api/wishlist - Get all wishlist items
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var wishlists = _context.Wishlists
-                .Select(w => w.toWishlistDto())
-                .ToList();
+       [HttpGet]
+public IActionResult Get()
+{
+    var wishlists = _context.Wishlists
+        .Include(w => w.Product)  // ngarko të dhënat e produktit
+        .Select(w => w.toWishlistDto())
+        .ToList();
 
-            return Ok(wishlists);
-        }
+    return Ok(wishlists);
+}
+[HttpGet("{userId}/{productId}")]
+public async Task<IActionResult> Get(string userId, int productId)
+{
+    var wishlist = await _context.Wishlists
+        .Include(w => w.Product)  // ngarko produktin
+        .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
 
-        // GET: api/wishlist/{userId}/{productId}
-        [HttpGet("{userId}/{productId}")]
-        public async Task<IActionResult> Get(string userId, int productId)
-        {
-            var wishlist = await _context.Wishlists
-                .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
+    if (wishlist == null)
+    {
+        return NotFound();
+    }
 
-            if (wishlist == null)
-            {
-                return NotFound();
-            }
+    return Ok(wishlist.toWishlistDto());
+}
 
-            return Ok(wishlist.toWishlistDto());
-        }
 
         // POST: api/wishlist
         [HttpPost]
@@ -60,6 +60,18 @@ namespace Backend.Controllers
 
             return CreatedAtAction(nameof(Get), new { userId = wishlistModel.UserId, productId = wishlistModel.ProductId }, wishlistModel.toWishlistDto());
         }
+// GET: api/Wishlist/user/{userId}
+[HttpGet("user/{userId}")]
+public async Task<IActionResult> GetByUserId(string userId)
+{
+    var wishlists = await _context.Wishlists
+        .Where(w => w.UserId == userId)
+        .Include(w => w.Product)
+        .Select(w => w.toWishlistDto())
+        .ToListAsync();
+
+    return Ok(wishlists);
+}
 
         // DELETE: api/wishlist/{userId}/{productId}
         [HttpDelete("{userId}/{productId}")]

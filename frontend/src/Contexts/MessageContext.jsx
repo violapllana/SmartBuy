@@ -121,7 +121,9 @@ setChatMessages(prev => [
           try {
             api.get(`http://localhost:5108/users/getusernamefromid/${senderId}`).then(response => {
               const senderUsername = response.data;
-              triggerNotification(senderUsername); // Show notification with sender's username
+            
+              triggerNotification(senderUsername);
+              // Show notification with sender's username
             });
           } catch (error) {
             console.error("Failed to fetch sender username", error);
