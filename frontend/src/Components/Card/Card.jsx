@@ -1,23 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-const AddCard = () => {
-  const [cardData, setCardData] = useState({
-    cardNumber: '',
-    CVV: '',
-    cardType: '',
-    userId: '',
-    expirationDate: '',  
-  });
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+// Load Stripe outside component to avoid recreating on every render
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+const AddCardForm = ({ userId }) => {
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [successMessage, setSuccessMessage] = useState('');
+
+  const [loading, setLoading] = useState(false);
+
+  console.log('Stripe key:', process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!stripe || !elements) {
+    alert('Stripe.js has not loaded yet.');
+    return;
+  }
+
+  setLoading(true);
+
+  const cardElement = elements.getElement(CardElement);
+
+  const { error, paymentMethod } = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardElement,
+  });
+
+  if (error) {
+    alert(error.message);
+    setLoading(false);
+    return;
+  }
+
+  // Get the card brand from paymentMethod.card.brand
+  const brand = paymentMethod.card.brand; // e.g. "mastercard"
+  
+  // Format brand with first letter uppercase, rest lowercase (if needed)
+  const formattedCardType = brand.charAt(0).toUpperCase() + brand.slice(1);
+
+  const payload = {
+    cardType: formattedCardType,               // note lowercase "cardType"
+    stripePaymentMethodId: paymentMethod.id,
+    userId,
+  };
+
+  try {
+    const res = await fetch('http://localhost:5108/api/Card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    });
+
+    if (res.ok) {
+      setSuccessMessage('Card created successfully!');
+      elements.getElement(CardElement).clear();
+    } else {
+      const errorText = await res.text();
+      alert('Failed to add card: ' + errorText);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Something went wrong.');
+  }
+
+  setLoading(false);
+};
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Stripe Card Input */}
+      <div>
+        <label className="block text-gray-700 font-medium mb-1">Card Details*</label>
+        <div className="p-3 border border-gray-300 rounded-md bg-white">
+          <CardElement options={{hidePostalCode: true}} />
+        </div>
+      </div>
+
+     
+
+     
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={!stripe || loading}
+        className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
+      >
+        {loading ? 'Processing...' : 'Submit'}
+      </button>
+
+      {/* Success Message */}
+      {successMessage && (
+        <p className="mt-4 text-green-600 text-center font-medium">{successMessage}</p>
+      )}
+    </form>
+  );
+};
+
+const AddCard = () => {
+  const [userId, setUserId] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const storedUsername = Cookies.get('username');
-    if (storedUsername) {
+    const username = Cookies.get('username');
+    if (username) {
       setIsLoggedIn(true);
-      fetchUserIdFromUsername(storedUsername); 
+      fetchUserIdFromUsername(username);
     } else {
       setIsLoggedIn(false);
     }
@@ -26,65 +124,11 @@ const AddCard = () => {
   const fetchUserIdFromUsername = async (username) => {
     try {
       const response = await fetch(`http://localhost:5108/users/by-username?username=${username}`);
-      if (!response.ok) {
-        throw new Error('User not found!');
-      }
+      if (!response.ok) throw new Error('User not found!');
       const data = await response.json();
-      setCardData(prev => ({
-        ...prev,
-        userId: data.id, 
-      }));
+      setUserId(data.id);
     } catch (error) {
       console.error('Error fetching userId:', error);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCardData({ ...cardData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    for (const key in cardData) {
-      if (!cardData[key]) {
-        alert(`Please fill in the ${key} field.`);
-        return;
-      }
-    }
-
-    try {
-      const payload = {
-        CardNumber: cardData.cardNumber,
-        ExpirationDate: new Date(cardData.expirationDate),  
-        CVV: cardData.CVV,
-        CardType: cardData.cardType,
-        UserId: cardData.userId,
-      };
-
-      const res = await fetch('http://localhost:5108/api/Card', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include',
-      });
-
-      if (res.ok) {
-        setSuccessMessage('Card created successfully!');
-        setCardData({
-          cardNumber: '',
-          CVV: '',
-          cardType: '',
-          userId: cardData.userId,
-          expirationDate: '',
-        });
-      } else {
-        alert('Failed to add card.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Something went wrong.');
     }
   };
 
@@ -108,79 +152,9 @@ const AddCard = () => {
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Card Number */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Card Number*</label>
-            <input
-              type="text"
-              name="cardNumber"
-              value={cardData.cardNumber}
-              onChange={handleChange}
-              required
-              minLength={13}
-              maxLength={16}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter card number"
-            />
-          </div>
-
-          {/* Expiration Date */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Expiration Date*</label>
-            <input
-              type="month"              
-              name="expirationDate"
-              value={cardData.expirationDate}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* CVV */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">CVV*</label>
-            <input
-              type="text"
-              name="CVV"
-              value={cardData.CVV}
-              onChange={handleChange}
-              required
-              maxLength={3}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="CVV"
-            />
-          </div>
-
-          {/* Card Type */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Card Type*</label>
-            <select
-              name="cardType"
-              value={cardData.cardType}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select type</option>
-              <option value="Visa">Visa</option>
-              <option value="MasterCard">MasterCard</option>
-              <option value="American Express">American Express</option>
-            </select>
-          </div>
-
-          {/* Submit Button */}
-          <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300">
-            Submit
-          </button>
-        </form>
-
-        {/* Success Message */}
-        {successMessage && (
-          <p className="mt-4 text-green-600 text-center font-medium">{successMessage}</p>
-        )}
+<Elements stripe={stripePromise}>
+      <AddCardForm userId={userId} />
+    </Elements>
       </div>
     </div>
   );

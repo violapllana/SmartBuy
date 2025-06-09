@@ -17,7 +17,10 @@ namespace Backend.Mappers
                 UserId = payment.UserId,
                 OrderId = payment.OrderId,
                 TotalAmount = payment.TotalAmount,
-                PaidAt = payment.PaidAt
+                PaidAt = payment.PaidAt,
+                TransactionId = payment.TransactionId,
+                PaymentMethod = payment.PaymentMethod,
+                PaymentStatus = payment.PaymentStatus
             };
         }
 

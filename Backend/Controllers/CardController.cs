@@ -1,134 +1,143 @@
+using Backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using SmartBuy.Data;
 using SmartBuy.Models;
+using Stripe;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using MongoDB.Driver;
-using SmartBuy.Mappers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class CardController : ControllerBase
 {
     private readonly IMongoCollection<MongoCard> _cardCollection;
-
     private readonly ApplicationDbContext _context;
 
     public CardController(ApplicationDbContext context, IMongoClient mongoClient)
     {
         _context = context;
-
         var database = mongoClient.GetDatabase("SmartBuy");
         _cardCollection = database.GetCollection<MongoCard>("Cards");
     }
 
-    // GET: api/Card
     [HttpGet]
-    public async Task<ActionResult> GetCards()
+    public async Task<ActionResult<IEnumerable<CardDto>>> GetCards()
     {
-        // Fetch the cards from the MongoDB collection
-        var cards = await _cardCollection
-            .Find(_ => true) // This will find all cards
-            .Project(c => new CardDto
+        var cards = await _context.Cards
+     .Select(c => new CardDto
+     {
+         Id = c.Id,
+         StripePaymentMethodId = c.StripePaymentMethodId,
+         Brand = c.Brand,
+         Last4 = c.Last4,
+         ExpMonth = c.ExpMonth,
+         ExpYear = c.ExpYear,
+         CardType = c.CardType,
+         UserId = c.UserId,
+         CreatedAt = c.CreatedAt
+     })
+     .ToListAsync();
+
+
+        return Ok(cards);
+    }
+
+
+
+
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CardDto>> GetCardById(int id)
+    {
+        var c = await _context.Cards.FindAsync(id);
+        if (c == null)
+            return NotFound();
+
+        var cardDto = new CardDto
+        {
+            Id = c.Id,
+            StripePaymentMethodId = c.StripePaymentMethodId,
+            Brand = c.Brand,
+            Last4 = c.Last4,
+            ExpMonth = c.ExpMonth,
+            ExpYear = c.ExpYear,
+            CardType = c.CardType,
+            UserId = c.UserId,
+            CreatedAt = c.CreatedAt
+        };
+
+        return Ok(cardDto);
+    }
+
+
+
+
+
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsByUserId(string userId)
+    {
+        var cards = await _context.Cards
+            .Where(c => c.UserId == userId)
+            .Select(c => new CardDto
             {
                 Id = c.Id,
-                CardNumber = c.CardNumber,
-                ExpirationDate = c.ExpirationDate,
-                CVV = c.CVV,
+                StripePaymentMethodId = c.StripePaymentMethodId,
+                Brand = c.Brand,
+                Last4 = c.Last4,
+                ExpMonth = c.ExpMonth,
+                ExpYear = c.ExpYear,
                 CardType = c.CardType,
                 UserId = c.UserId,
                 CreatedAt = c.CreatedAt
             })
             .ToListAsync();
 
+        if (cards == null || cards.Count == 0)
+        {
+            return NotFound();
+        }
+
         return Ok(cards);
     }
 
-
-    // GET: api/Card/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult> GetCardById(int id)
-    {
-        var card = await _cardCollection
-            .Find(c => c.Id == id)
-            .FirstOrDefaultAsync();
-
-        if (card == null)
-        {
-            return NotFound(); // If no card is found, return a 404 Not Found
-        }
-
-        return Ok(new CardDto
-        {
-            Id = card.Id,
-            CardNumber = card.CardNumber,
-            ExpirationDate = card.ExpirationDate,
-            CVV = card.CVV,
-            CardType = card.CardType,
-            UserId = card.UserId,
-            CreatedAt = card.CreatedAt
-        });
-    }
-
-
-    // POST: api/Card
     [HttpPost]
-    public async Task<ActionResult> CreateCard(CardCreateDto cardDto)
+    public async Task<IActionResult> CreateCard([FromBody] CardCreateDto dto)
     {
-        var card = new Card
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        // Use Stripe SDK to retrieve full card info
+        var service = new PaymentMethodService();
+        var paymentMethod = await service.GetAsync(dto.StripePaymentMethodId);
+
+        if (paymentMethod.Card == null)
+            return BadRequest("Invalid payment method: no card info");
+
+        var card = new SmartBuy.Models.Card
         {
-            CardNumber = cardDto.CardNumber,
-            ExpirationDate = cardDto.ExpirationDate,
-            CVV = cardDto.CVV,
-            CardType = cardDto.CardType,
-            UserId = cardDto.UserId
+            CardType = dto.CardType,
+            StripePaymentMethodId = dto.StripePaymentMethodId,
+            UserId = dto.UserId,
+            CreatedAt = DateTime.UtcNow,
+            Brand = paymentMethod.Card?.Brand ?? string.Empty,
+            Last4 = paymentMethod.Card?.Last4 ?? string.Empty,
+            ExpMonth = paymentMethod.Card != null ? (int)paymentMethod.Card.ExpMonth : 0,
+            ExpYear = paymentMethod.Card != null ? (int)paymentMethod.Card.ExpYear : 0
         };
+
 
         _context.Cards.Add(card);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetCardById), new { id = card.Id }, new CardDto
-        {
-            Id = card.Id,
-            CardNumber = card.CardNumber,
-            ExpirationDate = card.ExpirationDate,
-            CVV = card.CVV,
-            CardType = card.CardType,
-            UserId = card.UserId,
-            CreatedAt = card.CreatedAt
-        });
-    }
-    [HttpGet("user/{userId}")]
-public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsByUserId(string userId)
-{
-    var cards = await _cardCollection
-        .Find(c => c.UserId == userId)
-        .Project(c => new CardDto
-        {
-            Id = c.Id,
-            CardNumber = c.CardNumber,
-            ExpirationDate = c.ExpirationDate,
-            CVV = c.CVV,
-            CardType = c.CardType,
-            UserId = c.UserId,
-            CreatedAt = c.CreatedAt
-        })
-        .ToListAsync();
+        var cardDto = card.ToCardDto(); // Map to DTO if you have mapper
 
-    if (cards == null || cards.Count == 0)
-    {
-        return NotFound();
+        return CreatedAtAction(nameof(GetCardById), new { id = card.Id }, cardDto);
     }
 
-    return Ok(cards);
-}
-
-
-    // PUT: api/Card/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCard(int id, [FromBody] CardUpdateDto cardDto)
+    public async Task<IActionResult> UpdateCard(int id, CardUpdateDto cardDto)
     {
         var card = await _context.Cards.FindAsync(id);
         if (card == null)
@@ -136,27 +145,21 @@ public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsByUserId(string us
             return NotFound();
         }
 
-        card.CardNumber = cardDto.CardNumber;
-        card.ExpirationDate = cardDto.ExpirationDate;
-        card.CVV = cardDto.CVV;
         card.CardType = cardDto.CardType;
+        card.StripePaymentMethodId = cardDto.StripePaymentMethodId;
         card.UserId = cardDto.UserId;
-        card.CreatedAt = cardDto.CreatedAt;
-
         await _context.SaveChangesAsync();
+
         return Ok(new CardDto
         {
             Id = card.Id,
-            CardNumber = card.CardNumber,
-            ExpirationDate = card.ExpirationDate,
-            CVV = card.CVV,
             CardType = card.CardType,
             UserId = card.UserId,
+            StripePaymentMethodId = card.StripePaymentMethodId,
             CreatedAt = card.CreatedAt
         });
     }
 
-    // DELETE: api/Card/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCard(int id)
     {
@@ -168,6 +171,7 @@ public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsByUserId(string us
 
         _context.Cards.Remove(card);
         await _context.SaveChangesAsync();
+
         return NoContent();
     }
 }

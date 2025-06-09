@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import api from "../api";
+
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -46,9 +48,65 @@ const Wishlist = () => {
     }
   };
 
-  const handleAddToCart = (productId, quantity) => {
-    console.log(`Add product ${productId} with quantity ${quantity} to cart.`);
-  };
+
+
+
+
+
+
+
+  const handleAddToCart = async (productId, quantity) => {
+  if (!userId) {
+    console.error("User ID not available.");
+    return;
+  }
+
+  try {
+    // 1. Check if user has a pending order (returns boolean)
+    const { data: hasPendingOrder } = await api.get(`/Order/HasPendingOrder/${userId}`);
+
+    if (!hasPendingOrder) {
+      // 2a. No pending order, create a new order with product
+      // Backend expects DTO like: { userId, products: [{ productId, quantity }] }
+      await api.post(`/Order`, {
+        userId,
+        products: [{ productId, quantity }],
+      });
+
+    } else {
+      // 2b. Pending order exists, get that pending order's Id
+      const { data: orders } = await api.get(`/Order/GetOrdersByUser/${userId}`);
+
+      // Find the pending order from orders list
+      const pendingOrder = orders.find(o => o.status === "Pending");
+      if (!pendingOrder) {
+        console.error("Pending order not found after check.");
+        return;
+      }
+
+      // 3. Add product to existing pending order
+      // Backend expects AddProductToOrderRequestDto: { orderId, productId, quantity }
+      await api.post(`/Order/AddProductToOrder`, {
+        orderId: pendingOrder.id,
+        productId,
+        quantity,
+      });
+    }
+
+    alert("Product added to cart!");
+  } catch (err) {
+    console.error("Failed to add product to cart", err);
+  }
+};
+
+
+
+
+
+
+
+
+
 
   const deleteFromWishlist = async (productId) => {
     if (!userId) return;
