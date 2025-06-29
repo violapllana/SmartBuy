@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import api from '../Components/api';  // Make sure the case matches exactly (Api.js)
+import { useNavigate } from 'react-router-dom';
+import api from '../Components/api';  // Make sure this path and case are correct
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,17 +9,17 @@ const Register = () => {
     Password: '',
   });
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('http://localhost:5108/register', formData); // Use api instance
+      const response = await api.post('http://localhost:5108/register', formData);
       if (response.status === 200) {
         alert('Registration completed successfully! Welcome.');
         setError('');
@@ -28,7 +28,7 @@ const Register = () => {
           Email: '',
           Password: '',
         });
-        navigate('/'); // Redirect to home page after successful registration
+        navigate('/');  // Redirect home
       } else {
         throw new Error('Registration failed!');
       }
@@ -39,63 +39,91 @@ const Register = () => {
   };
 
   return (
-    <>
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Register</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="UserName" className="block">Username:</label>
-            <input
-              type="text"
-              id="UserName"
-              name="UserName"
-              value={formData.UserName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden flex items-center justify-center">
+      {/* Background elements, omitted here for brevity */}
+
+      <div className="relative z-10 w-full max-w-md mx-4">
+        <div className="group bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 hover:scale-105">
+          <div className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 px-8 py-10 text-center relative overflow-hidden">
+            {/* Header background pattern (omitted) */}
+            <div className="relative z-10">
+              <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
+              <p className="text-emerald-100">Join us and start your journey today</p>
+            </div>
           </div>
-          <div>
-            <label htmlFor="Email" className="block">Email:</label>
-            <input
-              type="email"
-              id="Email"
-              name="Email"
-              value={formData.Email}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-            />
+
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Username */}
+              <div>
+                <label htmlFor="UserName" className="block text-sm font-semibold text-emerald-300 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="UserName"
+                  name="UserName"
+                  value={formData.UserName}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  placeholder="Choose a username"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="Email" className="block text-sm font-semibold text-emerald-300 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="Email"
+                  name="Email"
+                  value={formData.Email}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label htmlFor="Password" className="block text-sm font-semibold text-emerald-300 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="Password"
+                  name="Password"
+                  value={formData.Password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  placeholder="Create a strong password"
+                />
+              </div>
+
+              {/* Error message */}
+              {error && (
+                <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-xl p-4 text-red-700">
+                  {error}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-semibold transition"
+              >
+                Register
+              </button>
+            </form>
           </div>
-          <div>
-            <label htmlFor="Password" className="block">Password:</label>
-            <input
-              type="password"
-              id="Password"
-              name="Password"
-              value={formData.Password}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <div className="flex justify-center">
-            <button type="submit" 
-  className="w-full bg-gradient-to-r from-green-300 via-green-400 to-green-500 text-white font-semibold py-2 rounded-md transition duration-300 ease-in-out hover:opacity-90"
-  >
-              Register
-            </button>
-          </div>
-        </form>
-        {error && <div className="text-red-500 text-center">{error}</div>}
-        <div className="mt-4 text-center">
-          <span className="text-gray-600">Already have an account?</span>
-          <Link to="/login" className="text-blue-500 hover:underline ml-1">Log in</Link>
         </div>
       </div>
     </div>
-    </>
   );
 };
 

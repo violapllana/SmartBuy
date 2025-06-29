@@ -22,6 +22,40 @@ namespace SmartBuy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Backend.Controllers.Mobile.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReservationDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("Backend.Models.Shipment", b =>
                 {
                     b.Property<int>("Id")
@@ -524,6 +558,9 @@ namespace SmartBuy.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -568,6 +605,15 @@ namespace SmartBuy.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("Backend.Controllers.Mobile.Reservation", b =>
+                {
+                    b.HasOne("SmartBuy.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Shipment", b =>

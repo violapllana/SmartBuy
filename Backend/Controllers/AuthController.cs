@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SmartBuy.Models;
 using SmartBuy.Services;
+using Stripe;
 
 public class AuthController : ControllerBase
 {
@@ -41,6 +42,28 @@ public class AuthController : ControllerBase
         if (result.Succeeded)
         {
             await AssignUserRoles(user, model.Username);
+
+            // Create Stripe customer
+            var customerService = new CustomerService();
+
+            var customerOptions = new CustomerCreateOptions
+            {
+                Email = user.Email,
+                Name = user.UserName
+            };
+
+            try
+            {
+                var customer = await customerService.CreateAsync(customerOptions);
+
+                // Save Stripe customer ID in user
+                user.StripeCustomerId = customer.Id;
+                await _userManager.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Failed to create Stripe customer.", Details = ex.Message });
+            }
 
             return Ok(new { Message = "User registered successfully." });
         }
@@ -183,11 +206,32 @@ public class AuthController : ControllerBase
         {
             user.Id,
             user.UserName,
-            user.Email
+            user.Email,
+            user.StripeCustomerId
+
         }).ToList();
 
         return Ok(userDtos);
     }
+
+
+    [HttpGet("userid/{username}")]
+    public async Task<IActionResult> GetUserIdByUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return BadRequest(new { Message = "Username is required." });
+        }
+
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            return NotFound(new { Message = $"User with username '{username}' not found." });
+        }
+
+        return Ok(new { userId = user.Id });
+    }
+
 
 
     [HttpGet("users/email")]
@@ -208,6 +252,23 @@ public class AuthController : ControllerBase
         return Ok(new { Email = user.Email });
     }
 
+    [HttpGet("users/stripe-customer-id")]
+    public async Task<IActionResult> GetStripeCustomerId([FromQuery] string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return BadRequest(new { Message = "User ID is required." });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound(new { Message = "User not found." });
+        }
+
+        return Ok(new { StripeCustomerId = user.StripeCustomerId });
+    }
 
 
 
@@ -257,7 +318,9 @@ public class AuthController : ControllerBase
         {
             user.Id,
             user.UserName,
-            user.Email
+            user.Email,
+            user.StripeCustomerId
+
         }).ToList();
 
         return Ok(adminDtos);
@@ -282,7 +345,8 @@ public class AuthController : ControllerBase
         {
             user.Id,
             user.UserName,
-            user.Email
+            user.Email,
+            user.StripeCustomerId
         };
 
         return Ok(userDto);

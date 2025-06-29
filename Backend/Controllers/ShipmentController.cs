@@ -46,6 +46,11 @@ namespace Backend.Controllers
             return Ok(shipmentDtos);
         }
 
+
+
+
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetShipment(int id)
         {
@@ -60,6 +65,14 @@ namespace Backend.Controllers
             return Ok(shipment.toShipmentDto());
         }
 
+
+
+
+
+
+
+
+
         [HttpPost]
         public async Task<ActionResult> CreateShipment(ShipmentCreateDto shipmentDto)
         {
@@ -70,6 +83,12 @@ namespace Backend.Controllers
 
             return CreatedAtAction(nameof(GetShipment), new { id = shipment.Id }, shipment.ToShipmentDto());
         }
+
+
+
+
+
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateShipment([FromRoute] int id, [FromBody] ShipmentUpdateDto shipmentDto)
         {

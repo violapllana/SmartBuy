@@ -1,268 +1,350 @@
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import CreditCard from "./CreditCard";
-import { useNavigate } from "react-router-dom";
+"use client"
+
+import { useEffect, useState } from "react"
+import Cookies from "js-cookie"
+import CreditCard from "./CreditCard"
+import { useNavigate } from "react-router-dom"
+import { Eye, EyeOff, Edit3, Trash2, CreditCardIcon, X, Check, Loader2 } from "lucide-react"
 
 const getCardLogo = (type) => {
   switch (type?.toLowerCase()) {
     case "visa":
-      return "/logos/visa.png";
+      return "/logos/visa.png"
     case "mastercard":
-      return "/logos/mastercard.png";
+      return "/logos/mastercard.png"
     case "amex":
     case "american express":
-      return "/logos/amex.png";
+      return "/logos/amex.png"
     case "discover":
-      return "/logos/discover.png";
+      return "/logos/discover.png"
     default:
-      return "/logos/generic-card.png";
+      return "/logos/generic-card.png"
   }
-};
+}
 
 // Mask card number except last 4 digits
 const maskCardNumber = (number) => {
-  if (!number || number.length < 4) return number;
-  return number.slice(0, -4).replace(/\d/g, "*") + number.slice(-4);
-};
+  if (!number || number.length < 4) return number
+  return number.slice(0, -4).replace(/\d/g, "*") + number.slice(-4)
+}
 
-const cardTypes = ["Visa", "Mastercard", "Amex", "Discover"];
+const cardTypes = ["Visa", "Mastercard", "Amex", "Discover"]
 
 const UserCardList = () => {
-  const [cards, setCards] = useState([]);
-  const [userId, setUserId] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [editCard, setEditCard] = useState(null);
-  const [originalCard, setOriginalCard] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showCVV, setShowCVV] = useState(false);
-  const [role, setRole] = useState("");
-
-  const navigate = useNavigate();
+  const [cards, setCards] = useState([])
+  const [userId, setUserId] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedCard, setSelectedCard] = useState(null)
+  const [editCard, setEditCard] = useState(null)
+  const [originalCard, setOriginalCard] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [showCVV, setShowCVV] = useState(false)
+  const [role, setRole] = useState("")
+  const [isDeleting, setIsDeleting] = useState(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const storedUsername = Cookies.get("username");
+    const storedUsername = Cookies.get("username")
     if (storedUsername) {
-      fetchUserId(storedUsername);
+      fetchUserId(storedUsername)
     } else {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
-  // You probably want to get role from somewhere, e.g. Cookies or an API
   useEffect(() => {
-    const storedRole = Cookies.get("role");
-    if (storedRole) setRole(storedRole);
-  }, []);
+    const storedRole = Cookies.get("role")
+    if (storedRole) setRole(storedRole)
+  }, [])
 
-  // Redirect logic corrected: redirect if role is NOT Admin or User
   useEffect(() => {
-    if (!role) return;
-
+    if (!role) return
     if (role !== "Admin" && role !== "User") {
-      navigate("/");
+      navigate("/")
     }
-  }, [role, navigate]);
+  }, [role, navigate])
 
-  // Fetch user ID by username
   const fetchUserId = async (username) => {
     try {
-      const res = await fetch(`http://localhost:5108/users/by-username?username=${username}`);
-      if (!res.ok) throw new Error("Failed to fetch user ID");
-      const data = await res.json();
-      setUserId(data.id);
-      fetchCards(data.id);
+      const res = await fetch(`http://localhost:5108/users/by-username?username=${username}`)
+      if (!res.ok) throw new Error("Failed to fetch user ID")
+      const data = await res.json()
+      setUserId(data.id)
+      fetchCards(data.id)
     } catch (err) {
-      console.error(err);
-      setLoading(false);
+      console.error(err)
+      setLoading(false)
     }
-  };
+  }
 
-  // Fetch cards for user
   const fetchCards = async (userId) => {
     try {
-      const res = await fetch(`http://localhost:5108/api/Card/user/${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch cards");
-      const data = await res.json();
-      setCards(data);
+      const res = await fetch(`http://localhost:5108/api/Card/user/${userId}`)
+      if (!res.ok) throw new Error("Failed to fetch cards")
+      const data = await res.json()
+      setCards(data)
     } catch (err) {
-      console.error(err);
-      setCards([]);
+      console.error(err)
+      setCards([])
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  // Delete card
   const handleDelete = async (cardId) => {
-    if (!window.confirm("Are you sure you want to delete this card?")) return;
+    if (!window.confirm("Are you sure you want to delete this card?")) return
+
+    setIsDeleting(cardId)
     try {
-      const res = await fetch(`http://localhost:5108/api/Card/${cardId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete card");
-      setCards(cards.filter((card) => card.id !== cardId));
+      const res = await fetch(`http://localhost:5108/api/Card/${cardId}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("Failed to delete card")
+      setCards(cards.filter((card) => card.id !== cardId))
     } catch (err) {
-      alert("Error deleting card");
-      console.error(err);
+      alert("Error deleting card")
+      console.error(err)
+    } finally {
+      setIsDeleting(null)
     }
-  };
+  }
 
-  // Open edit modal
   const openEdit = (card) => {
-    setEditCard({ ...card });
-    setOriginalCard({ ...card });
-    setIsEditing(true);
-  };
+    setEditCard({ ...card })
+    setOriginalCard({ ...card })
+    setIsEditing(true)
+  }
 
-  // Handle form changes in edit modal
   const handleEditChange = (e) => {
-    const { name, value } = e.target;
-
-    // For exp month and year, ensure numbers (convert if needed)
+    const { name, value } = e.target
     if (name === "expMonth" || name === "expYear") {
-      setEditCard((prev) => ({ ...prev, [name]: Number(value) }));
+      setEditCard((prev) => ({ ...prev, [name]: Number(value) }))
     } else {
-      setEditCard((prev) => ({ ...prev, [name]: value }));
+      setEditCard((prev) => ({ ...prev, [name]: value }))
     }
-  };
+  }
 
-  // Check if changes were made in edit form
   const isChanged = () => {
-    return JSON.stringify(editCard) !== JSON.stringify(originalCard);
-  };
+    return JSON.stringify(editCard) !== JSON.stringify(originalCard)
+  }
 
-  // Save edited card
   const saveEdit = async () => {
+    setIsSaving(true)
     try {
       const res = await fetch(`http://localhost:5108/api/Card/${editCard.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editCard),
-      });
-      if (!res.ok) throw new Error("Failed to update card");
-      setCards(cards.map((card) => (card.id === editCard.id ? editCard : card)));
-      setIsEditing(false);
-      setEditCard(null);
+      })
+      if (!res.ok) throw new Error("Failed to update card")
+      setCards(cards.map((card) => (card.id === editCard.id ? editCard : card)))
+      setIsEditing(false)
+      setEditCard(null)
     } catch (err) {
-      alert("Error updating card");
-      console.error(err);
+      alert("Error updating card")
+      console.error(err)
+    } finally {
+      setIsSaving(false)
     }
-  };
+  }
 
-  // View card details modal
   const viewDetails = (card) => {
-    setSelectedCard(card);
-    setShowCVV(false);
-    setShowDetails(true);
-  };
+    setSelectedCard(card)
+    setShowCVV(false)
+    setShowDetails(true)
+  }
 
-  if (loading)
-    return <p className="text-center text-gray-500 mt-20 text-lg font-medium">Loading cards...</p>;
-
-  if (!userId)
+  if (loading) {
     return (
-      <p className="text-center text-red-600 font-semibold mt-20 text-lg">
-        User not found or not logged in.
-      </p>
-    );
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+            <div className="w-8 h-8 bg-white/30 rounded-full"></div>
+          </div>
+          <p className="text-white text-xl font-medium">Loading your cards...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="bg-red-500/10 backdrop-blur-md border border-red-400/30 rounded-2xl p-8 text-center">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-400" />
+          </div>
+          <p className="text-red-300 text-xl font-semibold">User not found or not logged in.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 p-6 max-w-full sm:max-w-3xl md:max-w-5xl lg:max-w-7xl mx-auto">
-      <h2 className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-700 drop-shadow-md mb-10 animate-fade-in">
-        Your Credit Cards
-      </h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-32 h-32 bg-green-500/10 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-40 h-40 bg-emerald-400/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-yellow-400/5 rounded-full blur-xl animate-bounce" />
+      </div>
 
-      {cards.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg">No cards found.</p>
-      ) : (
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className="relative bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl shadow-md p-5 min-h-[360px] flex flex-col items-center justify-center group transition-transform hover:scale-[1.02]"
-            >
-              <div className="flex-1 flex items-center justify-center w-full">
-                {/* Pass masked card number */}
-                <CreditCard card={{ ...card, cardNumber: maskCardNumber(card.last4) }} />
-              </div>
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-30" />
 
-              {/* Action buttons shown on hover */}
-              <div className="absolute inset-0 bg-white/90 rounded-2xl flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5">
-                <div className="flex gap-3 w-full">
-                  <button
-                    onClick={() => viewDetails(card)}
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
-                  >
-                    Details
-                  </button>
-                  <button
-                    onClick={() => openEdit(card)}
-                    className="flex-1 px-4 py-2 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-500 transition"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(card.id)}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
-                  >
-                    Delete
-                  </button>
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-12 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl flex items-center justify-center">
+              <CreditCardIcon className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-400 to-yellow-400 mb-4">
+            Your Credit Cards
+          </h1>
+          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+            Manage your payment methods securely and efficiently
+          </p>
+        </div>
+
+        {cards.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-24 h-24 bg-gradient-to-br from-gray-600/20 to-gray-700/20 rounded-full flex items-center justify-center mx-auto mb-8">
+              <CreditCardIcon className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-white mb-4">No Cards Found</h3>
+            <p className="text-gray-400 text-lg">Add your first payment method to get started.</p>
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {cards.map((card) => (
+              <div
+                key={card.id}
+                className="group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 hover:border-white/20 transition-all duration-500 hover:scale-105"
+              >
+                {/* Glow effect */}
+                <div className="absolute -inset-2 bg-gradient-to-r from-emerald-400/20 via-green-400/20 to-yellow-400/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
+
+                <div className="relative z-10">
+                  {/* Card Display */}
+                  <div className="flex items-center justify-center mb-6">
+                    <CreditCard card={{ ...card, cardNumber: maskCardNumber(card.last4) }} />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => viewDetails(card)}
+                      className="group/btn flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Details
+                      <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
+                    </button>
+
+                    <button
+                      onClick={() => openEdit(card)}
+                      className="group/btn flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/25"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Edit
+                      <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(card.id)}
+                      disabled={isDeleting === card.id}
+                      className="group/btn flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25 disabled:hover:scale-100 disabled:hover:shadow-none disabled:opacity-50"
+                    >
+                      {isDeleting === card.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                      Delete
+                      <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Card Details Modal */}
       {showDetails && selectedCard && (
         <div
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowDetails(false)}
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl"
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-2xl font-bold text-indigo-700 mb-6 flex items-center gap-3">
-              <img
-                src={getCardLogo(selectedCard.cardType || selectedCard.brand)}
-                alt={`${selectedCard.cardType || selectedCard.brand} logo`}
-                className="w-12 h-7 object-contain"
-              />
-              Card Details
-            </h3>
-            <div className="space-y-3 text-gray-700 text-base">
-              <p>
-                <strong>Card Number:</strong> **** **** **** {selectedCard.last4}
-              </p>
-              <p>
-                <strong>Type:</strong> {selectedCard.cardType || selectedCard.brand}
-              </p>
-              <p>
-                <strong>Expiration:</strong> {selectedCard.expMonth}/{selectedCard.expYear}
-              </p>
-              <p>
-                <strong>Cardholder Name:</strong> {selectedCard.cardHolderName || "N/A"}
-              </p>
-              <p>
-                <strong>CVV:</strong>{" "}
-                {showCVV ? selectedCard.cvv || "N/A" : "***"}{" "}
-                <button
-                  onClick={() => setShowCVV((prev) => !prev)}
-                  className="text-indigo-600 hover:text-indigo-900 transition ml-2 underline"
-                >
-                  {showCVV ? "Hide" : "Show"}
-                </button>
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <CreditCardIcon className="w-5 h-5 text-white" />
+                </div>
+                Card Details
+              </h3>
               <button
                 onClick={() => setShowDetails(false)}
-                className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
               >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-gray-300">
+              <div className="bg-white/5 rounded-xl p-4">
+                <p className="text-sm text-white/60 mb-1">Card Number</p>
+                <p className="text-white font-mono text-lg">**** **** **** {selectedCard.last4}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 rounded-xl p-4">
+                  <p className="text-sm text-white/60 mb-1">Type</p>
+                  <p className="text-white font-medium">{selectedCard.cardType || selectedCard.brand}</p>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4">
+                  <p className="text-sm text-white/60 mb-1">Expires</p>
+                  <p className="text-white font-mono">
+                    {selectedCard.expMonth}/{selectedCard.expYear}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-xl p-4">
+                <p className="text-sm text-white/60 mb-1">Cardholder Name</p>
+                <p className="text-white font-medium">{selectedCard.cardHolderName || "N/A"}</p>
+              </div>
+
+              <div className="bg-white/5 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm text-white/60">CVV</p>
+                  <button
+                    onClick={() => setShowCVV((prev) => !prev)}
+                    className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors duration-300"
+                  >
+                    {showCVV ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showCVV ? "Hide" : "Show"}
+                  </button>
+                </div>
+                <p className="text-white font-mono">{showCVV ? selectedCard.cvv || "N/A" : "***"}</p>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={() => setShowDetails(false)}
+                className="group relative flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25"
+              >
+                <Check className="w-4 h-4" />
                 Close
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
               </button>
             </div>
           </div>
@@ -272,42 +354,57 @@ const UserCardList = () => {
       {/* Edit Card Modal */}
       {isEditing && editCard && (
         <div
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setIsEditing(false)}
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl"
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-2xl font-bold text-yellow-500 mb-6">Edit Card</h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                  <Edit3 className="w-5 h-5 text-white" />
+                </div>
+                Edit Card
+              </h3>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
             <form
               onSubmit={(e) => {
-                e.preventDefault();
+                e.preventDefault()
                 if (!isChanged()) {
-                  alert("No changes detected.");
-                  return;
+                  alert("No changes detected.")
+                  return
                 }
-                saveEdit();
+                saveEdit()
               }}
-              className="space-y-4"
+              className="space-y-6"
             >
               <div>
-                <label htmlFor="cardHolderName" className="block font-medium mb-1">
+                <label htmlFor="cardHolderName" className="block text-white/80 font-medium mb-2">
                   Cardholder Name
                 </label>
                 <input
                   type="text"
                   id="cardHolderName"
                   name="cardHolderName"
-                  value={editCard.cardHolderName || ""}
+                  value={Cookies.getItem(`username`) || ""}
                   onChange={handleEditChange}
                   required
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Enter cardholder name"
                 />
               </div>
 
               <div>
-                <label htmlFor="cardType" className="block font-medium mb-1">
+                <label htmlFor="cardType" className="block text-white/80 font-medium mb-2">
                   Card Type
                 </label>
                 <select
@@ -316,13 +413,13 @@ const UserCardList = () => {
                   value={editCard.cardType || ""}
                   onChange={handleEditChange}
                   required
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                 >
-                  <option value="" disabled>
+                  <option value="" disabled className="bg-gray-800">
                     Select card type
                   </option>
                   {cardTypes.map((type) => (
-                    <option key={type} value={type}>
+                    <option key={type} value={type} className="bg-gray-800">
                       {type}
                     </option>
                   ))}
@@ -330,7 +427,7 @@ const UserCardList = () => {
               </div>
 
               <div>
-                <label htmlFor="last4" className="block font-medium mb-1">
+                <label htmlFor="last4" className="block text-white/80 font-medium mb-2">
                   Last 4 Digits
                 </label>
                 <input
@@ -343,14 +440,14 @@ const UserCardList = () => {
                   minLength={4}
                   pattern="\d{4}"
                   required
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                   placeholder="1234"
                 />
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label htmlFor="expMonth" className="block font-medium mb-1">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="expMonth" className="block text-white/80 font-medium mb-2">
                     Exp Month
                   </label>
                   <input
@@ -362,11 +459,12 @@ const UserCardList = () => {
                     min={1}
                     max={12}
                     required
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                    placeholder="MM"
                   />
                 </div>
-                <div className="flex-1">
-                  <label htmlFor="expYear" className="block font-medium mb-1">
+                <div>
+                  <label htmlFor="expYear" className="block text-white/80 font-medium mb-2">
                     Exp Year
                   </label>
                   <input
@@ -378,13 +476,14 @@ const UserCardList = () => {
                     min={new Date().getFullYear()}
                     max={2100}
                     required
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                    placeholder="YYYY"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="cvv" className="block font-medium mb-1">
+                <label htmlFor="cvv" className="block text-white/80 font-medium mb-2">
                   CVV
                 </label>
                 <input
@@ -396,29 +495,33 @@ const UserCardList = () => {
                   maxLength={4}
                   minLength={3}
                   required
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                  placeholder="***"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 mt-6">
+              <div className="flex gap-4 pt-4">
                 <button
                   type="button"
                   onClick={() => {
-                    setIsEditing(false);
-                    setEditCard(null);
+                    setIsEditing(false)
+                    setEditCard(null)
                   }}
-                  className="px-5 py-2 border border-gray-400 rounded-md hover:bg-gray-100 transition"
+                  className="group relative flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105"
                 >
+                  <X className="w-4 h-4" />
                   Cancel
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-xl" />
                 </button>
+
                 <button
                   type="submit"
-                  disabled={!isChanged()}
-                  className={`px-5 py-2 rounded-md text-white ${
-                    isChanged() ? "bg-yellow-500 hover:bg-yellow-600" : "bg-yellow-300 cursor-not-allowed"
-                  } transition`}
+                  disabled={!isChanged() || isSaving}
+                  className="group relative flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25 disabled:hover:scale-100 disabled:hover:shadow-none disabled:opacity-50"
                 >
-                  Save
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                  {isSaving ? "Saving..." : "Save Changes"}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
                 </button>
               </div>
             </form>
@@ -426,7 +529,7 @@ const UserCardList = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default UserCardList;
+export default UserCardList
