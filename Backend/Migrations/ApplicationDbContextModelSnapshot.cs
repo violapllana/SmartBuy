@@ -70,6 +70,9 @@ namespace SmartBuy.Migrations
                     b.Property<DateTime>("ShipmentDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("TrackingNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

@@ -6301,23 +6301,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\begus\\.nuget\\packages\\": {},
+    "C:\\Users\\Alban\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "projectUniqueName": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
       "projectName": "SmartBuy",
-      "projectPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
-      "packagesPath": "C:\\Users\\begus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\SmartBuy.csproj",
+      "packagesPath": "C:\\Users\\Alban\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\begus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Alban\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -6417,5 +6417,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

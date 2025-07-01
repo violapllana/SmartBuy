@@ -12,13 +12,8 @@ using SmartBuy.Data;
 namespace SmartBuy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:Backend/Migrations/20250529120205_mnmnm.Designer.cs
-    [Migration("20250529120205_mnmnm")]
-    partial class mnmnm
-========
-    [Migration("20250628172905_init1")]
-    partial class init1
->>>>>>>> ae85bf8ff7f30eff6b34b918266a384a6f077531:Backend/Migrations/20250628172905_init1.Designer.cs
+    [Migration("20250628141621_UpdateCardModel")]
+    partial class UpdateCardModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,40 +24,6 @@ namespace SmartBuy.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Backend.Controllers.Mobile.Reservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReservationDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reservations");
-                });
 
             modelBuilder.Entity("Backend.Models.Shipment", b =>
                 {
@@ -77,6 +38,9 @@ namespace SmartBuy.Migrations
 
                     b.Property<DateTime>("ShipmentDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("TrackingNumber")
                         .IsRequired()
@@ -566,9 +530,6 @@ namespace SmartBuy.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StripeCustomerId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -613,15 +574,6 @@ namespace SmartBuy.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Wishlists");
-                });
-
-            modelBuilder.Entity("Backend.Controllers.Mobile.Reservation", b =>
-                {
-                    b.HasOne("SmartBuy.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Shipment", b =>
