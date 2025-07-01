@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Backend.Mappers;
 using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SmartBuy.Controllers
 {
@@ -39,42 +40,62 @@ namespace SmartBuy.Controllers
         [HttpPost("charge")]
         public async Task<IActionResult> CreatePaymentIntent([FromBody] PaymentRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.UserId) || request.Amount <= 0 || request.OrderId <= 0 || string.IsNullOrWhiteSpace(request.PaymentMethodId))
-            {
-                return BadRequest("Invalid payment data.");
-            }
+            if (string.IsNullOrWhiteSpace(request.UserId))
+                return BadRequest("UserId is required.");
+            if (request.Amount <= 0)
+                return BadRequest("Amount must be greater than zero.");
+            if (request.OrderId <= 0)
+                return BadRequest("OrderId must be greater than zero.");
+            if (string.IsNullOrWhiteSpace(request.PaymentMethodId))
+                return BadRequest("PaymentMethodId is required.");
+            if (string.IsNullOrWhiteSpace(request.StripeCustomerId))
+                return BadRequest("StripeCustomerId is required.");
 
-            // Check if a successful payment already exists for this order
             bool alreadyPaid = await _context.Payments
                 .AnyAsync(p => p.OrderId == request.OrderId && p.PaymentStatus == "succeeded");
 
             if (alreadyPaid)
-            {
                 return BadRequest("This order has already been paid.");
-            }
 
             var paymentIntentService = new PaymentIntentService(_stripeClient);
-
-            var options = new PaymentIntentCreateOptions
-            {
-                Amount = (long)(request.Amount * 100), // convert to cents
-                Currency = "usd",
-                PaymentMethod = request.PaymentMethodId,
-                Customer = request.StripeCustomerId,
-                ReceiptEmail = request.Email,
-                Confirm = true,
-                OffSession = true,
-                Metadata = new Dictionary<string, string>
-        {
-            { "UserId", request.UserId },
-            { "OrderId", request.OrderId.ToString() }
-        }
-            };
+            var paymentMethodService = new PaymentMethodService(_stripeClient);
 
             try
             {
+                var paymentMethod = await paymentMethodService.GetAsync(request.PaymentMethodId);
+
+                if (paymentMethod.Customer == null || string.IsNullOrEmpty(paymentMethod.Customer.Id))
+                {
+                    // Attach the payment method to the customer if not already attached
+                    await paymentMethodService.AttachAsync(request.PaymentMethodId, new PaymentMethodAttachOptions
+                    {
+                        Customer = request.StripeCustomerId
+                    });
+                }
+                else if (paymentMethod.Customer.Id != request.StripeCustomerId)
+                {
+                    return BadRequest(new { error = "Payment method belongs to a different customer." });
+                }
+
+                var options = new PaymentIntentCreateOptions
+                {
+                    Amount = (long)(request.Amount * 100), // amount in cents
+                    Currency = "usd",
+                    PaymentMethod = request.PaymentMethodId,
+                    Customer = request.StripeCustomerId,
+                    ReceiptEmail = request.Email,
+                    Confirm = true,
+                    OffSession = true,
+                    Metadata = new Dictionary<string, string>
+            {
+                { "UserId", request.UserId },
+                { "OrderId", request.OrderId.ToString() }
+            }
+                };
+
                 var intent = await paymentIntentService.CreateAsync(options);
 
+                // Save to database
                 var payment = new Payment
                 {
                     UserId = request.UserId,
@@ -93,13 +114,26 @@ namespace SmartBuy.Controllers
                 {
                     message = intent.Status == "succeeded" ? "Payment successful" : "Payment requires action",
                     status = intent.Status,
-                    transactionId = intent.Id
+                    transactionId = intent.Id,
+                    requiresAction = intent.Status == "requires_action" || intent.Status == "requires_confirmation",
+                    clientSecret = intent.ClientSecret
                 });
             }
             catch (StripeException e)
             {
+                // Handle the case where authentication is required even for off-session
+                if (e.StripeError?.Code == "authentication_required")
+                {
+                    return Ok(new
+                    {
+                        error = "Authentication required",
+                        requiresAction = true,
+                        clientSecret = e.StripeError?.PaymentIntent?.ClientSecret
+                    });
+                }
+
                 _logger.LogError(e, "Stripe payment intent creation failed.");
-                return BadRequest(new { error = e.Message });
+                return BadRequest(new { error = e.StripeError?.Message ?? e.Message });
             }
         }
 

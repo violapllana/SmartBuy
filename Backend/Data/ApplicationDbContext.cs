@@ -1,3 +1,4 @@
+using Backend.Controllers.Mobile;
 using Backend.Models;
 using Backend.SignalR;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,7 @@ namespace SmartBuy.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
 
 
 

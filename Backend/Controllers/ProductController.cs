@@ -141,6 +141,33 @@ public class ProductController : ControllerBase
         return Ok(product.ToProductDto());
     }
 
+
+
+    [HttpGet("random")]
+    public async Task<ActionResult> GetRandomProducts()
+    {
+        int count = await _context.Products.CountAsync();
+
+        if (count <= 4)
+        {
+            var allProducts = await _context.Products
+                .Select(p => p.ToProductDto())
+                .ToListAsync();
+
+            return Ok(allProducts);
+        }
+
+        var randomProducts = await _context.Products
+            .OrderBy(p => Guid.NewGuid()) // <-- Randomizes at the DB level
+            .Take(4)
+            .Select(p => p.ToProductDto())
+            .ToListAsync();
+
+        return Ok(randomProducts);
+    }
+
+
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
@@ -155,4 +182,10 @@ public class ProductController : ControllerBase
         return NoContent();
     }
 }
+
+
+
+
+
+
 

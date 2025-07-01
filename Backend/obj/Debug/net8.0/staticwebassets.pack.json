@@ -1,6 +1,7 @@
 {
   "Files": [
     {
+<<<<<<< HEAD
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\03c8fb42-6531-4232-93a5-77205563ccb2.png",
       "PackagePath": "staticwebassets\\images\\03c8fb42-6531-4232-93a5-77205563ccb2.png"
     },
@@ -118,6 +119,125 @@
     },
     {
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+=======
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\03c8fb42-6531-4232-93a5-77205563ccb2.png",
+      "PackagePath": "staticwebassets\\images\\03c8fb42-6531-4232-93a5-77205563ccb2.png"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\03ff863f-55d2-471d-b6e7-49bb09543d30.jpg",
+      "PackagePath": "staticwebassets\\images\\03ff863f-55d2-471d-b6e7-49bb09543d30.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\04dec077-2e2f-44ff-afae-d50d7f008f71.jpg",
+      "PackagePath": "staticwebassets\\images\\04dec077-2e2f-44ff-afae-d50d7f008f71.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\04yfR3CU1nuOPG61J3KtwTN-3.webp",
+      "PackagePath": "staticwebassets\\images\\04yfR3CU1nuOPG61J3KtwTN-3.webp"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\11d86e78-b6f2-4d37-868c-a5d368caa7c7.avif",
+      "PackagePath": "staticwebassets\\images\\11d86e78-b6f2-4d37-868c-a5d368caa7c7.avif"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\12828b20-9705-43f4-80b1-0b0cddb786e3.jpg",
+      "PackagePath": "staticwebassets\\images\\12828b20-9705-43f4-80b1-0b0cddb786e3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\1a888384-269f-4817-96a4-c07df17075dd.webp",
+      "PackagePath": "staticwebassets\\images\\1a888384-269f-4817-96a4-c07df17075dd.webp"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\2c1b2603-52ec-4bd2-b7fb-143e4f83fcfb.jpg",
+      "PackagePath": "staticwebassets\\images\\2c1b2603-52ec-4bd2-b7fb-143e4f83fcfb.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\3e8b0bf5-d0a0-497a-9fa7-ff817e6b167e.jpg",
+      "PackagePath": "staticwebassets\\images\\3e8b0bf5-d0a0-497a-9fa7-ff817e6b167e.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\41KH-bTKcKL.jpg",
+      "PackagePath": "staticwebassets\\images\\41KH-bTKcKL.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\440281.webp",
+      "PackagePath": "staticwebassets\\images\\440281.webp"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\45e0daa0-e5db-492f-8499-418db337fdd8.jpg",
+      "PackagePath": "staticwebassets\\images\\45e0daa0-e5db-492f-8499-418db337fdd8.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg",
+      "PackagePath": "staticwebassets\\images\\4c08ecf4-6b73-44f1-bf02-de4d23ea2e34.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\51YjNQZ0RDL.jpg",
+      "PackagePath": "staticwebassets\\images\\51YjNQZ0RDL.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\51aXvjzcukL.jpg",
+      "PackagePath": "staticwebassets\\images\\51aXvjzcukL.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\53dca630-2ace-4e54-b0d0-c9dee9abbb99.jpg",
+      "PackagePath": "staticwebassets\\images\\53dca630-2ace-4e54-b0d0-c9dee9abbb99.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\5fb355ec-2556-47bf-9e35-8d2885191146.avif",
+      "PackagePath": "staticwebassets\\images\\5fb355ec-2556-47bf-9e35-8d2885191146.avif"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\61Y1P6uIRFL._AC_UF894,1000_QL80_.jpg",
+      "PackagePath": "staticwebassets\\images\\61Y1P6uIRFL._AC_UF894,1000_QL80_.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\65803c82-5660-48a5-b3a8-4045ea04697c.jpg",
+      "PackagePath": "staticwebassets\\images\\65803c82-5660-48a5-b3a8-4045ea04697c.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\66b6f24b-a426-4380-a4df-317cf928f107.jpg",
+      "PackagePath": "staticwebassets\\images\\66b6f24b-a426-4380-a4df-317cf928f107.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\6787f346-4a83-4bee-ad64-3ac6c463c2ae.jpg",
+      "PackagePath": "staticwebassets\\images\\6787f346-4a83-4bee-ad64-3ac6c463c2ae.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\6864481.avif",
+      "PackagePath": "staticwebassets\\images\\6864481.avif"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\6cccc294-9ad4-49ae-a842-9a3bcaa16d71.jpg",
+      "PackagePath": "staticwebassets\\images\\6cccc294-9ad4-49ae-a842-9a3bcaa16d71.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\71PzW7vZNUL._AC_UF1000,1000_QL80_.jpg",
+      "PackagePath": "staticwebassets\\images\\71PzW7vZNUL._AC_UF1000,1000_QL80_.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\71gci2Lh99L._AC_UL480_FMwebp_QL65_.webp",
+      "PackagePath": "staticwebassets\\images\\71gci2Lh99L._AC_UL480_FMwebp_QL65_.webp"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\71mQb+Qg6iL.jpg",
+      "PackagePath": "staticwebassets\\images\\71mQb+Qg6iL.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\73aad71a-175a-405c-9f2d-529ff2935562.jpg",
+      "PackagePath": "staticwebassets\\images\\73aad71a-175a-405c-9f2d-529ff2935562.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\91fbf160-1f84-487f-8373-5ee8b87dfcca.jpg",
+      "PackagePath": "staticwebassets\\images\\91fbf160-1f84-487f-8373-5ee8b87dfcca.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\96a1d59f-a02e-481f-bc5e-3d83fcd8a389.jpg",
+      "PackagePath": "staticwebassets\\images\\96a1d59f-a02e-481f-bc5e-3d83fcd8a389.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg",
+>>>>>>> ae85bf8ff7f30eff6b34b918266a384a6f077531
       "PackagePath": "staticwebassets\\images\\9f84f5b5-9c76-487a-98f7-f78f35213dab.jpg"
     },
     {
@@ -125,6 +245,7 @@
       "PackagePath": "staticwebassets\\images\\Apple-iPhone-14-Pro-iPhone-14-Pro-Max-deep-purple-220907-geo_inline.jpg.large.jpg"
     },
     {
+<<<<<<< HEAD
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\a7603428-f785-437f-9798-0c39a50f384e.jpg",
       "PackagePath": "staticwebassets\\images\\a7603428-f785-437f-9798-0c39a50f384e.jpg"
     },
@@ -146,6 +267,29 @@
     },
     {
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\ce47f246-75f5-4c32-a8f2-58f3c0a334c8.jpg",
+=======
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\a7603428-f785-437f-9798-0c39a50f384e.jpg",
+      "PackagePath": "staticwebassets\\images\\a7603428-f785-437f-9798-0c39a50f384e.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\apple-tv-4k-hero-select-202210_FMT_WHH.jpg",
+      "PackagePath": "staticwebassets\\images\\apple-tv-4k-hero-select-202210_FMT_WHH.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\b04baccb-43d6-44c7-97cf-bec507659512.jpg",
+      "PackagePath": "staticwebassets\\images\\b04baccb-43d6-44c7-97cf-bec507659512.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\b232a5df-22a4-4291-ac74-dc74eba7ee50.avif",
+      "PackagePath": "staticwebassets\\images\\b232a5df-22a4-4291-ac74-dc74eba7ee50.avif"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\cb15d46d-bc08-4d3b-83f0-13e8d78483b9.jpg",
+      "PackagePath": "staticwebassets\\images\\cb15d46d-bc08-4d3b-83f0-13e8d78483b9.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\ce47f246-75f5-4c32-a8f2-58f3c0a334c8.jpg",
+>>>>>>> ae85bf8ff7f30eff6b34b918266a384a6f077531
       "PackagePath": "staticwebassets\\images\\ce47f246-75f5-4c32-a8f2-58f3c0a334c8.jpg"
     },
     {
@@ -153,6 +297,7 @@
       "PackagePath": "staticwebassets\\images\\download.jpg"
     },
     {
+<<<<<<< HEAD
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\e0e82302-f925-476b-b089-68ad96db09b6.jpg",
       "PackagePath": "staticwebassets\\images\\e0e82302-f925-476b-b089-68ad96db09b6.jpg"
     },
@@ -170,6 +315,25 @@
     },
     {
       "Id": "C:\\Users\\Alban\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\refurb-ipad-pro-12-wificell-spacegray-2021.jpg",
+=======
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\e0e82302-f925-476b-b089-68ad96db09b6.jpg",
+      "PackagePath": "staticwebassets\\images\\e0e82302-f925-476b-b089-68ad96db09b6.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\eos-r6-rf24-105mm-f4_7.png",
+      "PackagePath": "staticwebassets\\images\\eos-r6-rf24-105mm-f4_7.png"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\f7897aa9-900a-4931-aa5f-0a61efac4a2b.jpg",
+      "PackagePath": "staticwebassets\\images\\f7897aa9-900a-4931-aa5f-0a61efac4a2b.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\googlenesthub.jpg",
+      "PackagePath": "staticwebassets\\images\\googlenesthub.jpg"
+    },
+    {
+      "Id": "C:\\Users\\begus\\OneDrive\\Desktop\\SmartBuy\\Backend\\wwwroot\\images\\refurb-ipad-pro-12-wificell-spacegray-2021.jpg",
+>>>>>>> ae85bf8ff7f30eff6b34b918266a384a6f077531
       "PackagePath": "staticwebassets\\images\\refurb-ipad-pro-12-wificell-spacegray-2021.jpg"
     },
     {

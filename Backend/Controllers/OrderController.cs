@@ -28,6 +28,50 @@ namespace SmartBuy.Controllers
 
 
 
+        [HttpGet("analytics")]
+        public async Task<ActionResult> GetOrderAnalytics()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                return Ok(new
+                {
+                    TotalOrders = 0,
+                    TotalRevenue = 0.0,
+                    AverageOrderValue = 0.0,
+                    TotalProductsSold = 0
+                });
+            }
+
+            var totalOrders = orders.Count;
+
+            var totalRevenue = orders.Sum(order =>
+                order.OrderProducts.Sum(op =>
+                    op.Product.Price * op.Quantity));
+
+            var averageOrderValue = totalRevenue / totalOrders;
+
+            var totalProductsSold = orders.Sum(order =>
+                order.OrderProducts.Sum(op => op.Quantity));
+
+            return Ok(new
+            {
+                TotalOrders = totalOrders,
+                TotalRevenue = totalRevenue,
+                AverageOrderValue = averageOrderValue,
+                TotalProductsSold = totalProductsSold
+            });
+        }
+
+
+
+
+
+
         // Get Orders from SQL Database
         [HttpGet]
         public async Task<ActionResult> GetOrders()
