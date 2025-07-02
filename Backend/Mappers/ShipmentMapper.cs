@@ -13,7 +13,8 @@ namespace Backend.Mappers
                 Id = shipment.Id,
                 ShipmentDate = shipment.ShipmentDate,
                 TrackingNumber = shipment.TrackingNumber,
-                OrderId = shipment.OrderId
+                OrderId = shipment.OrderId,
+                UserId = shipment.UserId
             };
         }
 
@@ -23,10 +24,10 @@ namespace Backend.Mappers
             {
                 ShipmentDate = DateTime.UtcNow,
                 TrackingNumber = dto.TrackingNumber,
-                OrderId = dto.OrderId
+                OrderId = dto.OrderId,
+                UserId = dto.UserId
             };
         }
-
 
         public static ShipmentDto toShipmentDto(this MongoShipment shipment)
         {
@@ -35,10 +36,9 @@ namespace Backend.Mappers
                 Id = shipment.Id,
                 ShipmentDate = shipment.ShipmentDate,
                 TrackingNumber = shipment.TrackingNumber,
-                OrderId = shipment.OrderId
+                OrderId = shipment.OrderId,
+                UserId = shipment.UserId
             };
         }
-
-
     }
 }

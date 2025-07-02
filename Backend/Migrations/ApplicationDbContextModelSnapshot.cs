@@ -77,9 +77,15 @@ namespace SmartBuy.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Shipments");
                 });
@@ -622,12 +628,20 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("Backend.Models.Shipment", b =>
                 {
                     b.HasOne("SmartBuy.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("Shipments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartBuy.Models.User", "User")
+                        .WithMany("Shipments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.SignalR.Message", b =>
@@ -801,6 +815,8 @@ namespace SmartBuy.Migrations
                     b.Navigation("OrderProducts");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("Shipments");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.User", b =>
@@ -810,6 +826,8 @@ namespace SmartBuy.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("Shipments");
                 });
 #pragma warning restore 612, 618
         }

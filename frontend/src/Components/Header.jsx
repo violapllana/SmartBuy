@@ -49,12 +49,15 @@ const Header = ({ isLoggedIn, handleLogout, role, username }) => {
       icon: <FaComments />,
     },
     { name: "Products", path: "/productlist", icon: <FaBox /> },
+    {name: "My Shipments", path: "/myshipment"}
   ]
 
   // Admin-only navigation items
   const adminNavItems = [
     { name: "Order List", path: "/orderforadmins", icon: <FaListAlt /> },
     { name: "Products List", path: "/products", icon: <FaBox /> },
+        { name: "Shipment Manager", path: "/shipment", icon: <FaBox /> },
+
   ]
 
   return (

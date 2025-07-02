@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Models;
 
 namespace SmartBuy.Models
 {
@@ -21,6 +22,8 @@ namespace SmartBuy.Models
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
+
         public string Status { get; set; } = "Pending";  // <-- add this
 
     }

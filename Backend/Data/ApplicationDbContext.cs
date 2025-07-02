@@ -26,8 +26,6 @@ namespace SmartBuy.Data
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -65,6 +63,20 @@ namespace SmartBuy.Data
                 .HasOne(c => c.User)
                 .WithMany(u => u.Cards)
                 .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Shipment -> Order (fix multiple cascade paths)
+            modelBuilder.Entity<Shipment>()
+                .HasOne(s => s.Order)
+                .WithMany(o => o.Shipments)  // Make sure you have ICollection<Shipment> Shipments in Order model
+                .HasForeignKey(s => s.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Shipment -> User
+            modelBuilder.Entity<Shipment>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Shipments)  // Make sure you have ICollection<Shipment> Shipments in User model
+                .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

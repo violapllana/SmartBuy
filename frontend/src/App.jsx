@@ -31,6 +31,8 @@ import { MessageProvider } from './Contexts/MessageContext';
 import Order from './Components/Order';
 import StripePayment from './Components/Stripe/StripePayment';
 import OrderForAdmins from './Components/OrderForAdmins';
+import ShipmentManager from './Components/Shipment/ShipmentManager';
+import MyShipments from './Components/Shipment/MyShipments';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -240,6 +242,10 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
       <Route path="/productlist" element={<ProductList username={username} />} />
       <Route path="/cardlist" element={<CardList username={username} />} />
       <Route path="/usercardlist" element={<UserCardList username={username} />} />
+            <Route path="/shipment" element={<ShipmentManager username={username} />} />
+                        <Route path="/myshipment" element={<MyShipments username={username} />} />
+
+
       <Route path="/order" element={<Order username={username} />} />
             <Route path="/orderforadmins" element={<OrderForAdmins username={username} />} />
 

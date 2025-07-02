@@ -311,21 +311,19 @@ public class DataSyncBackgroundService : BackgroundService
                     ShipmentDate = sqlShipment.ShipmentDate,
                     TrackingNumber = sqlShipment.TrackingNumber,
                     OrderId = sqlShipment.OrderId,
+                    UserId = sqlShipment.UserId // ✅ Include this field
                 };
 
                 var filter = Builders<MongoShipment>.Filter.Eq("Id", mongoShipment.Id);
                 var update = Builders<MongoShipment>.Update
                     .Set("ShipmentDate", mongoShipment.ShipmentDate)
                     .Set("TrackingNumber", mongoShipment.TrackingNumber)
-                    .Set("OrderId", mongoShipment.OrderId);  // Missing semicolon here
+                    .Set("OrderId", mongoShipment.OrderId)
+                    .Set("UserId", mongoShipment.UserId); // ✅ Also update this in Mongo
 
                 await shipmentCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
             }
 
-            // Optional: Delete messages from MongoDB that are no longer in SQL Server
-            var sqlShipmentsIds = shipments.Select(s => s.Id).ToList();  // You should use 'shipments' instead of 'messages'
-            var shipmentDeleteFilter = Builders<MongoShipment>.Filter.Nin("Id", sqlShipmentsIds);
-            await shipmentCollection.DeleteManyAsync(shipmentDeleteFilter);
 
         }
     }

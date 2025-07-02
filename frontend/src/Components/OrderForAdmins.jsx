@@ -2,14 +2,36 @@
 
 import { useEffect, useState } from "react"
 import axios from "axios"
+import api from "./api"
 
-const OrderForAdmins = () => {
+
+const OrderForAdmins = ({username}) => {
   const [orders, setOrders] = useState([])
   const [usernames, setUsernames] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filterStatus, setFilterStatus] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
+  const [userId, setUserId] = useState("")
+
+
+
+
+
+  useEffect(() => {
+  const fetchUserId = async () => {
+    if (!username) return;
+    try {
+      const res = await api.get(`http://localhost:5108/users/by-username?username=${username}`);
+      setUserId(res.data.id);
+      localStorage.setItem('selectedUserId', res.data.id);
+    } catch (err) {
+      console.error("Failed to fetch user ID", err);
+    }
+  };
+
+  fetchUserId();
+}, [username]);
 
   // Fetch orders and usernames
   useEffect(() => {
@@ -48,32 +70,75 @@ const OrderForAdmins = () => {
   }, [])
 
   // Function to update order status
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      await axios.patch(`http://localhost:5108/api/Order/UpdateStatus/${orderId}`, { status: newStatus })
+ const updateOrderStatus = async (orderId, newStatus) => {
+  try {
+    // Update order status first
+    await axios.patch(`http://localhost:5108/api/Order/UpdateStatus/${orderId}`, { status: newStatus });
 
-      // Show success notification (you can replace with toast)
-      const notification = document.createElement("div")
-      notification.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse"
-      notification.textContent = `Order #${orderId} status updated to ${newStatus}`
-      document.body.appendChild(notification)
-      setTimeout(() => document.body.removeChild(notification), 3000)
+    // Show success notification for order update
+    const successNotification = document.createElement("div");
+    successNotification.className =
+      "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse";
+    successNotification.textContent = `Order #${orderId} status updated to ${newStatus}`;
+    document.body.appendChild(successNotification);
+    setTimeout(() => document.body.removeChild(successNotification), 3000);
 
-      // Refresh orders after update
-      const { data: updatedOrders } = await axios.get("http://localhost:5108/api/Order")
-      setOrders(updatedOrders)
-    } catch (error) {
-      console.error("Error updating status:", error.response?.data || error.message)
+    // If status is "Paid", create a new Shipment
+    if (newStatus === "Paid") {
+      try {
+        // Assuming userId is defined and available in this scope
+        const generateTrackingNumber = () => {
+  return "TRACK-" + Math.floor(100000 + Math.random() * 900000); // e.g., TRACK-349205
+};
 
-      // Show error notification
-      const notification = document.createElement("div")
-      notification.className = "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50"
-      notification.textContent = "Failed to update status: " + (error.response?.data || error.message)
-      document.body.appendChild(notification)
-      setTimeout(() => document.body.removeChild(notification), 3000)
+const shipmentPayload = {
+  orderId: orderId,
+  userId: userId,
+  shipmentDate: new Date().toISOString(),
+  trackingNumber: generateTrackingNumber()
+};
+
+
+        await axios.post("http://localhost:5108/api/Shipment", shipmentPayload);
+
+        // Show success notification for shipment creation
+        const shipmentNotification = document.createElement("div");
+        shipmentNotification.className =
+          "fixed top-16 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse";
+        shipmentNotification.textContent = `Shipment created for Order #${orderId}`;
+        document.body.appendChild(shipmentNotification);
+        setTimeout(() => document.body.removeChild(shipmentNotification), 3000);
+      } catch (shipmentError) {
+        console.error("Error creating shipment:", shipmentError.response?.data || shipmentError.message);
+
+        // Show error notification for shipment creation failure
+        const shipmentErrorNotification = document.createElement("div");
+        shipmentErrorNotification.className =
+          "fixed top-16 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50";
+        shipmentErrorNotification.textContent =
+          "Failed to create shipment: " + (shipmentError.response?.data || shipmentError.message);
+        document.body.appendChild(shipmentErrorNotification);
+        setTimeout(() => document.body.removeChild(shipmentErrorNotification), 3000);
+      }
     }
+
+    // Refresh orders after update and shipment creation
+    const { data: updatedOrders } = await axios.get("http://localhost:5108/api/Order");
+    setOrders(updatedOrders);
+
+  } catch (error) {
+    console.error("Error updating status:", error.response?.data || error.message);
+
+    // Show error notification for order update failure
+    const errorNotification = document.createElement("div");
+    errorNotification.className =
+      "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50";
+    errorNotification.textContent = "Failed to update status: " + (error.response?.data || error.message);
+    document.body.appendChild(errorNotification);
+    setTimeout(() => document.body.removeChild(errorNotification), 3000);
   }
+};
+
 
   // Filter orders based on status and search term
   const filteredOrders = orders.filter((order) => {

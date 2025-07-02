@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Backend.Models;
 using Backend.SignalR;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,5 +12,7 @@ namespace SmartBuy.Models
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public ICollection<Card> Cards { get; set; } = new List<Card>();
         public ICollection<Message> Messages { get; set; } = new List<Message>();
+        public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
+
     }
 }

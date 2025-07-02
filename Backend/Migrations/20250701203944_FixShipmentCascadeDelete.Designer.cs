@@ -12,13 +12,8 @@ using SmartBuy.Data;
 namespace SmartBuy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:Backend/Migrations/20250529120205_mnmnm.Designer.cs
-    [Migration("20250529120205_mnmnm")]
-    partial class mnmnm
-========
-    [Migration("20250628172905_init1")]
-    partial class init1
->>>>>>>> ae85bf8ff7f30eff6b34b918266a384a6f077531:Backend/Migrations/20250628172905_init1.Designer.cs
+    [Migration("20250701203944_FixShipmentCascadeDelete")]
+    partial class FixShipmentCascadeDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,13 +73,22 @@ namespace SmartBuy.Migrations
                     b.Property<DateTime>("ShipmentDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("TrackingNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Shipments");
                 });
@@ -627,12 +631,20 @@ namespace SmartBuy.Migrations
             modelBuilder.Entity("Backend.Models.Shipment", b =>
                 {
                     b.HasOne("SmartBuy.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("Shipments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartBuy.Models.User", "User")
+                        .WithMany("Shipments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.SignalR.Message", b =>
@@ -806,6 +818,8 @@ namespace SmartBuy.Migrations
                     b.Navigation("OrderProducts");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("Shipments");
                 });
 
             modelBuilder.Entity("SmartBuy.Models.User", b =>
@@ -815,6 +829,8 @@ namespace SmartBuy.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("Shipments");
                 });
 #pragma warning restore 612, 618
         }
